@@ -18,7 +18,7 @@
     <div class="max-w-3xl mx-auto px-4 py-4 flex justify-between items-center">
       <div>
         <h1 class="text-xl font-bold tracking-tight">AMS Ladies Bags and Abayas</h1>
-        <p class="text-xs text-indigo-200">Fast Invoicing & WhatsApp Delivery</p>
+        <p class="text-xs text-indigo-200">Fast Invoicing & Records</p>
       </div>
       <button onclick="toggleHistoryModal()" class="text-xs font-semibold bg-indigo-800 hover:bg-indigo-900 px-3 py-2 rounded-lg border border-indigo-500 transition">
         📋 View Date History
@@ -31,8 +31,8 @@
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Invoice No.</label>
-          <input id="invNum" type="text" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700" />
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Invoice No. (Editable)</label>
+          <input id="invNum" type="text" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" />
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Date</label>
@@ -82,7 +82,7 @@
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
-        <button onclick="openBillPreviewModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-3 px-2 rounded-xl text-xs sm:text-sm transition border border-indigo-200 text-center">
+        <button onclick="openCurrentBillPreview()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-3 px-2 rounded-xl text-xs sm:text-sm transition border border-indigo-200 text-center">
           👁️ View Bill
         </button>
         <button onclick="processBill('print')" class="bg-slate-700 hover:bg-slate-800 text-white font-semibold py-3 px-2 rounded-xl text-xs sm:text-sm transition shadow-sm text-center">
@@ -102,13 +102,13 @@
   <div id="previewModal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-60 z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
       <div class="bg-slate-100 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
-        <h3 class="font-bold text-sm text-slate-800">Bill Preview</h3>
+        <h3 class="font-bold text-sm text-slate-800">Invoice Details</h3>
         <button onclick="togglePreviewModal()" class="text-slate-400 hover:text-slate-600 font-bold text-2xl leading-none">&times;</button>
       </div>
 
       <div class="p-5 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-700">
         <div class="text-center pb-3 border-b border-dashed border-slate-300">
-          <div id="pvBizName" class="font-bold text-base text-slate-900"></div>
+          <div id="pvBizName" class="font-bold text-base text-slate-900">AMS Ladies Bags and Abayas</div>
           <div class="text-slate-400 text-xs">Retail Invoice</div>
         </div>
 
@@ -150,7 +150,7 @@
       <div class="p-4 border-b border-slate-200 flex justify-between items-center">
         <div>
           <h3 class="font-bold text-slate-800">Date-wise Sales History</h3>
-          <p class="text-xs text-slate-500">All invoices organized by calendar day</p>
+          <p class="text-xs text-slate-500">View or re-check past orders</p>
         </div>
         <button onclick="toggleHistoryModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl px-2">&times;</button>
       </div>
@@ -189,9 +189,18 @@
     }
 
     function incrementInvoiceNumber() {
-      let currentNum = parseInt(localStorage.getItem('ams_invoice_counter') || '1001', 10);
-      localStorage.setItem('ams_invoice_counter', (currentNum + 1).toString());
-      loadNextInvoiceNumber();
+      const currentVal = document.getElementById('invNum').value.trim();
+      const numMatch = currentVal.match(/\d+$/);
+      if (numMatch) {
+        const nextNum = parseInt(numMatch[0], 10) + 1;
+        const prefix = currentVal.substring(0, numMatch.index);
+        localStorage.setItem('ams_invoice_counter', nextNum.toString());
+        document.getElementById('invNum').value = prefix + nextNum;
+      } else {
+        let savedNum = parseInt(localStorage.getItem('ams_invoice_counter') || '1001', 10);
+        localStorage.setItem('ams_invoice_counter', (savedNum + 1).toString());
+        loadNextInvoiceNumber();
+      }
     }
 
     function addItemRow() {
@@ -209,17 +218,26 @@
       container.appendChild(div);
     }
 
-    function calculateTotal() {
-      let total = 0;
+    function getCurrentItems() {
       const names = document.querySelectorAll('.item-name');
       const qtys = document.querySelectorAll('.item-qty');
       const prices = document.querySelectorAll('.item-price');
+      const items = [];
 
       for (let i = 0; i < names.length; i++) {
-        const q = parseFloat(qtys[i].value) || 0;
+        const name = names[i].value.trim() || 'Item ' + (i + 1);
+        const q = parseFloat(qtys[i].value) || 1;
         const p = parseFloat(prices[i].value) || 0;
-        total += (q * p);
+        const sub = (q * p).toFixed(2);
+        items.push({ name, qty: q, price: p, total: sub });
       }
+      return items;
+    }
+
+    function calculateTotal() {
+      let total = 0;
+      const items = getCurrentItems();
+      items.forEach(it => total += parseFloat(it.total));
       document.getElementById('grandTotal').innerText = total.toFixed(2);
       return total.toFixed(2);
     }
@@ -229,36 +247,48 @@
       modal.classList.toggle('hidden');
     }
 
-    function openBillPreviewModal() {
-      document.getElementById('pvBizName').innerText = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
-      document.getElementById('pvInvNum').innerText = document.getElementById('invNum').value;
-      document.getElementById('pvDate').innerText = document.getElementById('invDate').value;
-      document.getElementById('pvCust').innerText = document.getElementById('custName').value || 'Dear Customer';
-      document.getElementById('pvPay').innerText = document.getElementById('paymentMode').value;
-      document.getElementById('pvGrandTotal').innerText = calculateTotal();
+    function renderPreviewContent(bizName, invNum, date, cust, pay, total, items) {
+      document.getElementById('pvBizName').innerText = bizName;
+      document.getElementById('pvInvNum').innerText = invNum;
+      document.getElementById('pvDate').innerText = date;
+      document.getElementById('pvCust').innerText = cust;
+      document.getElementById('pvPay').innerText = pay;
+      document.getElementById('pvGrandTotal').innerText = total;
 
       const tbody = document.getElementById('pvItemsList');
-      tbody.innerHTML = '';
-      const names = document.querySelectorAll('.item-name');
-      const qtys = document.querySelectorAll('.item-qty');
-      const prices = document.querySelectorAll('.item-price');
-
-      for (let i = 0; i < names.length; i++) {
-        const name = names[i].value.trim() || 'Item ' + (i + 1);
-        const q = qtys[i].value || '1';
-        const p = prices[i].value || '0';
-        const sub = (parseFloat(q) * parseFloat(p)).toFixed(2);
-        tbody.innerHTML += `
-          <tr class="py-1.5">
-            <td class="py-1.5 font-medium">${name}</td>
-            <td class="py-1.5 text-center">${q}</td>
-            <td class="py-1.5 text-right">₹${p}</td>
-            <td class="py-1.5 text-right font-semibold">₹${sub}</td>
-          </tr>
-        `;
-      }
+      tbody.innerHTML = items.map(it => `
+        <tr class="py-1.5">
+          <td class="py-1.5 font-medium">${it.name}</td>
+          <td class="py-1.5 text-center">${it.qty}</td>
+          <td class="py-1.5 text-right">₹${it.price}</td>
+          <td class="py-1.5 text-right font-semibold">₹${it.total}</td>
+        </tr>
+      `).join('');
 
       togglePreviewModal();
+    }
+
+    function openCurrentBillPreview() {
+      const bizName = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
+      const invNum = document.getElementById('invNum').value;
+      const invDate = document.getElementById('invDate').value;
+      const custName = document.getElementById('custName').value || 'Dear Customer';
+      const paymentMode = document.getElementById('paymentMode').value;
+      const total = calculateTotal();
+      const items = getCurrentItems();
+
+      renderPreviewContent(bizName, invNum, invDate, custName, paymentMode, total, items);
+    }
+
+    function viewPastBill(index) {
+      const history = JSON.parse(localStorage.getItem('ams_bill_history') || '[]');
+      const bill = history[index];
+      if (!bill) return;
+
+      const bizName = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
+      const items = bill.items || [{ name: 'Items summary', qty: 1, price: bill.total, total: bill.total }];
+      
+      renderPreviewContent(bizName, bill.invNum, bill.date, bill.custName, bill.paymentMode, bill.total, items);
     }
 
     function generatePDFBlob() {
@@ -271,19 +301,9 @@
       const custName = document.getElementById('custName').value || 'Dear Customer';
       const paymentMode = document.getElementById('paymentMode').value;
       const total = calculateTotal();
+      const items = getCurrentItems();
 
-      const names = document.querySelectorAll('.item-name');
-      const qtys = document.querySelectorAll('.item-qty');
-      const prices = document.querySelectorAll('.item-price');
-      const tableData = [];
-
-      for (let i = 0; i < names.length; i++) {
-        const name = names[i].value.trim() || 'Item ' + (i + 1);
-        const q = qtys[i].value || '1';
-        const p = prices[i].value || '0';
-        const sub = (parseFloat(q) * parseFloat(p)).toFixed(2);
-        tableData.push([name, q, `Rs. ${p}`, `Rs. ${sub}`]);
-      }
+      const tableData = items.map(it => [it.name, it.qty, `Rs. ${it.price}`, `Rs. ${it.total}`]);
 
       doc.setFontSize(18);
       doc.setTextColor(30, 41, 59);
@@ -328,11 +348,12 @@
         return;
       }
 
-      const invNum = document.getElementById('invNum').value;
+      const invNum = document.getElementById('invNum').value.trim();
       const custName = document.getElementById('custName').value || 'Dear Customer';
       const invDate = document.getElementById('invDate').value;
       const paymentMode = document.getElementById('paymentMode').value;
       const bizName = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
+      const items = getCurrentItems();
 
       if (mode === 'print') {
         const { doc } = generatePDFBlob();
@@ -342,7 +363,6 @@
         const { doc } = generatePDFBlob();
         doc.save(`${invNum}.pdf`);
       } else if (mode === 'whatsapp') {
-        // Message formatted with date right after payment mode
         const msg = encodeURIComponent(
           `Hello ${custName},\n\n` +
           `Thank you for choosing *${bizName}*.\n` +
@@ -361,10 +381,11 @@
         invNum,
         custName,
         phone: phoneInput ? '+91 ' + phoneInput : '',
-        total: parseFloat(total),
+        total: parseFloat(total).toFixed(2),
         paymentMode,
         date: invDate,
-        time: timeStr
+        time: timeStr,
+        items
       });
 
       incrementInvoiceNumber();
@@ -387,9 +408,9 @@
         return;
       }
 
-      const grouped = history.reduce((acc, bill) => {
+      const grouped = history.reduce((acc, bill, idx) => {
         acc[bill.date] = acc[bill.date] || [];
-        acc[bill.date].push(bill);
+        acc[bill.date].push({ ...bill, originalIndex: idx });
         return acc;
       }, {});
 
@@ -410,7 +431,12 @@
                     <div class="font-semibold text-slate-800 text-sm">${b.invNum} • ${b.custName}</div>
                     <div class="text-xs text-slate-400 mt-0.5">${b.time || ''} • <span class="text-indigo-600 font-medium">${b.paymentMode || 'Cash'}</span> ${b.phone ? '• ' + b.phone : ''}</div>
                   </div>
-                  <div class="text-sm font-bold text-slate-800">₹${parseFloat(b.total).toFixed(2)}</div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-sm font-bold text-slate-800">₹${parseFloat(b.total).toFixed(2)}</span>
+                    <button onclick="viewPastBill(${b.originalIndex})" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-lg border border-indigo-200">
+                      👁️ View
+                    </button>
+                  </div>
                 </div>
               `).join('')}
             </div>
