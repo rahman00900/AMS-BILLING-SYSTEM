@@ -3,122 +3,310 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Free WhatsApp Bill Generator</title>
+  <title>AMS Billing System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
 </head>
-<body class="bg-gray-100 p-4 sm:p-8 font-sans">
-  <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">Quick Bill Generator</h1>
-    
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Your Business Name</label>
-        <input id="bizName" type="text" class="w-full border p-2 rounded mt-1" value="My Store" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Invoice Number</label>
-        <input id="invNum" type="text" class="w-full border p-2 rounded mt-1" value="INV-1001" />
-      </div>
-    </div>
+<body class="bg-slate-50 min-h-screen text-slate-800 pb-12">
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+  <header class="bg-indigo-700 text-white shadow-md">
+    <div class="max-w-3xl mx-auto px-4 py-4 flex justify-between items-center">
       <div>
-        <label class="block text-sm font-medium text-gray-700">Customer Name</label>
-        <input id="custName" type="text" class="w-full border p-2 rounded mt-1" placeholder="John Doe" />
+        <h1 class="text-xl font-bold tracking-tight">AMS Quick Bill</h1>
+        <p class="text-xs text-indigo-200">Fast Invoicing & WhatsApp Delivery</p>
       </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Customer WhatsApp (+CountryCode)</label>
-        <input id="custPhone" type="tel" class="w-full border p-2 rounded mt-1" placeholder="919876543210" />
-      </div>
-    </div>
-
-    <div class="border-t pt-4 mb-4">
-      <h2 class="text-lg font-semibold mb-2 text-gray-800">Item Details</h2>
-      <div class="grid grid-cols-3 gap-2">
-        <input id="itemName" type="text" class="border p-2 rounded col-span-1" placeholder="Item description" />
-        <input id="itemQty" type="number" class="border p-2 rounded" placeholder="Qty" value="1" oninput="calcTotal()" />
-        <input id="itemPrice" type="number" class="border p-2 rounded" placeholder="Price (₹/$)" oninput="calcTotal()" />
-      </div>
-      <div class="text-right mt-2 font-bold text-gray-700">
-        Total: <span id="displayTotal">0.00</span>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
-      <button onclick="downloadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded text-center">
-        Download PDF Bill
+      <button onclick="toggleHistoryModal()" class="text-xs font-semibold bg-indigo-800 hover:bg-indigo-900 px-3 py-2 rounded-lg border border-indigo-500 transition">
+        📋 View Date History
       </button>
-      <button onclick="openWhatsApp()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded text-center">
-        Open in WhatsApp
-      </button>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 py-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-7 space-y-6">
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Invoice No.</label>
+          <input id="invNum" type="text" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Date</label>
+          <input id="invDate" type="text" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-700 font-medium" />
+        </div>
+        <div class="col-span-2 sm:col-span-1">
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Business Name</label>
+          <input id="bizName" type="text" value="AMS Store" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Customer Name</label>
+          <input id="custName" type="text" value="Dear Customer" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Customer WhatsApp</label>
+          <div class="flex">
+            <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-300 bg-slate-100 text-slate-600 text-sm font-semibold">+91</span>
+            <input id="custPhone" type="tel" maxlength="10" placeholder="9876543210" class="w-full border border-slate-300 rounded-r-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-slate-100">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-600">Items List</h2>
+          <button onclick="addItemRow()" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition">
+            + Add Item
+          </button>
+        </div>
+
+        <div id="itemsContainer" class="space-y-2"></div>
+
+        <div class="flex justify-end items-center mt-5 pt-4 border-t border-slate-200">
+          <span class="text-sm font-semibold text-slate-500 mr-3">Grand Total:</span>
+          <span class="text-2xl font-bold text-slate-800">₹<span id="grandTotal">0.00</span></span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
+        <button onclick="processBill('download')" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Download PDF Bill
+        </button>
+        <button onclick="processBill('whatsapp')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+          Send via WhatsApp
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="historyModal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-2xl max-h-[85vh] flex flex-col shadow-xl">
+      <div class="p-4 border-b border-slate-200 flex justify-between items-center">
+        <div>
+          <h3 class="font-bold text-slate-800">Date-wise Sales History</h3>
+          <p class="text-xs text-slate-500">All invoices organized by calendar day</p>
+        </div>
+        <button onclick="toggleHistoryModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl px-2">&times;</button>
+      </div>
+      
+      <div id="historyList" class="p-4 overflow-y-auto space-y-5 flex-grow text-sm"></div>
+
+      <div class="p-3 border-t border-slate-100 flex justify-between items-center">
+        <button onclick="clearHistory()" class="text-xs text-rose-600 hover:underline">Clear History</button>
+        <button onclick="toggleHistoryModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-1.5 rounded-lg text-xs font-semibold">Close</button>
+      </div>
     </div>
   </div>
 
   <script>
-    function calcTotal() {
-      const qty = parseFloat(document.getElementById('itemQty').value) || 0;
-      const price = parseFloat(document.getElementById('itemPrice').value) || 0;
-      document.getElementById('displayTotal').innerText = (qty * price).toFixed(2);
+    window.addEventListener('DOMContentLoaded', () => {
+      setTodayDate();
+      loadNextInvoiceNumber();
+      addItemRow();
+    });
+
+    function setTodayDate() {
+      const now = new Date();
+      const options = { day: '2-digit', month: 'short', year: 'numeric' };
+      document.getElementById('invDate').value = now.toLocaleDateString('en-GB', options);
     }
 
-    function createPDFBlob() {
+    function loadNextInvoiceNumber() {
+      let currentNum = parseInt(localStorage.getItem('ams_invoice_counter') || '1001', 10);
+      document.getElementById('invNum').value = 'INV-' + currentNum;
+    }
+
+    function incrementInvoiceNumber() {
+      let currentNum = parseInt(localStorage.getItem('ams_invoice_counter') || '1001', 10);
+      localStorage.setItem('ams_invoice_counter', (currentNum + 1).toString());
+      loadNextInvoiceNumber();
+    }
+
+    function addItemRow() {
+      const container = document.getElementById('itemsContainer');
+      const rowId = 'item_' + Date.now();
+      const div = document.createElement('div');
+      div.className = 'grid grid-cols-12 gap-2 items-center';
+      div.id = rowId;
+      div.innerHTML = `
+        <input type="text" placeholder="Item description" class="item-name col-span-6 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+        <input type="number" placeholder="Qty" value="1" min="1" oninput="calculateTotal()" class="item-qty col-span-2 border border-slate-300 rounded-xl px-2 py-2 text-sm text-center focus:ring-2 focus:ring-indigo-500 outline-none" />
+        <input type="number" placeholder="Price" min="0" oninput="calculateTotal()" class="item-price col-span-3 border border-slate-300 rounded-xl px-2 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+        <button onclick="document.getElementById('${rowId}').remove(); calculateTotal();" class="col-span-1 text-slate-400 hover:text-rose-500 font-bold text-center text-lg">&times;</button>
+      `;
+      container.appendChild(div);
+    }
+
+    function calculateTotal() {
+      let total = 0;
+      const names = document.querySelectorAll('.item-name');
+      const qtys = document.querySelectorAll('.item-qty');
+      const prices = document.querySelectorAll('.item-price');
+
+      for (let i = 0; i < names.length; i++) {
+        const q = parseFloat(qtys[i].value) || 0;
+        const p = parseFloat(prices[i].value) || 0;
+        total += (q * p);
+      }
+      document.getElementById('grandTotal').innerText = total.toFixed(2);
+      return total.toFixed(2);
+    }
+
+    function generatePDFBlob() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
-      const bizName = document.getElementById('bizName').value;
+      const bizName = document.getElementById('bizName').value || 'AMS Store';
       const invNum = document.getElementById('invNum').value;
-      const custName = document.getElementById('custName').value;
-      const itemName = document.getElementById('itemName').value || "Service/Item";
-      const qty = document.getElementById('itemQty').value || "1";
-      const price = document.getElementById('itemPrice').value || "0";
-      const total = (parseFloat(qty) * parseFloat(price)).toFixed(2);
+      const invDate = document.getElementById('invDate').value;
+      const custName = document.getElementById('custName').value || 'Dear Customer';
+      const total = calculateTotal();
 
-      // Title & Headers
+      const names = document.querySelectorAll('.item-name');
+      const qtys = document.querySelectorAll('.item-qty');
+      const prices = document.querySelectorAll('.item-price');
+      const tableData = [];
+
+      for (let i = 0; i < names.length; i++) {
+        const name = names[i].value.trim() || 'Item ' + (i + 1);
+        const q = qtys[i].value || '1';
+        const p = prices[i].value || '0';
+        const sub = (parseFloat(q) * parseFloat(p)).toFixed(2);
+        tableData.push([name, q, `Rs. ${p}`, `Rs. ${sub}`]);
+      }
+
       doc.setFontSize(18);
+      doc.setTextColor(30, 41, 59);
       doc.text(bizName, 14, 20);
-      doc.setFontSize(11);
-      doc.text(`Invoice #: ${invNum}`, 14, 28);
-      doc.text(`Customer: ${custName || 'N/A'}`, 14, 34);
-      doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 40);
 
-      // Table
+      doc.setFontSize(10);
+      doc.setTextColor(100, 116, 139);
+      doc.text(`Invoice: ${invNum}`, 14, 28);
+      doc.text(`Date: ${invDate}`, 14, 34);
+      doc.text(`Billed To: ${custName}`, 14, 40);
+
       doc.autoTable({
         startY: 46,
-        head: [['Item Description', 'Qty', 'Unit Price', 'Amount']],
-        body: [[itemName, qty, price, total]],
+        head: [['Item Description', 'Qty', 'Unit Price', 'Total']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { fillColor: [67, 56, 202] },
+        styles: { fontSize: 10 }
       });
 
-      doc.text(`Total Amount: ${total}`, 14, doc.lastAutoTable.finalY + 10);
-      return doc;
+      const finalY = doc.lastAutoTable.finalY + 10;
+      doc.setFontSize(12);
+      doc.setTextColor(15, 23, 42);
+      doc.text(`Total Amount: Rs. ${total}`, 14, finalY);
+
+      return { doc, invNum, total, custName, invDate };
     }
 
-    function downloadPDF() {
-      const doc = createPDFBlob();
-      const invNum = document.getElementById('invNum').value;
-      doc.save(`${invNum}.pdf`);
+    function saveToHistory(record) {
+      const history = JSON.parse(localStorage.getItem('ams_bill_history') || '[]');
+      history.unshift(record);
+      localStorage.setItem('ams_bill_history', JSON.stringify(history));
     }
 
-    function openWhatsApp() {
-      const phone = document.getElementById('custPhone').value.replace(/[^0-9]/g, '');
-      const custName = document.getElementById('custName').value;
-      const invNum = document.getElementById('invNum').value;
-      const total = document.getElementById('displayTotal').innerText;
+    function processBill(mode) {
+      const phoneInput = document.getElementById('custPhone').value.trim();
+      const total = calculateTotal();
 
-      if (!phone) {
-        alert("Please enter customer's WhatsApp number with country code.");
+      if (mode === 'whatsapp' && phoneInput.length < 10) {
+        alert('Please enter a valid 10-digit customer mobile number.');
         return;
       }
 
-      // Download PDF first so it's ready in files
-      downloadPDF();
+      const { doc, invNum, custName, invDate } = generatePDFBlob();
+      doc.save(`${invNum}.pdf`);
 
-      // Launch WhatsApp chat with pre-written invoice message
-      const text = encodeURIComponent(
-        `Hello ${custName},\n\nHere is your invoice *#${invNum}* for the amount of *${total}*.\nI have attached the PDF receipt below.\n\nThank you!`
-      );
-      window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      saveToHistory({
+        invNum,
+        custName,
+        phone: phoneInput ? '+91 ' + phoneInput : '',
+        total: parseFloat(total),
+        date: invDate,
+        time: timeStr
+      });
+
+      if (mode === 'whatsapp') {
+        const fullPhone = '91' + phoneInput;
+        const msg = encodeURIComponent(
+          `Hello ${custName},\n\nThank you for choosing *${document.getElementById('bizName').value}*.\nYour invoice *#${invNum}* for *₹${total}* has been issued.\n\nYour PDF bill is attached below.`
+        );
+        window.open(`https://wa.me/${fullPhone}?text=${msg}`, '_blank');
+      }
+
+      incrementInvoiceNumber();
+    }
+
+    function toggleHistoryModal() {
+      const modal = document.getElementById('historyModal');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) {
+        renderGroupedHistory();
+      }
+    }
+
+    function renderGroupedHistory() {
+      const list = document.getElementById('historyList');
+      const history = JSON.parse(localStorage.getItem('ams_bill_history') || '[]');
+
+      if (history.length === 0) {
+        list.innerHTML = '<p class="text-slate-400 text-center py-6">No bills recorded yet.</p>';
+        return;
+      }
+
+      const grouped = history.reduce((acc, bill) => {
+        acc[bill.date] = acc[bill.date] || [];
+        acc[bill.date].push(bill);
+        return acc;
+      }, {});
+
+      let html = '';
+      for (const [date, bills] of Object.entries(grouped)) {
+        const dailyTotal = bills.reduce((sum, b) => sum + (parseFloat(b.total) || 0), 0).toFixed(2);
+
+        html += `
+          <div class="border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+            <div class="bg-slate-100 px-4 py-2 flex justify-between items-center border-b border-slate-200">
+              <span class="font-bold text-xs text-slate-700 tracking-wide uppercase">📅 ${date}</span>
+              <span class="text-xs font-semibold text-slate-600">Day Total: <span class="text-indigo-700 font-bold">₹${dailyTotal}</span></span>
+            </div>
+            <div class="divide-y divide-slate-100 bg-white">
+              ${bills.map(b => `
+                <div class="px-4 py-3 flex justify-between items-center hover:bg-slate-50 transition">
+                  <div>
+                    <div class="font-semibold text-slate-800 text-sm">${b.invNum} • ${b.custName}</div>
+                    <div class="text-xs text-slate-400 mt-0.5">${b.time || ''} ${b.phone ? '• ' + b.phone : ''}</div>
+                  </div>
+                  <div class="text-sm font-bold text-slate-800">₹${parseFloat(b.total).toFixed(2)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+      list.innerHTML = html;
+    }
+
+    function clearHistory() {
+      if (confirm('Clear all saved bill records?')) {
+        localStorage.removeItem('ams_bill_history');
+        renderGroupedHistory();
+      }
     }
   </script>
 </body>
