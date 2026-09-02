@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free WhatsApp Bill Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body class="bg-gray-100 p-4 sm:p-8 font-sans">
+  <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">Quick Bill Generator</h1>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Your Business Name</label>
+        <input id="bizName" type="text" class="w-full border p-2 rounded mt-1" value="My Store" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Invoice Number</label>
+        <input id="invNum" type="text" class="w-full border p-2 rounded mt-1" value="INV-1001" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Customer Name</label>
+        <input id="custName" type="text" class="w-full border p-2 rounded mt-1" placeholder="John Doe" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Customer WhatsApp (+CountryCode)</label>
+        <input id="custPhone" type="tel" class="w-full border p-2 rounded mt-1" placeholder="919876543210" />
+      </div>
+    </div>
+
+    <div class="border-t pt-4 mb-4">
+      <h2 class="text-lg font-semibold mb-2 text-gray-800">Item Details</h2>
+      <div class="grid grid-cols-3 gap-2">
+        <input id="itemName" type="text" class="border p-2 rounded col-span-1" placeholder="Item description" />
+        <input id="itemQty" type="number" class="border p-2 rounded" placeholder="Qty" value="1" oninput="calcTotal()" />
+        <input id="itemPrice" type="number" class="border p-2 rounded" placeholder="Price (₹/$)" oninput="calcTotal()" />
+      </div>
+      <div class="text-right mt-2 font-bold text-gray-700">
+        Total: <span id="displayTotal">0.00</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+      <button onclick="downloadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded text-center">
+        Download PDF Bill
+      </button>
+      <button onclick="openWhatsApp()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded text-center">
+        Open in WhatsApp
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function calcTotal() {
+      const qty = parseFloat(document.getElementById('itemQty').value) || 0;
+      const price = parseFloat(document.getElementById('itemPrice').value) || 0;
+      document.getElementById('displayTotal').innerText = (qty * price).toFixed(2);
+    }
+
+    function createPDFBlob() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const bizName = document.getElementById('bizName').value;
+      const invNum = document.getElementById('invNum').value;
+      const custName = document.getElementById('custName').value;
+      const itemName = document.getElementById('itemName').value || "Service/Item";
+      const qty = document.getElementById('itemQty').value || "1";
+      const price = document.getElementById('itemPrice').value || "0";
+      const total = (parseFloat(qty) * parseFloat(price)).toFixed(2);
+
+      // Title & Headers
+      doc.setFontSize(18);
+      doc.text(bizName, 14, 20);
+      doc.setFontSize(11);
+      doc.text(`Invoice #: ${invNum}`, 14, 28);
+      doc.text(`Customer: ${custName || 'N/A'}`, 14, 34);
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 40);
+
+      // Table
+      doc.autoTable({
+        startY: 46,
+        head: [['Item Description', 'Qty', 'Unit Price', 'Amount']],
+        body: [[itemName, qty, price, total]],
+      });
+
+      doc.text(`Total Amount: ${total}`, 14, doc.lastAutoTable.finalY + 10);
+      return doc;
+    }
+
+    function downloadPDF() {
+      const doc = createPDFBlob();
+      const invNum = document.getElementById('invNum').value;
+      doc.save(`${invNum}.pdf`);
+    }
+
+    function openWhatsApp() {
+      const phone = document.getElementById('custPhone').value.replace(/[^0-9]/g, '');
+      const custName = document.getElementById('custName').value;
+      const invNum = document.getElementById('invNum').value;
+      const total = document.getElementById('displayTotal').innerText;
+
+      if (!phone) {
+        alert("Please enter customer's WhatsApp number with country code.");
+        return;
+      }
+
+      // Download PDF first so it's ready in files
+      downloadPDF();
+
+      // Launch WhatsApp chat with pre-written invoice message
+      const text = encodeURIComponent(
+        `Hello ${custName},\n\nHere is your invoice *#${invNum}* for the amount of *${total}*.\nI have attached the PDF receipt below.\n\nThank you!`
+      );
+      window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    }
+  </script>
+</body>
+</html>
