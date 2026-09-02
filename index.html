@@ -19,7 +19,7 @@
     <div class="max-w-3xl mx-auto px-4 py-4 flex justify-between items-center">
       <div>
         <h1 class="text-xl font-bold tracking-tight">AMS Ladies Bags and Abayas</h1>
-        <p class="text-xs text-indigo-200">Fast Billing & WhatsApp Invoicing</p>
+        <p class="text-xs text-indigo-200">Fast Invoicing & Thermal/A4 Printing</p>
       </div>
       <button onclick="toggleHistoryModal()" class="text-xs font-semibold bg-indigo-800 hover:bg-indigo-900 px-3 py-2 rounded-lg border border-indigo-500 transition">
         📋 View Date History
@@ -89,13 +89,16 @@
       <!-- Action Buttons -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
         <button onclick="processBill('print')" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-semibold py-3 px-3 rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
-          🖨️ Print Bill
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          Print Bill
         </button>
         <button onclick="processBill('download')" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-3 rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
-          📄 Download PDF
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Download PDF
         </button>
         <button onclick="processBill('whatsapp')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-3 rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-2">
-          💬 Send WhatsApp Chat
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+          WhatsApp
         </button>
       </div>
 
@@ -243,51 +246,13 @@
         return;
       }
 
-      const invNum = document.getElementById('invNum').value;
-      const custName = document.getElementById('custName').value || 'Dear Customer';
-      const invDate = document.getElementById('invDate').value;
-      const paymentMode = document.getElementById('paymentMode').value;
-      const bizName = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
+      const { doc, invNum, custName, invDate, paymentMode } = generatePDFBlob();
 
       if (mode === 'print') {
-        const { doc } = generatePDFBlob();
         doc.autoPrint();
         window.open(doc.output('bloburl'), '_blank');
       } else if (mode === 'download') {
-        const { doc } = generatePDFBlob();
         doc.save(`${invNum}.pdf`);
-      } else if (mode === 'whatsapp') {
-        // Build an itemized chat receipt
-        const names = document.querySelectorAll('.item-name');
-        const qtys = document.querySelectorAll('.item-qty');
-        const prices = document.querySelectorAll('.item-price');
-        let itemLines = '';
-
-        for (let i = 0; i < names.length; i++) {
-          const name = names[i].value.trim() || 'Item ' + (i + 1);
-          const q = qtys[i].value || '1';
-          const p = prices[i].value || '0';
-          const sub = (parseFloat(q) * parseFloat(p)).toFixed(2);
-          itemLines += `• ${name} (x${q}) - ₹${sub}\n`;
-        }
-
-        const msg = encodeURIComponent(
-          `*${bizName}*\n` +
-          `--------------------------------\n` +
-          `🧾 *Invoice:* ${invNum}\n` +
-          `📅 *Date:* ${invDate}\n` +
-          `👤 *Customer:* ${custName}\n` +
-          `💳 *Payment:* ${paymentMode}\n` +
-          `--------------------------------\n` +
-          `*Items Purchased:*\n` +
-          itemLines +
-          `--------------------------------\n` +
-          `💰 *Total Amount:* ₹${total}\n\n` +
-          `Thank you for shopping with us! ✨`
-        );
-
-        const fullPhone = '91' + phoneInput;
-        window.open(`https://wa.me/${fullPhone}?text=${msg}`, '_blank');
       }
 
       const now = new Date();
@@ -302,6 +267,14 @@
         date: invDate,
         time: timeStr
       });
+
+      if (mode === 'whatsapp') {
+        const fullPhone = '91' + phoneInput;
+        const msg = encodeURIComponent(
+          `Hello ${custName},\n\nThank you for choosing *${document.getElementById('bizName').value}*.\nYour invoice *#${invNum}* for *₹${total}* (${paymentMode}) has been generated.\n\nThank you!`
+        );
+        window.open(`https://wa.me/${fullPhone}?text=${msg}`, '_blank');
+      }
 
       incrementInvoiceNumber();
     }
