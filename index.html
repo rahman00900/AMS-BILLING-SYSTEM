@@ -270,16 +270,9 @@
       resetInputs();
     }
 
-    function buildPDF() {
+    function makePDFObject(biz, inv, dt, cust, pay, tot, items) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
-      const inv = document.getElementById('invNum').value;
-      const dt = document.getElementById('invDate').value;
-      const cust = document.getElementById('custName').value || 'Dear Customer';
-      const pay = document.getElementById('paymentMode').value;
-      const tot = calcTotal();
-      const items = getItems();
 
       doc.setFontSize(16);
       doc.text(biz, 14, 20);
@@ -289,7 +282,7 @@
       doc.text(`Customer: ${cust}`, 14, 40);
       doc.text(`Payment: ${pay}`, 14, 46);
 
-      const rows = items.map(it => [it.name, it.qty, `Rs. ${it.price}`, `Rs. ${it.total}`]);
+      const rows = (items || []).map(it => [it.name, it.qty, `Rs. ${it.price}`, `Rs. ${it.total}`]);
       doc.autoTable({
         startY: 52,
         head: [['Item', 'Qty', 'Price', 'Total']],
@@ -301,6 +294,17 @@
       doc.setFontSize(12);
       doc.text(`Total Amount: Rs. ${tot}`, 14, y);
       return doc;
+    }
+
+    function buildPDF() {
+      const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
+      const inv = document.getElementById('invNum').value;
+      const dt = document.getElementById('invDate').value;
+      const cust = document.getElementById('custName').value || 'Dear Customer';
+      const pay = document.getElementById('paymentMode').value;
+      const tot = calcTotal();
+      const items = getItems();
+      return makePDFObject(biz, inv, dt, cust, pay, tot, items);
     }
 
     function runBill(mode) {
@@ -342,6 +346,44 @@
       resetInputs();
     }
 
+    // Past Bill Actions (Print, PDF, WhatsApp)
+    function printPastBill(idx) {
+      const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
+      const b = list[idx];
+      if (!b) return;
+      const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
+      const doc = makePDFObject(biz, b.invNum, b.date, b.custName, b.payment, b.total, b.items);
+      doc.autoPrint();
+      window.open(doc.output('bloburl'), '_blank');
+    }
+
+    function pdfPastBill(idx) {
+      const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
+      const b = list[idx];
+      if (!b) return;
+      const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
+      const doc = makePDFObject(biz, b.invNum, b.date, b.custName, b.payment, b.total, b.items);
+      doc.save(`${b.invNum}.pdf`);
+    }
+
+    function waPastBill(idx) {
+      const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
+      const b = list[idx];
+      if (!b) return;
+      if (!b.phone || b.phone.length < 10) {
+        alert('No 10-digit phone number was saved with this bill.');
+        return;
+      }
+      const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
+      const text = encodeURIComponent(
+        `Hello ${b.custName},\n\n` +
+        `Thank you for choosing *${biz}*.\n` +
+        `Your invoice *#${b.invNum}* for *₹${b.total}* (${b.payment}) on ${b.date} has been generated.\n\n` +
+        `Thank you!`
+      );
+      window.open(`https://wa.me/91${b.phone}?text=${text}`, '_blank');
+    }
+
     function showPreview(data) {
       const biz = document.getElementById('bizName').value;
       const inv = data ? data.invNum : document.getElementById('invNum').value;
@@ -360,7 +402,7 @@
 
       const tb = document.getElementById('pvList');
       tb.innerHTML = '';
-      items.forEach(it => {
+      (items || []).forEach(it => {
         tb.innerHTML += `
           <tr class="border-b">
             <td class="py-1">${it.name}</td>
@@ -386,15 +428,26 @@
         box.innerHTML = '<p class="text-center text-slate-400 py-6">No bills recorded yet.</p>';
       } else {
         box.innerHTML = list.map((b, idx) => `
-          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex justify-between items-center">
-            <div>
-              <p class="font-bold text-slate-800">${b.invNum} • ${b.custName}</p>
-              <p class="text-[11px] text-slate-500">${b.date} • ${b.payment} ${b.phone ? '• ' + b.phone : ''}</p>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="font-bold text-slate-800 text-sm">${b.invNum} • ${b.custName}</p>
+                <p class="text-[11px] text-slate-500">${b.date} • ${b.payment} ${b.phone ? '• 📱 +91 ' + b.phone : ''}</p>
+              </div>
+              <p class="font-black text-indigo-700 text-sm">₹${b.total}</p>
             </div>
-            <div class="text-right space-y-1">
-              <p class="font-black text-indigo-700">₹${b.total}</p>
-              <button type="button" onclick='showPreview(${JSON.stringify(b)})' class="bg-white border border-slate-300 px-2 py-0.5 rounded font-bold text-[10px]">
-                View
+            <div class="grid grid-cols-4 gap-1 pt-1 border-t border-slate-200">
+              <button type="button" onclick='showPreview(${JSON.stringify(b)})' class="bg-white hover:bg-slate-100 border border-slate-300 py-1.5 rounded-lg font-bold text-[10px] text-center shadow-xs">
+                👁️ View
+              </button>
+              <button type="button" onclick='printPastBill(${idx})' class="bg-white hover:bg-slate-100 border border-slate-300 py-1.5 rounded-lg font-bold text-[10px] text-center shadow-xs">
+                🖨️ Print
+              </button>
+              <button type="button" onclick='pdfPastBill(${idx})' class="bg-white hover:bg-slate-100 border border-slate-300 py-1.5 rounded-lg font-bold text-[10px] text-center shadow-xs">
+                📄 PDF
+              </button>
+              <button type="button" onclick='waPastBill(${idx})' class="bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 rounded-lg font-bold text-[10px] text-center shadow-xs">
+                💬 WA
               </button>
             </div>
           </div>
