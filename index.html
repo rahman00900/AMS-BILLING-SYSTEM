@@ -153,6 +153,8 @@
     </div>
   </div>
 
+  <iframe id="printFrame" class="hidden" style="position:fixed;right:0;bottom:0;width:0;height:0;border:0;"></iframe>
+
   <script>
     window.onload = function() {
       initDate();
@@ -270,6 +272,85 @@
       resetInputs();
     }
 
+    // Direct Browser Printing (Eliminates mobile popup blockers)
+    function executeNativePrint(biz, inv, dt, cust, pay, tot, items) {
+      const rowsHtml = (items || []).map(it => `
+        <tr>
+          <td style="padding: 4px 0; border-bottom: 1px dashed #ddd;">${it.name}</td>
+          <td style="padding: 4px 0; border-bottom: 1px dashed #ddd; text-align: center;">${it.qty}</td>
+          <td style="padding: 4px 0; border-bottom: 1px dashed #ddd; text-align: right;">Rs. ${it.price}</td>
+          <td style="padding: 4px 0; border-bottom: 1px dashed #ddd; text-align: right;">Rs. ${it.total}</td>
+        </tr>
+      `).join('');
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${inv}</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 12px; margin: 0; color: #111; font-size: 12px; }
+            .biz { font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 4px; }
+            .sub { text-align: center; font-size: 10px; margin-bottom: 12px; color: #555; }
+            .info { margin-bottom: 12px; line-height: 1.4; }
+            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 12px; }
+            th { text-align: left; border-bottom: 1px solid #000; padding: 4px 0; }
+            .tot-box { border-top: 1px dashed #000; padding-top: 8px; font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; }
+            .footer { text-align: center; margin-top: 18px; font-size: 10px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="biz">${biz}</div>
+          <div class="sub">Retail Sales Receipt</div>
+          <div class="info">
+            <div><strong>Invoice:</strong> ${inv}</div>
+            <div><strong>Date:</strong> ${dt}</div>
+            <div><strong>Customer:</strong> ${cust}</div>
+            <div><strong>Payment:</strong> ${pay}</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th style="text-align: center;">Qty</th>
+                <th style="text-align: right;">Price</th>
+                <th style="text-align: right;">Total</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+          <div class="tot-box">
+            <span>Grand Total:</span>
+            <span>Rs. ${tot}</span>
+          </div>
+          <div class="footer">Thank you for your visit!</div>
+        </body>
+        </html>
+      `;
+
+      const frame = document.getElementById('printFrame');
+      const fdoc = frame.contentWindow || frame.contentDocument;
+      const targetDoc = fdoc.document || fdoc;
+      targetDoc.open();
+      targetDoc.write(printHtml);
+      targetDoc.close();
+
+      setTimeout(() => {
+        try {
+          frame.contentWindow.focus();
+          frame.contentWindow.print();
+        } catch (e) {
+          // Fallback if cross-origin iframe focus fails on older WebViews
+          const w = window.open('', '_blank');
+          w.document.write(printHtml);
+          w.document.close();
+          w.focus();
+          w.print();
+          w.close();
+        }
+      }, 250);
+    }
+
     function makePDFObject(biz, inv, dt, cust, pay, tot, items) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
@@ -296,17 +377,6 @@
       return doc;
     }
 
-    function buildPDF() {
-      const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
-      const inv = document.getElementById('invNum').value;
-      const dt = document.getElementById('invDate').value;
-      const cust = document.getElementById('custName').value || 'Dear Customer';
-      const pay = document.getElementById('paymentMode').value;
-      const tot = calcTotal();
-      const items = getItems();
-      return makePDFObject(biz, inv, dt, cust, pay, tot, items);
-    }
-
     function runBill(mode) {
       const total = parseFloat(calcTotal());
       if (total <= 0) {
@@ -320,13 +390,12 @@
       const biz = document.getElementById('bizName').value.trim() || 'AMS Ladies Bags and Abayas';
       const dt = document.getElementById('invDate').value;
       const pay = document.getElementById('paymentMode').value;
+      const items = getItems();
 
       if (mode === 'print') {
-        const doc = buildPDF();
-        doc.autoPrint();
-        window.open(doc.output('bloburl'), '_blank');
+        executeNativePrint(biz, inv, dt, cust, pay, total.toFixed(2), items);
       } else if (mode === 'pdf') {
-        const doc = buildPDF();
+        const doc = makePDFObject(biz, inv, dt, cust, pay, total.toFixed(2), items);
         doc.save(`${inv}.pdf`);
       } else if (mode === 'wa') {
         if (phone.length < 10) {
@@ -346,15 +415,13 @@
       resetInputs();
     }
 
-    // Past Bill Actions (Print, PDF, WhatsApp)
+    // Past Bill Print
     function printPastBill(idx) {
       const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
       const b = list[idx];
       if (!b) return;
       const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
-      const doc = makePDFObject(biz, b.invNum, b.date, b.custName, b.payment, b.total, b.items);
-      doc.autoPrint();
-      window.open(doc.output('bloburl'), '_blank');
+      executeNativePrint(biz, b.invNum, b.date, b.custName, b.payment, b.total, b.items);
     }
 
     function pdfPastBill(idx) {
