@@ -19,15 +19,10 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-amber-500 selection:text-white pb-28">
 
-  <!-- Top Navigation Header -->
   <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/80 shadow-xs">
     <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 p-[1px] shadow-xs">
-          <div class="w-full h-full bg-amber-50 rounded-[15px] flex items-center justify-center border border-amber-300">
-            <span class="text-xs font-black tracking-wider text-amber-900">AMS</span>
-          </div>
-        </div>
+        <canvas id="navLogoCanvas" width="80" height="80" class="w-10 h-10 rounded-2xl border border-amber-300 shadow-xs"></canvas>
         <div>
           <h1 id="topStoreName" class="font-extrabold text-sm sm:text-base tracking-tight text-slate-900 leading-tight">AMS Bags & Abayas</h1>
           <p class="text-[10px] text-amber-700 font-semibold">Musheerabad, HYD • +91 91217 57822</p>
@@ -46,7 +41,6 @@
 
   <main class="max-w-2xl mx-auto px-4 py-4 space-y-4">
 
-    <!-- Card 1: Invoice & Date Meta -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
       <div class="grid grid-cols-2 gap-3">
         <div>
@@ -60,7 +54,6 @@
       </div>
     </div>
 
-    <!-- Card 2: Customer & Payment Mode -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3.5">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
@@ -79,7 +72,6 @@
         </div>
       </div>
 
-      <!-- Segmented Payment Selector -->
       <div>
         <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Payment Mode</label>
         <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200">
@@ -87,19 +79,18 @@
             <span>💵</span> Cash
           </button>
           <button type="button" id="btnOnline" onclick="setPaymentMode('Online / UPI')" class="py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 transition">
-            <span>📱</span> Online / UPI
+            <span>📱</span> PhonePe / UPI
           </button>
         </div>
         <input type="hidden" id="paymentMode" value="Cash" />
       </div>
     </div>
 
-    <!-- Quick Category Buttons Bar -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2.5">
       <div class="flex justify-between items-center">
         <div>
           <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">⚡ Quick Categories</span>
-          <span class="text-[10px] text-slate-400">Tap a category to quickly add to bill</span>
+          <span class="text-[10px] text-slate-400">Tap to add categorized items directly</span>
         </div>
         <button type="button" onclick="openCategoryModal()" class="text-xs text-amber-700 hover:text-amber-800 font-bold transition">
           ⚙️ Manage Categories
@@ -108,7 +99,6 @@
       <div id="quickCategoryBar" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 text-xs"></div>
     </div>
 
-    <!-- Card 3: Categorized Items Cart -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100">
         <div>
@@ -122,7 +112,6 @@
 
       <div id="itemsBox" class="space-y-3"></div>
 
-      <!-- Live Total Display -->
       <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 p-4 rounded-2xl text-white flex justify-between items-center shadow-sm mt-4">
         <div>
           <span class="text-[10px] font-bold uppercase tracking-widest text-amber-100 block">Grand Total</span>
@@ -136,7 +125,6 @@
 
   </main>
 
-  <!-- Sticky Mobile Action Footer -->
   <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 z-30 shadow-lg">
     <div class="max-w-2xl mx-auto grid grid-cols-5 gap-2">
       <button type="button" onclick="saveOnly()" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black py-3 rounded-xl text-xs flex flex-col items-center justify-center transition shadow-xs">
@@ -157,13 +145,10 @@
     </div>
   </div>
 
-  <!-- Preview Modal -->
   <div id="previewModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl border border-slate-200 shadow-2xl overflow-hidden p-5 space-y-4 text-xs text-slate-700">
       <div class="text-center border-b border-slate-100 pb-3">
-        <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 font-black flex items-center justify-center text-sm shadow-xs">
-          AMS
-        </div>
+        <canvas id="previewLogoCanvas" width="80" height="80" class="w-14 h-14 mx-auto mb-2 rounded-2xl border border-amber-300 shadow-xs"></canvas>
         <h3 id="pvBiz" class="font-extrabold text-sm text-slate-900"></h3>
         <p class="text-[10px] text-slate-500 mt-0.5">Bangladesh Cloth Market, Musheerabad, HYD</p>
         <p class="text-[10px] text-slate-500">📞 +91 91217 57822</p>
@@ -196,7 +181,6 @@
     </div>
   </div>
 
-  <!-- Settings Modal -->
   <div id="settingsModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col text-xs text-slate-700">
       <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -213,8 +197,9 @@
           <input id="setCustName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-amber-500" />
         </div>
         <div>
-          <label class="block font-bold text-slate-500 mb-1.5">STORE UPI ID (For Scan & Pay QR)</label>
-          <input id="setUpiId" type="text" placeholder="e.g. 9121757822@upi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
+          <label class="block font-bold text-slate-500 mb-1.5">PHONEPE MERCHANT UPI VPA</label>
+          <input id="setUpiId" type="text" value="Q059185009@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
+          <p class="text-[10px] text-slate-400 mt-1">Verified: Q059185009@ybl (PhonePe Standee)</p>
         </div>
       </div>
       <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
@@ -224,23 +209,21 @@
     </div>
   </div>
 
-  <!-- Category Manager Modal (Add / Edit / Delete Categories) -->
   <div id="categoryModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700">
       <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <div>
           <h3 class="font-extrabold text-sm text-slate-900">Manage Categories</h3>
-          <p class="text-[10px] text-slate-400">Add, edit, or delete categories</p>
+          <p class="text-[10px] text-slate-400">Add, edit, or delete store categories</p>
         </div>
         <button type="button" onclick="closeCategoryModal()" class="text-slate-400 text-lg font-bold p-1">×</button>
       </div>
       <div class="p-4 space-y-3 overflow-y-auto flex-grow">
-        <!-- Add New Category Form -->
         <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-200 space-y-2">
           <p class="font-bold text-amber-900">Add New Category</p>
           <div class="grid grid-cols-12 gap-2">
             <input id="newCatName" type="text" placeholder="Category (e.g. Hijab)" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:border-amber-500 font-semibold" />
-            <input id="newCatCode" type="text" placeholder="Code (e.g. HJ-01)" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs outline-none focus:border-amber-500 font-bold" />
+            <input id="newCatCode" type="text" placeholder="Code (e.g. HJ-01)" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:border-amber-500 font-bold" />
             <input id="newCatPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs outline-none focus:border-amber-500 font-bold" />
           </div>
           <input id="newCatDesc" type="text" placeholder="Default Description (e.g. Premium Silk Hijab)" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:border-amber-500" />
@@ -248,8 +231,6 @@
             + Save Category
           </button>
         </div>
-
-        <!-- Editable Category Items List -->
         <div id="categoryItemsList" class="space-y-2 pt-1"></div>
       </div>
       <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-end">
@@ -258,13 +239,12 @@
     </div>
   </div>
 
-  <!-- History Modal -->
   <div id="historyModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-3xl border border-slate-200 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-700">
       <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <div>
           <h3 class="font-extrabold text-sm text-slate-900">Sales Records</h3>
-          <p class="text-[10px] text-slate-400">Past customer orders</p>
+          <p class="text-[10px] text-slate-400">Past customer transactions</p>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold transition">
@@ -287,8 +267,9 @@
     const DEFAULT_STORE = "AMS Ladies Bags and Abayas";
     const STORE_ADDRESS = "Bangladesh Cloth Market, Musheerabad, Hyderabad";
     const STORE_PHONE = "+91 91217 57822";
+    const STORE_MAPS_LINK = "https://maps.google.com/?q=AMS+Ladies+Bags+and+Abayas+Bangladesh+Cloth+Market+Musheerabad+Hyderabad";
     const DEFAULT_CUST = "Dear Customer";
-    const DEFAULT_UPI = "9121757822@upi";
+    const DEFAULT_UPI = "Q059185009@ybl";
 
     const DEFAULT_CATEGORIES = [
       { name: "Abaya", code: "AB-101", desc: "Black Designer Abaya", price: 1800 },
@@ -300,38 +281,57 @@
 
     function generateBrandLogoBase64() {
       const canvas = document.createElement("canvas");
-      canvas.width = 240;
-      canvas.height = 240;
+      canvas.width = 300;
+      canvas.height = 300;
       const ctx = canvas.getContext("2d");
 
-      const grad = ctx.createRadialGradient(120, 120, 20, 120, 120, 115);
+      const grad = ctx.createRadialGradient(150, 150, 20, 150, 150, 145);
       grad.addColorStop(0, "#fffbeb");
-      grad.addColorStop(0.7, "#fef3c7");
+      grad.addColorStop(0.65, "#fef3c7");
       grad.addColorStop(1, "#fde68a");
       ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.arc(120, 120, 110, 0, Math.PI * 2);
+      ctx.arc(150, 150, 140, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.lineWidth = 6;
+      ctx.lineWidth = 8;
       ctx.strokeStyle = "#d97706";
       ctx.stroke();
 
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "#b45309";
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = "#92400e";
       ctx.beginPath();
-      ctx.arc(120, 120, 102, 0, Math.PI * 2);
+      ctx.arc(150, 150, 130, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = "#b45309";
+      ctx.beginPath();
+      ctx.arc(150, 75, 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(150, 92);
+      ctx.bezierCurveTo(120, 115, 115, 180, 105, 205);
+      ctx.bezierCurveTo(135, 195, 165, 195, 195, 205);
+      ctx.bezierCurveTo(185, 180, 180, 115, 150, 92);
+      ctx.fill();
+
+      ctx.strokeStyle = "#78350f";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(175, 160, 22, 18);
+      ctx.beginPath();
+      ctx.arc(186, 160, 6, Math.PI, 0);
       ctx.stroke();
 
       ctx.fillStyle = "#78350f";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.font = "bold 58px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillText("AMS", 120, 108);
+      ctx.font = "bold 44px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("AMS", 150, 228);
 
-      ctx.font = "bold 16px 'Plus Jakarta Sans', sans-serif";
+      ctx.font = "bold 13px 'Plus Jakarta Sans', sans-serif";
       ctx.fillStyle = "#92400e";
-      ctx.fillText("BAGS & ABAYAS", 120, 146);
+      ctx.fillText("BAGS & ABAYAS", 150, 252);
 
       return canvas.toDataURL("image/png");
     }
@@ -339,12 +339,23 @@
     const EMBEDDED_LOGO_BASE64 = generateBrandLogoBase64();
 
     window.onload = function() {
+      drawLogoToCanvas('navLogoCanvas');
+      drawLogoToCanvas('previewLogoCanvas');
       initSettings();
       initDate();
       initInvoice();
       renderQuickCategoryBar();
       addRow("Abaya", "AB-101", "Black Designer Abaya", 1, 1800);
     };
+
+    function drawLogoToCanvas(canvasId) {
+      const cvs = document.getElementById(canvasId);
+      if (!cvs) return;
+      const ctx = cvs.getContext("2d");
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+      img.src = EMBEDDED_LOGO_BASE64;
+    }
 
     function initSettings() {
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
@@ -424,7 +435,6 @@
       }
     }
 
-    // Category Store Handlers
     function getCategories() {
       return JSON.parse(localStorage.getItem('ams_categories') || JSON.stringify(DEFAULT_CATEGORIES));
     }
@@ -477,7 +487,7 @@
             <input type="number" value="${c.price || 0}" onchange="updateCategory(${idx}, 'price', this.value)" placeholder="Price" class="col-span-2 bg-white border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs text-right font-bold text-slate-800 outline-none" />
             <button type="button" onclick="deleteCategory(${idx})" class="col-span-1 text-rose-600 font-black text-center text-sm hover:bg-rose-50 rounded">×</button>
           </div>
-          <input type="text" value="${c.desc || ''}" onchange="updateCategory(${idx}, 'desc', this.value)" placeholder="Default Item Description" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1 text-xs text-slate-600 outline-none" />
+          <input type="text" value="${c.desc || ''}" onchange="updateCategory(${idx}, 'desc', this.value)" placeholder="Default Description" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1 text-xs text-slate-600 outline-none" />
         </div>
       `).join('');
     }
@@ -519,7 +529,6 @@
       renderCategoryManager();
     }
 
-    // Dynamic Invoice Item Rows
     function addRow(category = '', code = '', name = '', qty = 1, price = '') {
       const id = 'row_' + Date.now() + Math.floor(Math.random() * 100);
       const div = document.createElement('div');
@@ -639,7 +648,7 @@
       const upiId = localStorage.getItem('ams_upi') || DEFAULT_UPI;
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
       const upiString = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(biz)}&am=${encodeURIComponent(amount)}&cu=INR`;
-      return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiString)}`;
+      return `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiString)}`;
     }
 
     function executeNativePrint(biz, inv, dt, cust, custPhone, pay, tot, items) {
@@ -666,7 +675,7 @@
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 15px; margin: 0 auto; max-width: 380px; color: #1e293b; font-size: 12px; }
             .header { text-align: center; border-bottom: 2px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
-            .logo-badge { width: 50px; height: 50px; border-radius: 50%; background: #fffbeb; color: #b45309; font-size: 16px; font-weight: 900; line-height: 50px; margin: 0 auto 6px auto; border: 1px solid #f59e0b; text-align: center; }
+            .logo-img { width: 60px; height: 60px; border-radius: 50%; object-fit: contain; margin: 0 auto 6px auto; border: 1px solid #d97706; display: block; }
             .biz { font-size: 16px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin-bottom: 2px; }
             .sub { font-size: 10px; color: #64748b; line-height: 1.4; }
             .meta { margin-bottom: 12px; font-size: 11px; line-height: 1.5; }
@@ -674,13 +683,13 @@
             th { text-align: left; padding: 6px 0; border-bottom: 1px solid #0f172a; text-transform: uppercase; font-size: 10px; color: #475569; }
             .tot-box { border-top: 2px dashed #94a3b8; padding-top: 10px; font-size: 15px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
             .qr-sec { text-align: center; margin-top: 18px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
-            .qr-sec img { width: 90px; height: 90px; margin: 0 auto; display: block; }
+            .qr-sec img { width: 105px; height: 105px; margin: 0 auto; display: block; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px; }
             .footer { text-align: center; margin-top: 14px; font-size: 10px; color: #64748b; line-height: 1.4; }
           </style>
         </head>
         <body>
           <div class="header">
-            <div class="logo-badge">AMS</div>
+            <img src="${EMBEDDED_LOGO_BASE64}" class="logo-img" />
             <div class="biz">${biz}</div>
             <div class="sub">${STORE_ADDRESS}</div>
             <div class="sub">Store Contact: ${STORE_PHONE}</div>
@@ -708,8 +717,9 @@
           </div>
 
           <div class="qr-sec">
-            <p style="font-size: 10px; font-weight: bold; margin: 0 0 6px 0;">SCAN TO PAY (UPI)</p>
+            <p style="font-size: 10px; font-weight: bold; margin: 0 0 6px 0;">SCAN TO PAY VIA PHONEPE / UPI</p>
             <img src="${qrUrl}" alt="UPI QR" />
+            <p style="font-size: 9px; color: #64748b; margin-top: 4px;">Merchant ID: ${DEFAULT_UPI}</p>
           </div>
 
           <div class="footer">
@@ -752,40 +762,40 @@
 
       // 1. Header Obsidian Block
       doc.setFillColor(15, 23, 42);
-      doc.rect(0, 0, 80, 30, 'F');
+      doc.rect(0, 0, 80, 31, 'F');
 
-      // 2. Guaranteed In-Memory Gold Emblem
+      // 2. Guaranteed In-Memory Gold Emblem Injection
       try {
-        doc.addImage(EMBEDDED_LOGO_BASE64, 'PNG', 32.5, 2.5, 15, 15);
+        doc.addImage(EMBEDDED_LOGO_BASE64, 'PNG', 32, 2.5, 16, 16);
       } catch (e) {}
 
       // 3. Store Typography
       doc.setTextColor(254, 243, 199);
       doc.setFontSize(8.5);
       doc.setFont(undefined, 'bold');
-      doc.text(biz, 40, 21, { align: 'center' });
+      doc.text(biz, 40, 22, { align: 'center' });
 
       doc.setTextColor(148, 163, 184);
       doc.setFontSize(5.5);
       doc.setFont(undefined, 'normal');
-      doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, 26, { align: 'center' });
+      doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, 27, { align: 'center' });
 
-      // 4. Metadata Box
+      // 4. Metadata Details Box
       doc.setFillColor(248, 250, 252);
-      doc.roundedRect(5, 33, 70, 15, 2, 2, 'F');
+      doc.roundedRect(5, 34, 70, 15, 2, 2, 'F');
       doc.setDrawColor(226, 232, 240);
-      doc.roundedRect(5, 33, 70, 15, 2, 2, 'S');
+      doc.roundedRect(5, 34, 70, 15, 2, 2, 'S');
 
       doc.setTextColor(30, 41, 59);
       doc.setFontSize(6.5);
       doc.setFont(undefined, 'bold');
-      doc.text(`INVOICE: ${inv}`, 8, 38);
-      doc.text(`DATE: ${dt}`, 72, 38, { align: 'right' });
+      doc.text(`INVOICE: ${inv}`, 8, 39);
+      doc.text(`DATE: ${dt}`, 72, 39, { align: 'right' });
 
       doc.setFont(undefined, 'normal');
       const custDisplay = custPhone ? `${cust} (+91 ${custPhone})` : cust;
-      doc.text(`CUSTOMER: ${custDisplay}`, 8, 42);
-      doc.text(`PAYMENT: ${pay}`, 8, 46);
+      doc.text(`CUSTOMER: ${custDisplay}`, 8, 43);
+      doc.text(`PAYMENT: ${pay}`, 8, 47);
 
       // 5. Line Items Table with Code & Category
       const rows = (items || []).map(it => [
@@ -796,7 +806,7 @@
       ]);
 
       doc.autoTable({
-        startY: 51,
+        startY: 52,
         margin: { left: 5, right: 5 },
         head: [['Item & Details', 'Qty', 'Rate', 'Amount']],
         body: rows,
@@ -814,12 +824,12 @@
           2: { halign: 'right', cellWidth: 14 },
           3: { halign: 'right', cellWidth: 14 }
         },
-        styles: { fontSize: 6, cellPadding: 2, textColor: [30, 41, 59] }
+        styles: { fontSize: 6.5, cellPadding: 2, textColor: [30, 41, 59] }
       });
 
       let finalY = doc.lastAutoTable.finalY + 4;
 
-      // 6. Grand Total Box
+      // 6. Grand Total Highlight Box
       doc.setFillColor(15, 23, 42);
       doc.roundedRect(5, finalY, 70, 10, 2, 2, 'F');
 
@@ -832,7 +842,7 @@
       doc.setFontSize(9);
       doc.text(`Rs. ${tot}`, 71, finalY + 6.5, { align: 'right' });
 
-      // 7. UPI QR Code
+      // 7. Dynamic UPI QR Section
       finalY += 13;
       const qrUrl = getUpiQrUrl(tot);
       if (qrUrl) {
@@ -842,13 +852,13 @@
           doc.setFontSize(6);
           doc.setFont(undefined, 'bold');
           doc.setTextColor(100, 116, 139);
-          doc.text("SCAN WITH ANY UPI APP TO PAY", 40, finalY, { align: 'center' });
+          doc.text("SCAN WITH PHONEPE / GPAY TO PAY", 40, finalY, { align: 'center' });
         } catch (e) {
           finalY += 6;
         }
       }
 
-      // 8. Footer Address
+      // 8. Footer Clean Text Address (No Link in PDF)
       finalY += 6;
       doc.setFontSize(6);
       doc.setFont(undefined, 'bold');
@@ -901,6 +911,7 @@
           `🛍️ *Items Purchased:*\n${itemsSummary}\n\n` +
           `💰 *Total Amount:* ₹${total.toFixed(2)}\n\n` +
           `📍 *Store Address:*\n${STORE_ADDRESS}\n` +
+          `🗺️ *Google Maps Location:*\n${STORE_MAPS_LINK}\n` +
           `📞 *Store Contact:* ${STORE_PHONE}\n\n` +
           `Thank you for choosing us!`
         );
@@ -949,6 +960,7 @@
         `🛍️ *Items Purchased:*\n${itemsSummary}\n\n` +
         `💰 *Total Amount:* ₹${b.total}\n\n` +
         `📍 *Store Address:*\n${STORE_ADDRESS}\n` +
+        `🗺️ *Google Maps Location:*\n${STORE_MAPS_LINK}\n` +
         `📞 *Store Contact:* ${STORE_PHONE}\n\n` +
         `Thank you for choosing us!`
       );
