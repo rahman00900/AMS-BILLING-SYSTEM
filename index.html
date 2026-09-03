@@ -19,7 +19,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-amber-500 selection:text-white pb-28">
 
-  <!-- Top App Navigation -->
+  <!-- Top Navigation with Logo -->
   <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/80 shadow-xs">
     <div class="max-w-xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
@@ -267,7 +267,6 @@
     const DEFAULT_STORE = "AMS Ladies Bags and Abayas";
     const STORE_ADDRESS = "Bangladesh Cloth Market, Musheerabad, Hyderabad";
     const STORE_PHONE = "+91 91217 57822";
-    const STORE_MAPS_SEARCH = "https://www.google.com/maps/search/?api=1&query=AMS+Ladies+Bags+and+Abayas+Bangladesh+Cloth+Market+Musheerabad+Hyderabad";
     const DEFAULT_CUST = "Dear Customer";
     const DEFAULT_UPI = "9121757822@upi";
     const DEFAULT_PRESETS = [
@@ -278,33 +277,26 @@
       { name: "Premium Hijab", price: 250 }
     ];
 
-    let cachedLogoBase64 = null;
-
     window.onload = function() {
       initSettings();
       initDate();
       initInvoice();
       renderQuickPresetsBar();
       addRow();
-      preloadLogo();
     };
 
-    function preloadLogo() {
-      const img = new Image();
-      img.crossOrigin = "Anonymous";
-      img.onload = function() {
-        try {
-          const canvas = document.createElement("canvas");
-          canvas.width = img.naturalWidth;
-          canvas.height = img.naturalHeight;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
-          cachedLogoBase64 = canvas.toDataURL("image/png");
-        } catch (e) {
-          cachedLogoBase64 = null;
-        }
-      };
-      img.src = "logo.png";
+    function getBase64FromImageElement(imgEl) {
+      if (!imgEl || !imgEl.complete || imgEl.naturalWidth === 0) return null;
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = imgEl.naturalWidth;
+        canvas.height = imgEl.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(imgEl, 0, 0);
+        return canvas.toDataURL("image/png");
+      } catch (e) {
+        return null;
+      }
     }
 
     function initSettings() {
@@ -632,7 +624,7 @@
 
           <div class="footer">
             <p>Thank you for shopping with us!</p>
-            <p style="margin-top: 4px;">📍 Bangladesh Cloth Market, Musheerabad, Hyderabad</p>
+            <p style="margin-top: 4px;">📍 ${STORE_ADDRESS}</p>
           </div>
         </body>
         </html>
@@ -672,21 +664,24 @@
       doc.setFillColor(254, 243, 199);
       doc.rect(0, 0, 80, 26, 'F');
 
-      if (cachedLogoBase64) {
+      const headerImg = document.getElementById('headerLogo');
+      const logoData = getBase64FromImageElement(headerImg);
+
+      if (logoData) {
         try {
-          doc.addImage(cachedLogoBase64, 'PNG', 34, 2, 12, 12);
+          doc.addImage(logoData, 'PNG', 34, 2, 12, 12);
         } catch (e) {}
       }
 
       doc.setTextColor(146, 64, 14);
       doc.setFontSize(8.5);
       doc.setFont(undefined, 'bold');
-      doc.text(biz, 40, cachedLogoBase64 ? 18 : 10, { align: 'center' });
+      doc.text(biz, 40, logoData ? 18 : 10, { align: 'center' });
 
       doc.setTextColor(100, 116, 139);
       doc.setFontSize(5);
       doc.setFont(undefined, 'normal');
-      doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, cachedLogoBase64 ? 22 : 15, { align: 'center' });
+      doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, logoData ? 22 : 15, { align: 'center' });
 
       // Invoice Details Block
       doc.setTextColor(30, 41, 59);
@@ -748,9 +743,10 @@
       doc.setTextColor(148, 163, 184);
       doc.text("Thank you for shopping with us!", 40, finalY, { align: 'center' });
 
+      // Clean Text Address Only (No URL Link)
       finalY += 4;
-      doc.setTextColor(37, 99, 235);
-      doc.textWithLink("📍 Google Maps Location", 40, finalY, { url: STORE_MAPS_SEARCH, align: 'center' });
+      doc.setTextColor(100, 116, 139);
+      doc.text(STORE_ADDRESS, 40, finalY, { align: 'center' });
 
       return doc;
     }
@@ -792,7 +788,6 @@
           `🛍️ *Purchased Items:*\n${itemsSummary}\n\n` +
           `💰 *Total Amount:* ₹${total.toFixed(2)}\n\n` +
           `📍 *Store Location:*\n${STORE_ADDRESS}\n` +
-          `🗺️ *Maps:* ${STORE_MAPS_SEARCH}\n` +
           `📞 *Store Contact:* ${STORE_PHONE}\n\n` +
           `Thank you for choosing us!`
         );
@@ -841,7 +836,6 @@
         `🛍️ *Purchased Items:*\n${itemsSummary}\n\n` +
         `💰 *Total Amount:* ₹${b.total}\n\n` +
         `📍 *Store Location:*\n${STORE_ADDRESS}\n` +
-        `🗺️ *Maps:* ${STORE_MAPS_SEARCH}\n` +
         `📞 *Store Contact:* ${STORE_PHONE}\n\n` +
         `Thank you for choosing us!`
       );
