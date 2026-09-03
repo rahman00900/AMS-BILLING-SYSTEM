@@ -17,26 +17,26 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen antialiased selection:bg-amber-500 selection:text-slate-950 pb-28">
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-amber-500 selection:text-white pb-28">
 
-  <header class="sticky top-0 z-30 bg-slate-950/80 backdrop-blur-md border-b border-amber-500/20 shadow-lg">
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/80 shadow-xs">
     <div class="max-w-xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 p-[1px] shadow-sm">
-          <div class="w-full h-full bg-slate-950 rounded-[15px] flex items-center justify-center">
-            <span class="text-xs font-black tracking-wider text-amber-300">AMS</span>
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 p-[1px] shadow-xs">
+          <div class="w-full h-full bg-amber-50 rounded-[15px] flex items-center justify-center border border-amber-300">
+            <span class="text-xs font-black tracking-wider text-amber-900">AMS</span>
           </div>
         </div>
         <div>
-          <h1 id="topStoreName" class="font-extrabold text-sm sm:text-base tracking-tight text-white leading-tight">AMS Bags & Abayas</h1>
-          <p class="text-[10px] text-amber-300/80 font-medium">Musheerabad, HYD • +91 91217 57822</p>
+          <h1 id="topStoreName" class="font-extrabold text-sm sm:text-base tracking-tight text-slate-900 leading-tight">AMS Bags & Abayas</h1>
+          <p class="text-[10px] text-amber-700 font-semibold">Musheerabad, HYD • +91 91217 57822</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button type="button" onclick="showHistory()" class="flex items-center gap-1 bg-slate-800/80 hover:bg-slate-700 active:scale-95 px-3 py-2 rounded-xl text-xs font-bold border border-slate-700/80 text-slate-200 shadow-sm transition">
+        <button type="button" onclick="showHistory()" class="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 active:scale-95 px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-700 shadow-xs transition">
           📋 Records
         </button>
-        <button type="button" onclick="openSettings()" class="bg-slate-800/80 hover:bg-slate-700 active:scale-95 p-2 rounded-xl text-xs font-bold border border-slate-700/80 text-slate-200 shadow-sm transition">
+        <button type="button" onclick="openSettings()" class="bg-slate-100 hover:bg-slate-200 active:scale-95 p-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-700 shadow-xs transition">
           ⚙️
         </button>
       </div>
@@ -45,44 +45,44 @@
 
   <main class="max-w-xl mx-auto px-4 py-4 space-y-4">
 
-    <div class="bg-slate-800/50 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/60 shadow-md space-y-3">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Invoice No. ✏️</label>
-          <input id="invNum" type="text" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-amber-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition" />
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Invoice No. ✏️</label>
+          <input id="invNum" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-amber-800 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition" />
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Date</label>
-          <input id="invDate" type="text" class="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl px-3 py-2 text-sm font-semibold text-slate-400 outline-none select-none" readonly />
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Date</label>
+          <input id="invDate" type="text" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-500 outline-none select-none" readonly />
         </div>
       </div>
     </div>
 
-    <div class="bg-slate-800/50 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/60 shadow-md space-y-3.5">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3.5">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <div class="flex justify-between items-center mb-1.5">
-            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer</label>
-            <span class="text-[10px] text-amber-400/70 font-medium">Default in ⚙️</span>
+            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Customer</label>
+            <span class="text-[10px] text-amber-600 font-medium">Default in ⚙️</span>
           </div>
-          <input id="custName" type="text" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-sm font-medium text-white focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none transition" />
+          <input id="custName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition" />
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">WhatsApp Mobile</label>
-          <div class="flex rounded-xl overflow-hidden border border-slate-700 focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-400/20 transition">
-            <span class="inline-flex items-center px-3 bg-slate-900 text-slate-400 text-xs font-bold border-r border-slate-700">+91</span>
-            <input id="custPhone" type="tel" maxlength="10" placeholder="10-digit number" class="w-full bg-slate-900/90 px-3 py-2 text-sm font-medium text-white outline-none" />
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">WhatsApp Mobile</label>
+          <div class="flex rounded-xl overflow-hidden border border-slate-200 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/20 transition">
+            <span class="inline-flex items-center px-3 bg-slate-100 text-slate-600 text-xs font-bold border-r border-slate-200">+91</span>
+            <input id="custPhone" type="tel" maxlength="10" placeholder="10-digit number" class="w-full bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 outline-none focus:bg-white" />
           </div>
         </div>
       </div>
 
       <div>
-        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Payment Mode</label>
-        <div class="grid grid-cols-2 gap-2 bg-slate-900/90 p-1 rounded-xl border border-slate-700/70">
-          <button type="button" id="btnCash" onclick="setPaymentMode('Cash')" class="py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm transition">
+        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Payment Mode</label>
+        <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button type="button" id="btnCash" onclick="setPaymentMode('Cash')" class="py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-amber-500 text-white shadow-xs transition">
             <span>💵</span> Cash
           </button>
-          <button type="button" id="btnOnline" onclick="setPaymentMode('Online / UPI')" class="py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-400 hover:text-white transition">
+          <button type="button" id="btnOnline" onclick="setPaymentMode('Online / UPI')" class="py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 transition">
             <span>📱</span> Online / UPI
           </button>
         </div>
@@ -90,166 +90,166 @@
       </div>
     </div>
 
-    <div class="bg-slate-800/50 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/60 shadow-md space-y-2.5">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2.5">
       <div class="flex justify-between items-center">
-        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">⚡ Quick Items</span>
-        <button type="button" onclick="openPresetModal()" class="text-xs text-amber-400 hover:text-amber-300 font-bold transition">
+        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">⚡ Quick Items</span>
+        <button type="button" onclick="openPresetModal()" class="text-xs text-amber-700 hover:text-amber-800 font-bold transition">
           ⚙️ Edit Presets
         </button>
       </div>
       <div id="quickPresetsBar" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 text-xs"></div>
     </div>
 
-    <div class="bg-slate-800/50 backdrop-blur-sm p-4 rounded-2xl border border-slate-700/60 shadow-md space-y-3">
-      <div class="flex justify-between items-center pb-2 border-b border-slate-700/60">
-        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Items in Bill</span>
-        <button type="button" onclick="addRow()" class="flex items-center gap-1 bg-amber-500/10 hover:bg-amber-500/20 active:scale-95 text-amber-300 border border-amber-500/30 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Items in Bill</span>
+        <button type="button" onclick="addRow()" class="flex items-center gap-1 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-800 border border-amber-200 font-bold px-3 py-1.5 rounded-xl text-xs transition">
           + Add Item
         </button>
       </div>
 
       <div id="itemsBox" class="space-y-2.5"></div>
 
-      <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/40 p-4 rounded-2xl border border-amber-500/30 flex justify-between items-center shadow-inner mt-4">
+      <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 p-4 rounded-2xl text-white flex justify-between items-center shadow-sm mt-4">
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">Grand Total</span>
-          <span class="text-xs text-amber-300/80 font-medium">All items included</span>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-amber-100 block">Grand Total</span>
+          <span class="text-xs text-amber-50 font-medium">All line items included</span>
         </div>
         <div class="text-right">
-          <span class="text-2xl sm:text-3xl font-black text-amber-300 tracking-tight">₹<span id="grandTotal">0.00</span></span>
+          <span class="text-2xl sm:text-3xl font-black text-white tracking-tight">₹<span id="grandTotal">0.00</span></span>
         </div>
       </div>
     </div>
 
   </main>
 
-  <div class="fixed bottom-0 inset-x-0 bg-slate-950/90 backdrop-blur-md border-t border-slate-800 p-3 z-30 shadow-2xl">
+  <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 z-30 shadow-lg">
     <div class="max-w-xl mx-auto grid grid-cols-5 gap-2">
-      <button type="button" onclick="saveOnly()" class="bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black py-3 rounded-xl text-xs flex flex-col items-center justify-center transition shadow-md">
+      <button type="button" onclick="saveOnly()" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black py-3 rounded-xl text-xs flex flex-col items-center justify-center transition shadow-xs">
         <span>💾</span> Save
       </button>
-      <button type="button" onclick="showPreview()" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 border border-slate-700 font-bold py-3 rounded-xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="showPreview()" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 font-bold py-3 rounded-xl text-xs flex flex-col items-center justify-center transition">
         <span>👁️</span> View
       </button>
-      <button type="button" onclick="runBill('print')" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 border border-slate-700 font-bold py-3 rounded-xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="runBill('print')" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 font-bold py-3 rounded-xl text-xs flex flex-col items-center justify-center transition">
         <span>🖨️</span> Print
       </button>
-      <button type="button" onclick="runBill('pdf')" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 border border-slate-700 font-bold py-3 rounded-xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="runBill('pdf')" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 font-bold py-3 rounded-xl text-xs flex flex-col items-center justify-center transition">
         <span>📄</span> PDF
       </button>
-      <button type="button" onclick="runBill('wa')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black py-3 rounded-xl text-xs flex flex-col items-center justify-center transition shadow-md">
+      <button type="button" onclick="runBill('wa')" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black py-3 rounded-xl text-xs flex flex-col items-center justify-center transition shadow-xs">
         <span>💬</span> WhatsApp
       </button>
     </div>
   </div>
 
-  <div id="previewModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 w-full max-w-sm rounded-3xl border border-slate-700 shadow-2xl overflow-hidden p-5 space-y-4 text-xs text-slate-200">
-      <div class="text-center border-b border-slate-800 pb-3">
-        <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-amber-500/10 border border-amber-400/40 text-amber-300 font-black flex items-center justify-center text-sm shadow-inner">
+  <div id="previewModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl border border-slate-200 shadow-2xl overflow-hidden p-5 space-y-4 text-xs text-slate-700">
+      <div class="text-center border-b border-slate-100 pb-3">
+        <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 font-black flex items-center justify-center text-sm shadow-xs">
           AMS
         </div>
-        <h3 id="pvBiz" class="font-extrabold text-sm text-white"></h3>
-        <p class="text-[10px] text-slate-400 mt-0.5">Bangladesh Cloth Market, Musheerabad, HYD</p>
-        <p class="text-[10px] text-slate-400">📞 +91 91217 57822</p>
+        <h3 id="pvBiz" class="font-extrabold text-sm text-slate-900"></h3>
+        <p class="text-[10px] text-slate-500 mt-0.5">Bangladesh Cloth Market, Musheerabad, HYD</p>
+        <p class="text-[10px] text-slate-500">📞 +91 91217 57822</p>
       </div>
-      <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 space-y-1">
-        <div class="flex justify-between"><span>Invoice:</span> <strong id="pvInv" class="text-amber-300"></strong></div>
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+        <div class="flex justify-between"><span>Invoice:</span> <strong id="pvInv" class="text-amber-800"></strong></div>
         <div class="flex justify-between"><span>Date:</span> <span id="pvDate"></span></div>
         <div class="flex justify-between"><span>Customer:</span> <span id="pvCust"></span></div>
         <div class="flex justify-between"><span>Payment:</span> <span id="pvPay"></span></div>
       </div>
-      <table class="w-full border-t border-b border-slate-800">
+      <table class="w-full border-t border-b border-slate-200">
         <thead>
-          <tr class="text-left text-[10px] text-slate-500 uppercase tracking-wider">
+          <tr class="text-left text-[10px] text-slate-400 uppercase tracking-wider">
             <th class="py-1.5">Item</th>
             <th class="py-1.5 text-center">Qty</th>
             <th class="py-1.5 text-right">Price</th>
             <th class="py-1.5 text-right">Total</th>
           </tr>
         </thead>
-        <tbody id="pvList" class="divide-y divide-slate-800/60"></tbody>
+        <tbody id="pvList" class="divide-y divide-slate-100"></tbody>
       </table>
       <div class="flex justify-between font-black text-sm pt-1">
         <span>Grand Total:</span>
-        <span class="text-amber-400">₹<span id="pvTot"></span></span>
+        <span class="text-amber-600">₹<span id="pvTot"></span></span>
       </div>
-      <button type="button" onclick="closePreview()" class="w-full bg-slate-800 hover:bg-slate-700 font-bold py-2.5 rounded-xl transition">
+      <button type="button" onclick="closePreview()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl transition">
         Close Preview
       </button>
     </div>
   </div>
 
-  <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 w-full max-w-md rounded-3xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col text-xs text-slate-200">
-      <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/60">
-        <h3 class="font-extrabold text-sm text-white">⚙️ Store Settings</h3>
+  <div id="settingsModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col text-xs text-slate-700">
+      <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <h3 class="font-extrabold text-sm text-slate-900">⚙️ Store Settings</h3>
         <button type="button" onclick="closeSettings()" class="text-slate-400 text-lg font-bold p-1">×</button>
       </div>
       <div class="p-4 space-y-3.5">
         <div>
-          <label class="block font-bold text-slate-400 mb-1.5">STORE NAME</label>
-          <input id="setBizName" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-semibold outline-none focus:border-amber-400" />
+          <label class="block font-bold text-slate-500 mb-1.5">STORE NAME</label>
+          <input id="setBizName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
         </div>
         <div>
-          <label class="block font-bold text-slate-400 mb-1.5">DEFAULT CUSTOMER NAME</label>
-          <input id="setCustName" type="text" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400" />
+          <label class="block font-bold text-slate-500 mb-1.5">DEFAULT CUSTOMER NAME</label>
+          <input id="setCustName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-amber-500" />
         </div>
         <div>
-          <label class="block font-bold text-slate-400 mb-1.5">STORE UPI ID (For Scan & Pay QR)</label>
-          <input id="setUpiId" type="text" placeholder="e.g. 9121757822@upi" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-semibold outline-none focus:border-amber-400" />
+          <label class="block font-bold text-slate-500 mb-1.5">STORE UPI ID (For Scan & Pay QR)</label>
+          <input id="setUpiId" type="text" placeholder="e.g. 9121757822@upi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
         </div>
       </div>
-      <div class="p-3 border-t border-slate-800 bg-slate-950/60 flex justify-end gap-2">
-        <button type="button" onclick="closeSettings()" class="bg-slate-800 px-4 py-2 rounded-xl font-bold">Cancel</button>
-        <button type="button" onclick="saveSettings()" class="bg-amber-500 text-slate-950 px-4 py-2 rounded-xl font-bold">Save Settings</button>
+      <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
+        <button type="button" onclick="closeSettings()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-xl font-bold">Cancel</button>
+        <button type="button" onclick="saveSettings()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl font-bold">Save Settings</button>
       </div>
     </div>
   </div>
 
-  <div id="presetsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 w-full max-w-md rounded-3xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-200">
-      <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/60">
-        <h3 class="font-extrabold text-sm text-white">Manage Quick Items</h3>
+  <div id="presetsModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700">
+      <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <h3 class="font-extrabold text-sm text-slate-900">Manage Quick Items</h3>
         <button type="button" onclick="closePresetModal()" class="text-slate-400 text-lg font-bold p-1">×</button>
       </div>
       <div class="p-4 space-y-3 overflow-y-auto flex-grow">
-        <div class="bg-slate-950/60 p-3 rounded-2xl border border-slate-800 space-y-2">
-          <p class="font-bold text-amber-300">Add New Quick Preset</p>
+        <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-200 space-y-2">
+          <p class="font-bold text-amber-900">Add New Quick Preset</p>
           <div class="grid grid-cols-7 gap-2">
-            <input id="newPresetName" type="text" placeholder="Item Name" class="col-span-4 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs outline-none" />
-            <input id="newPresetPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs outline-none" />
+            <input id="newPresetName" type="text" placeholder="Item Name" class="col-span-4 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none" />
+            <input id="newPresetPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none" />
           </div>
-          <button type="button" onclick="addNewPreset()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-xs transition">
+          <button type="button" onclick="addNewPreset()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-2 rounded-xl text-xs transition">
             + Save Preset
           </button>
         </div>
         <div id="presetItemsList" class="space-y-2 pt-1"></div>
       </div>
-      <div class="p-3 border-t border-slate-800 bg-slate-950/60 flex justify-end">
-        <button type="button" onclick="closePresetModal()" class="bg-slate-800 px-4 py-2 rounded-xl font-bold">Done</button>
+      <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-end">
+        <button type="button" onclick="closePresetModal()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-xl font-bold">Done</button>
       </div>
     </div>
   </div>
 
-  <div id="historyModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 w-full max-w-lg rounded-3xl border border-slate-700 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-200">
-      <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/60">
+  <div id="historyModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl border border-slate-200 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-700">
+      <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <div>
-          <h3 class="font-extrabold text-sm text-white">Sales Records</h3>
+          <h3 class="font-extrabold text-sm text-slate-900">Sales Records</h3>
           <p class="text-[10px] text-slate-400">Past customer orders</p>
         </div>
         <div class="flex items-center gap-2">
-          <button type="button" onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold transition">
+          <button type="button" onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold transition">
             📥 CSV
           </button>
           <button type="button" onclick="closeHistory()" class="text-slate-400 text-lg font-bold p-1">×</button>
         </div>
       </div>
       <div id="historyContent" class="p-4 overflow-y-auto space-y-2.5 flex-grow"></div>
-      <div class="p-3 border-t border-slate-800 bg-slate-950/60 flex justify-between">
-        <button type="button" onclick="wipeHistory()" class="text-rose-400 font-bold text-xs p-1">Clear History</button>
-        <button type="button" onclick="closeHistory()" class="bg-slate-800 px-4 py-1.5 rounded-xl font-bold text-xs">Close</button>
+      <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-between">
+        <button type="button" onclick="wipeHistory()" class="text-rose-600 font-bold text-xs p-1">Clear History</button>
+        <button type="button" onclick="closeHistory()" class="bg-slate-200 hover:bg-slate-300 px-4 py-1.5 rounded-xl font-bold text-xs">Close</button>
       </div>
     </div>
   </div>
@@ -349,11 +349,11 @@
       const btnOnline = document.getElementById('btnOnline');
 
       if (mode === 'Cash') {
-        btnCash.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm transition';
-        btnOnline.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-400 hover:text-white transition';
+        btnCash.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-amber-500 text-white shadow-xs transition';
+        btnOnline.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 transition';
       } else {
-        btnOnline.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm transition';
-        btnCash.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-400 hover:text-white transition';
+        btnOnline.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-amber-500 text-white shadow-xs transition';
+        btnCash.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 transition';
       }
     }
 
@@ -365,8 +365,8 @@
       const bar = document.getElementById('quickPresetsBar');
       const presets = getPresets();
       bar.innerHTML = presets.map((p) => `
-        <button type="button" onclick="addPresetRow('${p.name}', ${p.price})" class="shrink-0 bg-slate-800/80 hover:bg-slate-700 active:scale-95 text-slate-200 font-semibold px-3 py-1.5 rounded-xl border border-slate-700 shadow-xs transition">
-          ${p.name} <span class="font-bold text-amber-300">₹${p.price}</span>
+        <button type="button" onclick="addPresetRow('${p.name}', ${p.price})" class="shrink-0 bg-slate-100 hover:bg-amber-100 active:scale-95 text-slate-700 font-semibold px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs transition">
+          ${p.name} <span class="font-bold text-amber-700">₹${p.price}</span>
         </button>
       `).join('');
     }
@@ -401,13 +401,13 @@
       const list = getPresets();
       const box = document.getElementById('presetItemsList');
       box.innerHTML = list.map((p, idx) => `
-        <div class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-2xl border border-slate-800">
-          <input type="text" value="${p.name}" onchange="updatePreset(${idx}, 'name', this.value)" class="w-1/2 bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 text-xs text-white font-semibold outline-none" />
-          <div class="flex items-center w-1/3 bg-slate-900 border border-slate-700 rounded-xl px-2">
-            <span class="text-amber-400 font-bold">₹</span>
-            <input type="number" value="${p.price}" onchange="updatePreset(${idx}, 'price', this.value)" class="w-full bg-transparent px-1 py-1.5 text-xs font-bold text-white outline-none" />
+        <div class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+          <input type="text" value="${p.name}" onchange="updatePreset(${idx}, 'name', this.value)" class="w-1/2 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 font-semibold outline-none" />
+          <div class="flex items-center w-1/3 bg-white border border-slate-200 rounded-xl px-2">
+            <span class="text-amber-600 font-bold">₹</span>
+            <input type="number" value="${p.price}" onchange="updatePreset(${idx}, 'price', this.value)" class="w-full bg-transparent px-1 py-1.5 text-xs font-bold text-slate-800 outline-none" />
           </div>
-          <button type="button" onclick="deletePreset(${idx})" class="text-rose-400 font-black px-2 py-1 hover:bg-rose-500/10 rounded-lg">×</button>
+          <button type="button" onclick="deletePreset(${idx})" class="text-rose-600 font-black px-2 py-1 hover:bg-rose-50 rounded-lg">×</button>
         </div>
       `).join('');
     }
@@ -444,13 +444,13 @@
     function addRow(name = '', qty = 1, price = '') {
       const id = 'row_' + Date.now();
       const div = document.createElement('div');
-      div.className = 'grid grid-cols-12 gap-2 items-center bg-slate-900/60 p-2 rounded-xl border border-slate-700/60';
+      div.className = 'grid grid-cols-12 gap-2 items-center bg-slate-50 p-2 rounded-xl border border-slate-200';
       div.id = id;
       div.innerHTML = `
-        <input type="text" placeholder="Item Name" value="${name}" class="row-name col-span-6 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-medium outline-none focus:border-amber-400" />
-        <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="calcTotal()" class="row-qty col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-center text-white font-bold outline-none focus:border-amber-400" />
-        <input type="number" placeholder="Price" value="${price}" min="0" oninput="calcTotal()" class="row-price col-span-3 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-right text-amber-300 font-bold outline-none focus:border-amber-400" />
-        <button type="button" onclick="removeRow('${id}')" class="col-span-1 text-slate-500 hover:text-rose-400 font-black text-center text-sm">×</button>
+        <input type="text" placeholder="Item Name" value="${name}" class="row-name col-span-6 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-medium outline-none focus:border-amber-500" />
+        <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="calcTotal()" class="row-qty col-span-2 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-center text-slate-800 font-bold outline-none focus:border-amber-500" />
+        <input type="number" placeholder="Price" value="${price}" min="0" oninput="calcTotal()" class="row-price col-span-3 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-right text-amber-800 font-bold outline-none focus:border-amber-500" />
+        <button type="button" onclick="removeRow('${id}')" class="col-span-1 text-slate-400 hover:text-rose-600 font-black text-center text-sm">×</button>
       `;
       document.getElementById('itemsBox').appendChild(div);
       calcTotal();
@@ -549,7 +549,7 @@
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 15px; margin: 0 auto; max-width: 380px; color: #1e293b; font-size: 12px; }
             .header { text-align: center; border-bottom: 2px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
-            .logo-badge { width: 50px; height: 50px; border-radius: 50%; background: #0f172a; color: #f59e0b; font-size: 16px; font-weight: 900; line-height: 50px; margin: 0 auto 6px auto; border: 1px solid #d97706; text-align: center; }
+            .logo-badge { width: 50px; height: 50px; border-radius: 50%; background: #fffbeb; color: #b45309; font-size: 16px; font-weight: 900; line-height: 50px; margin: 0 auto 6px auto; border: 1px solid #f59e0b; text-align: center; }
             .biz { font-size: 16px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin-bottom: 2px; }
             .sub { font-size: 10px; color: #64748b; line-height: 1.4; }
             .meta { margin-bottom: 12px; font-size: 11px; line-height: 1.5; }
@@ -633,15 +633,16 @@
         format: [80, 200]
       });
 
-      doc.setFillColor(15, 23, 42);
+      // Clean, bright header banner
+      doc.setFillColor(254, 243, 199); // Light Amber
       doc.rect(0, 0, 80, 22, 'F');
 
-      doc.setTextColor(253, 230, 138);
+      doc.setTextColor(146, 64, 14); // Rich Amber Brown
       doc.setFontSize(9);
       doc.setFont(undefined, 'bold');
       doc.text(biz, 40, 9, { align: 'center' });
 
-      doc.setTextColor(203, 213, 225);
+      doc.setTextColor(100, 116, 139);
       doc.setFontSize(5.5);
       doc.setFont(undefined, 'normal');
       doc.text("Musheerabad, Hyderabad • Ph: +91 91217 57822", 40, 15, { align: 'center' });
@@ -664,7 +665,7 @@
         body: rows,
         theme: 'plain',
         headStyles: { 
-          fillColor: [248, 250, 252], 
+          fillColor: [241, 245, 249], 
           textColor: [15, 23, 42],
           fontSize: 7, 
           fontStyle: 'bold',
@@ -816,11 +817,11 @@
       tb.innerHTML = '';
       (items || []).forEach(it => {
         tb.innerHTML += `
-          <tr class="border-b border-slate-800/60">
-            <td class="py-1.5">${it.name}</td>
-            <td class="py-1.5 text-center text-slate-400">${it.qty}</td>
-            <td class="py-1.5 text-right text-slate-400">₹${it.price}</td>
-            <td class="py-1.5 text-right font-bold text-white">₹${it.total}</td>
+          <tr class="border-b border-slate-100">
+            <td class="py-1.5 font-medium text-slate-800">${it.name}</td>
+            <td class="py-1.5 text-center text-slate-500">${it.qty}</td>
+            <td class="py-1.5 text-right text-slate-500">₹${it.price}</td>
+            <td class="py-1.5 text-right font-bold text-slate-900">₹${it.total}</td>
           </tr>
         `;
       });
@@ -837,28 +838,28 @@
       const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
 
       if (list.length === 0) {
-        box.innerHTML = '<p class="text-center text-slate-500 py-8">No recorded bills yet.</p>';
+        box.innerHTML = '<p class="text-center text-slate-400 py-8">No recorded bills yet.</p>';
       } else {
         box.innerHTML = list.map((b, idx) => `
-          <div class="bg-slate-950/80 p-3 rounded-2xl border border-slate-800 space-y-2">
+          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
             <div class="flex justify-between items-start">
               <div>
-                <p class="font-extrabold text-white text-xs sm:text-sm">${b.invNum} • ${b.custName}</p>
-                <p class="text-[10px] text-slate-400">${b.date} • <span class="text-amber-300 font-medium">${b.payment}</span> ${b.phone ? '• ' + b.phone : ''}</p>
+                <p class="font-extrabold text-slate-900 text-xs sm:text-sm">${b.invNum} • ${b.custName}</p>
+                <p class="text-[10px] text-slate-500">${b.date} • <span class="text-amber-700 font-semibold">${b.payment}</span> ${b.phone ? '• ' + b.phone : ''}</p>
               </div>
-              <p class="font-black text-amber-400 text-sm">₹${b.total}</p>
+              <p class="font-black text-amber-700 text-sm">₹${b.total}</p>
             </div>
-            <div class="grid grid-cols-4 gap-1.5 pt-1.5 border-t border-slate-800/80">
-              <button type="button" onclick='showPreview(${JSON.stringify(b)})' class="bg-slate-900 hover:bg-slate-800 border border-slate-700/80 py-1.5 rounded-xl font-bold text-[10px] text-center text-slate-200 shadow-xs">
+            <div class="grid grid-cols-4 gap-1.5 pt-1.5 border-t border-slate-200">
+              <button type="button" onclick='showPreview(${JSON.stringify(b)})' class="bg-white hover:bg-slate-100 border border-slate-200 py-1.5 rounded-xl font-bold text-[10px] text-center text-slate-700 shadow-xs">
                 👁️ View
               </button>
-              <button type="button" onclick='printPastBill(${idx})' class="bg-slate-900 hover:bg-slate-800 border border-slate-700/80 py-1.5 rounded-xl font-bold text-[10px] text-center text-slate-200 shadow-xs">
+              <button type="button" onclick='printPastBill(${idx})' class="bg-white hover:bg-slate-100 border border-slate-200 py-1.5 rounded-xl font-bold text-[10px] text-center text-slate-700 shadow-xs">
                 🖨️ Print
               </button>
-              <button type="button" onclick='pdfPastBill(${idx})' class="bg-slate-900 hover:bg-slate-800 border border-slate-700/80 py-1.5 rounded-xl font-bold text-[10px] text-center text-slate-200 shadow-xs">
+              <button type="button" onclick='pdfPastBill(${idx})' class="bg-white hover:bg-slate-100 border border-slate-200 py-1.5 rounded-xl font-bold text-[10px] text-center text-slate-700 shadow-xs">
                 📄 PDF
               </button>
-              <button type="button" onclick='waPastBill(${idx})' class="bg-emerald-600/90 hover:bg-emerald-600 py-1.5 rounded-xl font-bold text-[10px] text-center text-white shadow-xs">
+              <button type="button" onclick='waPastBill(${idx})' class="bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 rounded-xl font-bold text-[10px] text-center shadow-xs">
                 💬 WA
               </button>
             </div>
