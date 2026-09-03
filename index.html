@@ -13,17 +13,19 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-amber-500 selection:text-white pb-28">
 
-  <!-- Top App Navigation with Logo -->
+  <!-- Top Navigation Header -->
   <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/80 shadow-xs">
-    <div class="max-w-xl mx-auto px-4 py-3 flex justify-between items-center">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <img id="headerLogo" src="logo.png" alt="Logo" class="w-10 h-10 rounded-2xl object-cover border border-amber-300 shadow-xs" onerror="this.src='https://ui-avatars.com/api/?name=AMS&background=fef3c7&color=b45309&bold=true'" />
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 p-[1px] shadow-xs">
+          <div class="w-full h-full bg-amber-50 rounded-[15px] flex items-center justify-center border border-amber-300">
+            <span class="text-xs font-black tracking-wider text-amber-900">AMS</span>
+          </div>
+        </div>
         <div>
           <h1 id="topStoreName" class="font-extrabold text-sm sm:text-base tracking-tight text-slate-900 leading-tight">AMS Bags & Abayas</h1>
           <p class="text-[10px] text-amber-700 font-semibold">Musheerabad, HYD • +91 91217 57822</p>
@@ -40,7 +42,7 @@
     </div>
   </header>
 
-  <main class="max-w-xl mx-auto px-4 py-4 space-y-4">
+  <main class="max-w-2xl mx-auto px-4 py-4 space-y-4">
 
     <!-- Card 1: Invoice & Date Meta -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
@@ -90,33 +92,25 @@
       </div>
     </div>
 
-    <!-- Quick Item Presets -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2.5">
-      <div class="flex justify-between items-center">
-        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">⚡ Quick Items</span>
-        <button type="button" onclick="openPresetModal()" class="text-xs text-amber-700 hover:text-amber-800 font-bold transition">
-          ⚙️ Edit Presets
-        </button>
-      </div>
-      <div id="quickPresetsBar" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 text-xs"></div>
-    </div>
-
-    <!-- Card 3: Items Cart -->
+    <!-- Card 3: Categorized Items Cart (Category -> Code -> Description -> Price) -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100">
-        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Items in Bill</span>
+        <div>
+          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Items & Categories</span>
+          <span class="text-[10px] text-slate-400">Category • Item Code • Description • Price</span>
+        </div>
         <button type="button" onclick="addRow()" class="flex items-center gap-1 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-800 border border-amber-200 font-bold px-3 py-1.5 rounded-xl text-xs transition">
           + Add Item
         </button>
       </div>
 
-      <div id="itemsBox" class="space-y-2.5"></div>
+      <div id="itemsBox" class="space-y-3"></div>
 
       <!-- Live Total Display -->
       <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 p-4 rounded-2xl text-white flex justify-between items-center shadow-sm mt-4">
         <div>
           <span class="text-[10px] font-bold uppercase tracking-widest text-amber-100 block">Grand Total</span>
-          <span class="text-xs text-amber-50 font-medium">All line items included</span>
+          <span class="text-xs text-amber-50 font-medium">All item totals included</span>
         </div>
         <div class="text-right">
           <span class="text-2xl sm:text-3xl font-black text-white tracking-tight">₹<span id="grandTotal">0.00</span></span>
@@ -128,7 +122,7 @@
 
   <!-- Sticky Mobile Action Footer -->
   <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 z-30 shadow-lg">
-    <div class="max-w-xl mx-auto grid grid-cols-5 gap-2">
+    <div class="max-w-2xl mx-auto grid grid-cols-5 gap-2">
       <button type="button" onclick="saveOnly()" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black py-3 rounded-xl text-xs flex flex-col items-center justify-center transition shadow-xs">
         <span>💾</span> Save
       </button>
@@ -151,7 +145,9 @@
   <div id="previewModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl border border-slate-200 shadow-2xl overflow-hidden p-5 space-y-4 text-xs text-slate-700">
       <div class="text-center border-b border-slate-100 pb-3">
-        <img src="logo.png" alt="Logo" class="w-14 h-14 mx-auto mb-2 rounded-2xl object-cover border border-amber-300 shadow-xs" onerror="this.src='https://ui-avatars.com/api/?name=AMS&background=fef3c7&color=b45309&bold=true'" />
+        <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 font-black flex items-center justify-center text-sm shadow-xs">
+          AMS
+        </div>
         <h3 id="pvBiz" class="font-extrabold text-sm text-slate-900"></h3>
         <p class="text-[10px] text-slate-500 mt-0.5">Bangladesh Cloth Market, Musheerabad, HYD</p>
         <p class="text-[10px] text-slate-500">📞 +91 91217 57822</p>
@@ -166,7 +162,7 @@
       <table class="w-full border-t border-b border-slate-200">
         <thead>
           <tr class="text-left text-[10px] text-slate-400 uppercase tracking-wider">
-            <th class="py-1.5">Item</th>
+            <th class="py-1.5">Item & Code</th>
             <th class="py-1.5 text-center">Qty</th>
             <th class="py-1.5 text-right">Price</th>
             <th class="py-1.5 text-right">Total</th>
@@ -212,32 +208,6 @@
     </div>
   </div>
 
-  <!-- Presets Management Modal -->
-  <div id="presetsModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700">
-      <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-        <h3 class="font-extrabold text-sm text-slate-900">Manage Quick Items</h3>
-        <button type="button" onclick="closePresetModal()" class="text-slate-400 text-lg font-bold p-1">×</button>
-      </div>
-      <div class="p-4 space-y-3 overflow-y-auto flex-grow">
-        <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-200 space-y-2">
-          <p class="font-bold text-amber-900">Add New Quick Preset</p>
-          <div class="grid grid-cols-7 gap-2">
-            <input id="newPresetName" type="text" placeholder="Item Name" class="col-span-4 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none" />
-            <input id="newPresetPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none" />
-          </div>
-          <button type="button" onclick="addNewPreset()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-2 rounded-xl text-xs transition">
-            + Save Preset
-          </button>
-        </div>
-        <div id="presetItemsList" class="space-y-2 pt-1"></div>
-      </div>
-      <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-end">
-        <button type="button" onclick="closePresetModal()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-xl font-bold">Done</button>
-      </div>
-    </div>
-  </div>
-
   <!-- History Modal -->
   <div id="historyModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-3xl border border-slate-200 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-700">
@@ -269,44 +239,58 @@
     const STORE_PHONE = "+91 91217 57822";
     const DEFAULT_CUST = "Dear Customer";
     const DEFAULT_UPI = "9121757822@upi";
-    const DEFAULT_PRESETS = [
-      { name: "Abaya Classic", price: 1200 },
-      { name: "Designer Abaya", price: 1800 },
-      { name: "Ladies Handbag", price: 650 },
-      { name: "Shoulder Bag", price: 450 },
-      { name: "Premium Hijab", price: 250 }
-    ];
+
+    // High-Resolution Gold Boutique Emblem Generated In-Memory (Zero Dependency, 100% Reliable in PDF)
+    function generateBrandLogoBase64() {
+      const canvas = document.createElement("canvas");
+      canvas.width = 240;
+      canvas.height = 240;
+      const ctx = canvas.getContext("2d");
+
+      // Circular Badge with Soft Radial Gradient
+      const grad = ctx.createRadialGradient(120, 120, 20, 120, 120, 115);
+      grad.addColorStop(0, "#fffbeb");
+      grad.addColorStop(0.7, "#fef3c7");
+      grad.addColorStop(1, "#fde68a");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(120, 120, 110, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Outer Gold Rings
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#d97706";
+      ctx.stroke();
+
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#b45309";
+      ctx.beginPath();
+      ctx.arc(120, 120, 102, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Brand Typography
+      ctx.fillStyle = "#78350f";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "bold 58px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("AMS", 120, 108);
+
+      ctx.font = "bold 16px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillStyle = "#92400e";
+      ctx.fillText("BAGS & ABAYAS", 120, 146);
+
+      return canvas.toDataURL("image/png");
+    }
+
+    const EMBEDDED_LOGO_BASE64 = generateBrandLogoBase64();
 
     window.onload = function() {
       initSettings();
       initDate();
       initInvoice();
-      renderQuickPresetsBar();
-      addRow();
+      addRow("Abaya", "AB-101", "Black Designer Abaya", 1, 1800);
+      addRow("Handbag", "BG-201", "Luxury Ladies Shoulder Bag", 1, 650);
     };
-
-    function loadLogoImageBase64() {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.onload = function() {
-          try {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.naturalWidth || 200;
-            canvas.height = img.naturalHeight || 200;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            resolve(canvas.toDataURL("image/png"));
-          } catch (e) {
-            resolve(null);
-          }
-        };
-        img.onerror = function() {
-          resolve(null);
-        };
-        img.src = "logo.png?" + new Date().getTime();
-      });
-    }
 
     function initSettings() {
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
@@ -386,100 +370,41 @@
       }
     }
 
-    function getPresets() {
-      return JSON.parse(localStorage.getItem('ams_presets') || JSON.stringify(DEFAULT_PRESETS));
-    }
-
-    function renderQuickPresetsBar() {
-      const bar = document.getElementById('quickPresetsBar');
-      const presets = getPresets();
-      bar.innerHTML = presets.map((p) => `
-        <button type="button" onclick="addPresetRow('${p.name}', ${p.price})" class="shrink-0 bg-slate-100 hover:bg-amber-100 active:scale-95 text-slate-700 font-semibold px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs transition">
-          ${p.name} <span class="font-bold text-amber-700">₹${p.price}</span>
-        </button>
-      `).join('');
-    }
-
-    function addPresetRow(name, price) {
-      const names = document.querySelectorAll('.row-name');
-      const qtys = document.querySelectorAll('.row-qty');
-      const prices = document.querySelectorAll('.row-price');
-
-      if (names.length === 1 && names[0].value.trim() === '' && (prices[0].value === '' || prices[0].value === '0')) {
-        names[0].value = name;
-        qtys[0].value = '1';
-        prices[0].value = price;
-        calcTotal();
-        return;
-      }
-
-      addRow(name, 1, price);
-    }
-
-    function openPresetModal() {
-      renderPresetManager();
-      document.getElementById('presetsModal').classList.remove('hidden');
-    }
-
-    function closePresetModal() {
-      document.getElementById('presetsModal').classList.add('hidden');
-      renderQuickPresetsBar();
-    }
-
-    function renderPresetManager() {
-      const list = getPresets();
-      const box = document.getElementById('presetItemsList');
-      box.innerHTML = list.map((p, idx) => `
-        <div class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-          <input type="text" value="${p.name}" onchange="updatePreset(${idx}, 'name', this.value)" class="w-1/2 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 font-semibold outline-none" />
-          <div class="flex items-center w-1/3 bg-white border border-slate-200 rounded-xl px-2">
-            <span class="text-amber-600 font-bold">₹</span>
-            <input type="number" value="${p.price}" onchange="updatePreset(${idx}, 'price', this.value)" class="w-full bg-transparent px-1 py-1.5 text-xs font-bold text-slate-800 outline-none" />
-          </div>
-          <button type="button" onclick="deletePreset(${idx})" class="text-rose-600 font-black px-2 py-1 hover:bg-rose-50 rounded-lg">×</button>
-        </div>
-      `).join('');
-    }
-
-    function addNewPreset() {
-      const name = document.getElementById('newPresetName').value.trim();
-      const price = parseFloat(document.getElementById('newPresetPrice').value) || 0;
-      if (!name) return alert('Enter item name');
-      const presets = getPresets();
-      presets.push({ name, price });
-      localStorage.setItem('ams_presets', JSON.stringify(presets));
-      document.getElementById('newPresetName').value = '';
-      document.getElementById('newPresetPrice').value = '';
-      renderPresetManager();
-    }
-
-    function updatePreset(idx, field, value) {
-      const presets = getPresets();
-      if (field === 'price') {
-        presets[idx].price = parseFloat(value) || 0;
-      } else {
-        presets[idx].name = value.trim() || 'Item';
-      }
-      localStorage.setItem('ams_presets', JSON.stringify(presets));
-    }
-
-    function deletePreset(idx) {
-      const presets = getPresets();
-      presets.splice(idx, 1);
-      localStorage.setItem('ams_presets', JSON.stringify(presets));
-      renderPresetManager();
-    }
-
-    function addRow(name = '', qty = 1, price = '') {
-      const id = 'row_' + Date.now();
+    // Dynamic Row with Category, Code, Description, Qty, Price
+    function addRow(category = '', code = '', name = '', qty = 1, price = '') {
+      const id = 'row_' + Date.now() + Math.floor(Math.random() * 100);
       const div = document.createElement('div');
-      div.className = 'grid grid-cols-12 gap-2 items-center bg-slate-50 p-2 rounded-xl border border-slate-200';
+      div.className = 'bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2 relative transition-all';
       div.id = id;
       div.innerHTML = `
-        <input type="text" placeholder="Item Name" value="${name}" class="row-name col-span-6 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-medium outline-none focus:border-amber-500" />
-        <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="calcTotal()" class="row-qty col-span-2 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-center text-slate-800 font-bold outline-none focus:border-amber-500" />
-        <input type="number" placeholder="Price" value="${price}" min="0" oninput="calcTotal()" class="row-price col-span-3 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-right text-amber-800 font-bold outline-none focus:border-amber-500" />
-        <button type="button" onclick="removeRow('${id}')" class="col-span-1 text-slate-400 hover:text-rose-600 font-black text-center text-sm">×</button>
+        <div class="grid grid-cols-12 gap-2 items-center">
+          <div class="col-span-6">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5">Category</label>
+            <input type="text" placeholder="e.g. Abaya / Bag" value="${category}" class="row-cat w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-amber-500" />
+          </div>
+          <div class="col-span-5">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5">Item Code</label>
+            <input type="text" placeholder="e.g. AB-101" value="${code}" class="row-code w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-amber-800 font-bold outline-none focus:border-amber-500" />
+          </div>
+          <div class="col-span-1 text-right pt-4">
+            <button type="button" onclick="removeRow('${id}')" class="text-slate-400 hover:text-rose-600 font-black text-base transition">×</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-2 items-center">
+          <div class="col-span-6">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5">Description</label>
+            <input type="text" placeholder="Item Name" value="${name}" class="row-name w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-medium outline-none focus:border-amber-500" />
+          </div>
+          <div class="col-span-2">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5 text-center">Qty</label>
+            <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="calcTotal()" class="row-qty w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1.5 text-xs text-center text-slate-800 font-bold outline-none focus:border-amber-500" />
+          </div>
+          <div class="col-span-4">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5 text-right">Price (₹)</label>
+            <input type="number" placeholder="Price" value="${price}" min="0" oninput="calcTotal()" class="row-price w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-right text-amber-800 font-bold outline-none focus:border-amber-500" />
+          </div>
+        </div>
       `;
       document.getElementById('itemsBox').appendChild(div);
       calcTotal();
@@ -494,16 +419,20 @@
     }
 
     function getItems() {
+      const cats = document.querySelectorAll('.row-cat');
+      const codes = document.querySelectorAll('.row-code');
       const names = document.querySelectorAll('.row-name');
       const qtys = document.querySelectorAll('.row-qty');
       const prices = document.querySelectorAll('.row-price');
       const list = [];
 
       for (let i = 0; i < names.length; i++) {
+        const cat = cats[i].value.trim() || 'General';
+        const code = codes[i].value.trim() || '-';
         const n = names[i].value.trim() || `Item ${i + 1}`;
         const q = parseFloat(qtys[i].value) || 0;
         const p = parseFloat(prices[i].value) || 0;
-        list.push({ name: n, qty: q, price: p, total: (q * p).toFixed(2) });
+        list.push({ category: cat, code: code, name: n, qty: q, price: p, total: (q * p).toFixed(2) });
       }
       return list;
     }
@@ -518,7 +447,7 @@
 
     function formatItemsForWhatsApp(items) {
       if (!items || items.length === 0) return '• General Items';
-      return items.map(it => `• *${it.name}* (Qty: ${it.qty}) - ₹${parseFloat(it.total).toFixed(2)}`).join('\n');
+      return items.map(it => `• *[${it.code}] ${it.name}* (${it.category}) - ${it.qty} x ₹${it.price} = *₹${parseFloat(it.total).toFixed(2)}*`).join('\n');
     }
 
     function saveRecord() {
@@ -568,7 +497,10 @@
       const qrUrl = getUpiQrUrl(tot);
       const rowsHtml = (items || []).map(it => `
         <tr>
-          <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0;">${it.name}</td>
+          <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0;">
+            <div style="font-weight: bold;">${it.name}</div>
+            <div style="font-size: 9px; color: #64748b;">Code: ${it.code} • Cat: ${it.category}</div>
+          </td>
           <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0; text-align: center;">${it.qty}</td>
           <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0; text-align: right;">₹${it.price}</td>
           <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0; text-align: right; font-weight: bold;">₹${it.total}</td>
@@ -585,7 +517,7 @@
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 15px; margin: 0 auto; max-width: 380px; color: #1e293b; font-size: 12px; }
             .header { text-align: center; border-bottom: 2px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
-            .logo-img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; margin: 0 auto 6px auto; border: 1px solid #f59e0b; display: block; }
+            .logo-badge { width: 50px; height: 50px; border-radius: 50%; background: #fffbeb; color: #b45309; font-size: 16px; font-weight: 900; line-height: 50px; margin: 0 auto 6px auto; border: 1px solid #f59e0b; text-align: center; }
             .biz { font-size: 16px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin-bottom: 2px; }
             .sub { font-size: 10px; color: #64748b; line-height: 1.4; }
             .meta { margin-bottom: 12px; font-size: 11px; line-height: 1.5; }
@@ -599,7 +531,7 @@
         </head>
         <body>
           <div class="header">
-            <img src="logo.png" class="logo-img" onerror="this.style.display='none'" />
+            <div class="logo-badge">AMS</div>
             <div class="biz">${biz}</div>
             <div class="sub">${STORE_ADDRESS}</div>
             <div class="sub">Store Contact: ${STORE_PHONE}</div>
@@ -613,7 +545,7 @@
           <table>
             <thead>
               <tr>
-                <th>Item</th>
+                <th>Item & Details</th>
                 <th style="text-align: center;">Qty</th>
                 <th style="text-align: right;">Price</th>
                 <th style="text-align: right;">Total</th>
@@ -661,8 +593,8 @@
       }, 300);
     }
 
-    // Modern Luxury PDF Generator (With Real Logo & Custom Layout)
-    async function makePDFObject(biz, inv, dt, cust, custPhone, pay, tot, items) {
+    // High-End Luxury Boutique PDF with Instant Embedded Logo
+    function makePDFObject(biz, inv, dt, cust, custPhone, pay, tot, items) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
         orientation: 'p',
@@ -670,60 +602,55 @@
         format: [80, 220]
       });
 
-      // 1. Dark Luxury Header Top Bar
-      doc.setFillColor(15, 23, 42); // Elegant Obsidian
-      doc.rect(0, 0, 80, 28, 'F');
+      // 1. Header Obsidian Block
+      doc.setFillColor(15, 23, 42);
+      doc.rect(0, 0, 80, 30, 'F');
 
-      // 2. Load & Draw Logo cleanly
-      const logoBase64 = await loadLogoImageBase64();
-      if (logoBase64) {
-        try {
-          doc.addImage(logoBase64, 'PNG', 33, 3, 14, 14);
-        } catch (e) {}
-      } else {
-        // Fallback Circular Gold Badge if image is unavailable
-        doc.setFillColor(245, 158, 11);
-        doc.circle(40, 9, 6, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(7);
-        doc.setFont(undefined, 'bold');
-        doc.text("AMS", 40, 11, { align: 'center' });
-      }
+      // 2. Guaranteed In-Memory Gold Emblem Injection
+      try {
+        doc.addImage(EMBEDDED_LOGO_BASE64, 'PNG', 32.5, 2.5, 15, 15);
+      } catch (e) {}
 
-      // 3. Header Titles
-      doc.setTextColor(254, 243, 199); // Champagne Gold
-      doc.setFontSize(8);
+      // 3. Store Typography
+      doc.setTextColor(254, 243, 199);
+      doc.setFontSize(8.5);
       doc.setFont(undefined, 'bold');
-      doc.text(biz, 40, 20, { align: 'center' });
+      doc.text(biz, 40, 21, { align: 'center' });
 
-      doc.setTextColor(148, 163, 184); // Muted Slate
-      doc.setFontSize(5);
+      doc.setTextColor(148, 163, 184);
+      doc.setFontSize(5.5);
       doc.setFont(undefined, 'normal');
-      doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, 24, { align: 'center' });
+      doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, 26, { align: 'center' });
 
-      // 4. Metadata Details Card
+      // 4. Metadata Box
       doc.setFillColor(248, 250, 252);
-      doc.roundedRect(5, 32, 70, 16, 2, 2, 'F');
+      doc.roundedRect(5, 33, 70, 15, 2, 2, 'F');
       doc.setDrawColor(226, 232, 240);
-      doc.roundedRect(5, 32, 70, 16, 2, 2, 'S');
+      doc.roundedRect(5, 33, 70, 15, 2, 2, 'S');
 
       doc.setTextColor(30, 41, 59);
       doc.setFontSize(6.5);
       doc.setFont(undefined, 'bold');
-      doc.text(`INVOICE: ${inv}`, 8, 37);
-      doc.text(`DATE: ${dt}`, 72, 37, { align: 'right' });
+      doc.text(`INVOICE: ${inv}`, 8, 38);
+      doc.text(`DATE: ${dt}`, 72, 38, { align: 'right' });
 
       doc.setFont(undefined, 'normal');
       const custDisplay = custPhone ? `${cust} (+91 ${custPhone})` : cust;
-      doc.text(`CUSTOMER: ${custDisplay}`, 8, 41);
-      doc.text(`PAYMENT: ${pay}`, 8, 45);
+      doc.text(`CUSTOMER: ${custDisplay}`, 8, 42);
+      doc.text(`PAYMENT: ${pay}`, 8, 46);
 
-      // 5. Line Items Table (Modern, Minimal Grid)
-      const rows = (items || []).map(it => [it.name, it.qty, `Rs. ${it.price}`, `Rs. ${it.total}`]);
+      // 5. Line Items Table with Code & Category
+      const rows = (items || []).map(it => [
+        `${it.name}\n[${it.code}] ${it.category}`,
+        it.qty,
+        `Rs. ${it.price}`,
+        `Rs. ${it.total}`
+      ]);
+
       doc.autoTable({
         startY: 51,
         margin: { left: 5, right: 5 },
-        head: [['Item Description', 'Qty', 'Rate', 'Amount']],
+        head: [['Item & Details', 'Qty', 'Rate', 'Amount']],
         body: rows,
         theme: 'striped',
         headStyles: { 
@@ -739,13 +666,13 @@
           2: { halign: 'right', cellWidth: 14 },
           3: { halign: 'right', cellWidth: 14 }
         },
-        styles: { fontSize: 6.5, cellPadding: 2, textColor: [30, 41, 59] }
+        styles: { fontSize: 6, cellPadding: 2, textColor: [30, 41, 59] }
       });
 
       let finalY = doc.lastAutoTable.finalY + 4;
 
-      // 6. Grand Total Highlight Card
-      doc.setFillColor(15, 23, 42); // High contrast badge
+      // 6. Grand Total Highlight Box
+      doc.setFillColor(15, 23, 42);
       doc.roundedRect(5, finalY, 70, 10, 2, 2, 'F');
 
       doc.setFontSize(7.5);
@@ -753,12 +680,12 @@
       doc.setTextColor(255, 255, 255);
       doc.text("GRAND TOTAL:", 10, finalY + 6.5);
 
-      doc.setTextColor(251, 191, 36); // Amber Gold
+      doc.setTextColor(251, 191, 36);
       doc.setFontSize(9);
       doc.text(`Rs. ${tot}`, 71, finalY + 6.5, { align: 'right' });
 
-      // 7. Dynamic QR Code Section
-      finalY += 14;
+      // 7. UPI QR Code
+      finalY += 13;
       const qrUrl = getUpiQrUrl(tot);
       if (qrUrl) {
         try {
@@ -773,7 +700,7 @@
         }
       }
 
-      // 8. Footer (Text Address Only, Clean & Simple)
+      // 8. Footer Clean Address
       finalY += 6;
       doc.setFontSize(6);
       doc.setFont(undefined, 'bold');
@@ -789,7 +716,7 @@
       return doc;
     }
 
-    async function runBill(mode) {
+    function runBill(mode) {
       const total = parseFloat(calcTotal());
       if (total <= 0) {
         alert('Please enter an item price first.');
@@ -808,7 +735,7 @@
       if (mode === 'print') {
         executeNativePrint(biz, inv, dt, cust, custPhone, pay, total.toFixed(2), items);
       } else if (mode === 'pdf') {
-        const doc = await makePDFObject(biz, inv, dt, cust, custPhone, pay, total.toFixed(2), items);
+        const doc = makePDFObject(biz, inv, dt, cust, custPhone, pay, total.toFixed(2), items);
         doc.save(`${inv}.pdf`);
       } else if (mode === 'wa') {
         if (custPhone.length < 10) {
@@ -844,12 +771,12 @@
       executeNativePrint(biz, b.invNum, b.date, b.custName, b.phone, b.payment, b.total, b.items);
     }
 
-    async function pdfPastBill(idx) {
+    function pdfPastBill(idx) {
       const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
       const b = list[idx];
       if (!b) return;
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
-      const doc = await makePDFObject(biz, b.invNum, b.date, b.custName, b.phone, b.payment, b.total, b.items);
+      const doc = makePDFObject(biz, b.invNum, b.date, b.custName, b.phone, b.payment, b.total, b.items);
       doc.save(`${b.invNum}.pdf`);
     }
 
@@ -903,7 +830,10 @@
       (items || []).forEach(it => {
         tb.innerHTML += `
           <tr class="border-b border-slate-100">
-            <td class="py-1.5 font-medium text-slate-800">${it.name}</td>
+            <td class="py-1.5 font-medium text-slate-800">
+              <div>${it.name}</div>
+              <div class="text-[9px] text-slate-400">Code: ${it.code} • ${it.category}</div>
+            </td>
             <td class="py-1.5 text-center text-slate-500">${it.qty}</td>
             <td class="py-1.5 text-right text-slate-500">₹${it.price}</td>
             <td class="py-1.5 text-right font-bold text-slate-900">₹${it.total}</td>
