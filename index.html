@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AMS Ladies Bags & Abayas - Modern POS</title>
+  <title>AMS Ladies Bags & Abayas - POS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -240,14 +240,14 @@
     </div>
   </div>
 
-  <!-- Settings Modal -->
+  <!-- Settings Modal with Backup & Restore -->
   <div id="settingsModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col text-xs text-slate-700">
       <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <h3 class="font-extrabold text-sm text-slate-900">⚙️ Store Settings</h3>
         <button type="button" onclick="closeSettings()" class="text-slate-400 text-lg font-bold p-1">×</button>
       </div>
-      <div class="p-5 space-y-3.5">
+      <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
         <div>
           <label class="block font-bold text-slate-400 mb-1">STORE NAME</label>
           <input id="setBizName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
@@ -261,6 +261,22 @@
           <input id="setUpiId" type="text" value="Q059185009@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" readonly />
           <p class="text-[10px] text-slate-400 mt-1">Official Standee VPA: Q059185009@ybl</p>
         </div>
+
+        <!-- 1-Click Multi-Device Backup & Restore Section -->
+        <div class="pt-3 border-t border-slate-100 space-y-2">
+          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px]">Data Backup & Sync (Cross-Device)</label>
+          <p class="text-[10px] text-slate-400">Export a single backup file to load all your sales, invoices, and catalog onto another phone or PC.</p>
+          
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button type="button" onclick="exportBackupFile()" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold py-2.5 px-3 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-xs">
+              <span>📥</span> Backup Data
+            </button>
+            <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold py-2.5 px-3 rounded-2xl transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs text-center">
+              <span>📤</span> Restore Data
+              <input type="file" id="restoreFileInput" accept=".json" onchange="importBackupFile(event)" class="hidden" />
+            </label>
+          </div>
+        </div>
       </div>
       <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
         <button type="button" onclick="closeSettings()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2.5 rounded-2xl font-bold">Cancel</button>
@@ -269,7 +285,7 @@
     </div>
   </div>
 
-  <!-- Item Catalog Modal (Add, Edit, Delete Products) -->
+  <!-- Item Catalog Modal -->
   <div id="catalogModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700">
       <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -450,7 +466,6 @@
       initDate();
       initInvoice();
       
-      // Start with a clean empty row
       addRow('', '', '', 1, '');
 
       window.addEventListener('keydown', (e) => {
@@ -560,6 +575,55 @@
       alert('Settings updated successfully!');
     }
 
+    // ==========================================
+    // BACKUP & RESTORE DATA HANDLERS
+    // ==========================================
+    function exportBackupFile() {
+      const backupData = {
+        ams_history: JSON.parse(localStorage.getItem('ams_history') || '[]'),
+        ams_catalog: JSON.parse(localStorage.getItem('ams_catalog') || JSON.stringify(DEFAULT_CATALOG)),
+        ams_num: localStorage.getItem('ams_num') || '1001',
+        ams_biz: localStorage.getItem('ams_biz') || DEFAULT_STORE,
+        ams_default_cust: localStorage.getItem('ams_default_cust') || DEFAULT_CUST,
+        backup_date: new Date().toISOString()
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `AMS_Backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importBackupFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.ams_history || data.ams_catalog) {
+            if (data.ams_history) localStorage.setItem('ams_history', JSON.stringify(data.ams_history));
+            if (data.ams_catalog) localStorage.setItem('ams_catalog', JSON.stringify(data.ams_catalog));
+            if (data.ams_num) localStorage.setItem('ams_num', data.ams_num);
+            if (data.ams_biz) localStorage.setItem('ams_biz', data.ams_biz);
+            if (data.ams_default_cust) localStorage.setItem('ams_default_cust', data.ams_default_cust);
+
+            alert('Backup restored successfully! The page will now refresh.');
+            window.location.reload();
+          } else {
+            alert('Invalid backup file format.');
+          }
+        } catch (err) {
+          alert('Error reading backup file: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
     function initDate() {
       const d = new Date();
       const dd = String(d.getDate()).padStart(2, '0');
@@ -602,7 +666,7 @@
       }
     }
 
-    // Catalog Store Handlers
+    // Catalog Handlers
     function getCatalog() {
       return JSON.parse(localStorage.getItem('ams_catalog') || JSON.stringify(DEFAULT_CATALOG));
     }
@@ -707,7 +771,6 @@
       calcTotal();
     }
 
-    // Dynamic Row with Dropdown Select + Editable Inputs
     function addRow(category = '', code = '', name = '', qty = 1, price = '') {
       const id = 'row_' + Date.now() + Math.floor(Math.random() * 100);
       const div = document.createElement('div');
