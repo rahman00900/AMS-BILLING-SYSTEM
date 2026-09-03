@@ -23,11 +23,7 @@
   <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/80 shadow-xs">
     <div class="max-w-xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 p-[1px] shadow-xs">
-          <div class="w-full h-full bg-amber-50 rounded-[15px] flex items-center justify-center border border-amber-300">
-            <span class="text-xs font-black tracking-wider text-amber-900">AMS</span>
-          </div>
-        </div>
+        <img id="headerLogo" src="logo.png" alt="Logo" class="w-10 h-10 rounded-2xl object-cover border border-amber-300 shadow-xs" onerror="this.src='https://ui-avatars.com/api/?name=AMS&background=fef3c7&color=b45309&bold=true'" />
         <div>
           <h1 id="topStoreName" class="font-extrabold text-sm sm:text-base tracking-tight text-slate-900 leading-tight">AMS Bags & Abayas</h1>
           <p class="text-[10px] text-amber-700 font-semibold">Musheerabad, HYD • +91 91217 57822</p>
@@ -65,13 +61,13 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <div class="flex justify-between items-center mb-1.5">
-            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Customer</label>
+            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Customer Name</label>
             <span class="text-[10px] text-amber-600 font-medium">Default in ⚙️</span>
           </div>
           <input id="custName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition" />
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">WhatsApp Mobile</label>
+          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Customer Number</label>
           <div class="flex rounded-xl overflow-hidden border border-slate-200 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/20 transition">
             <span class="inline-flex items-center px-3 bg-slate-100 text-slate-600 text-xs font-bold border-r border-slate-200">+91</span>
             <input id="custPhone" type="tel" maxlength="10" placeholder="10-digit number" class="w-full bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 outline-none focus:bg-white" />
@@ -155,9 +151,7 @@
   <div id="previewModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl border border-slate-200 shadow-2xl overflow-hidden p-5 space-y-4 text-xs text-slate-700">
       <div class="text-center border-b border-slate-100 pb-3">
-        <div class="w-12 h-12 mx-auto mb-2 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 font-black flex items-center justify-center text-sm shadow-xs">
-          AMS
-        </div>
+        <img src="logo.png" alt="Logo" class="w-14 h-14 mx-auto mb-2 rounded-2xl object-cover border border-amber-300 shadow-xs" onerror="this.src='https://ui-avatars.com/api/?name=AMS&background=fef3c7&color=b45309&bold=true'" />
         <h3 id="pvBiz" class="font-extrabold text-sm text-slate-900"></h3>
         <p class="text-[10px] text-slate-500 mt-0.5">Bangladesh Cloth Market, Musheerabad, HYD</p>
         <p class="text-[10px] text-slate-500">📞 +91 91217 57822</p>
@@ -166,6 +160,7 @@
         <div class="flex justify-between"><span>Invoice:</span> <strong id="pvInv" class="text-amber-800"></strong></div>
         <div class="flex justify-between"><span>Date:</span> <span id="pvDate"></span></div>
         <div class="flex justify-between"><span>Customer:</span> <span id="pvCust"></span></div>
+        <div class="flex justify-between"><span>Cust. Phone:</span> <strong id="pvCustPhone" class="text-slate-800"></strong></div>
         <div class="flex justify-between"><span>Payment:</span> <span id="pvPay"></span></div>
       </div>
       <table class="w-full border-t border-b border-slate-200">
@@ -272,7 +267,7 @@
     const DEFAULT_STORE = "AMS Ladies Bags and Abayas";
     const STORE_ADDRESS = "Bangladesh Cloth Market, Musheerabad, Hyderabad";
     const STORE_PHONE = "+91 91217 57822";
-    const STORE_MAPS_LINK = "https://maps.app.goo.gl/8YQs17uvQxQRoxH77?g_st=ac";
+    const STORE_MAPS_SEARCH = "https://www.google.com/maps/search/?api=1&query=AMS+Ladies+Bags+and+Abayas+Bangladesh+Cloth+Market+Musheerabad+Hyderabad";
     const DEFAULT_CUST = "Dear Customer";
     const DEFAULT_UPI = "9121757822@upi";
     const DEFAULT_PRESETS = [
@@ -283,13 +278,34 @@
       { name: "Premium Hijab", price: 250 }
     ];
 
+    let cachedLogoBase64 = null;
+
     window.onload = function() {
       initSettings();
       initDate();
       initInvoice();
       renderQuickPresetsBar();
       addRow();
+      preloadLogo();
     };
+
+    function preloadLogo() {
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = function() {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          cachedLogoBase64 = canvas.toDataURL("image/png");
+        } catch (e) {
+          cachedLogoBase64 = null;
+        }
+      };
+      img.src = "logo.png";
+    }
 
     function initSettings() {
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
@@ -499,6 +515,11 @@
       return sum.toFixed(2);
     }
 
+    function formatItemsForWhatsApp(items) {
+      if (!items || items.length === 0) return '';
+      return items.map(it => `• ${it.name} (x${it.qty}) - ₹${parseFloat(it.total).toFixed(2)}`).join('\n');
+    }
+
     function saveRecord() {
       const total = calcTotal();
       const items = getItems();
@@ -542,7 +563,7 @@
       return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiString)}`;
     }
 
-    function executeNativePrint(biz, inv, dt, cust, pay, tot, items) {
+    function executeNativePrint(biz, inv, dt, cust, custPhone, pay, tot, items) {
       const qrUrl = getUpiQrUrl(tot);
       const rowsHtml = (items || []).map(it => `
         <tr>
@@ -553,6 +574,8 @@
         </tr>
       `).join('');
 
+      const custDisplay = custPhone ? `${cust} (+91 ${custPhone})` : cust;
+
       const printHtml = `
         <!DOCTYPE html>
         <html>
@@ -561,7 +584,7 @@
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 15px; margin: 0 auto; max-width: 380px; color: #1e293b; font-size: 12px; }
             .header { text-align: center; border-bottom: 2px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
-            .logo-badge { width: 50px; height: 50px; border-radius: 50%; background: #fffbeb; color: #b45309; font-size: 16px; font-weight: 900; line-height: 50px; margin: 0 auto 6px auto; border: 1px solid #f59e0b; text-align: center; }
+            .logo-img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; margin: 0 auto 6px auto; border: 1px solid #f59e0b; display: block; }
             .biz { font-size: 16px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin-bottom: 2px; }
             .sub { font-size: 10px; color: #64748b; line-height: 1.4; }
             .meta { margin-bottom: 12px; font-size: 11px; line-height: 1.5; }
@@ -575,16 +598,16 @@
         </head>
         <body>
           <div class="header">
-            <div class="logo-badge">AMS</div>
+            <img src="logo.png" class="logo-img" onerror="this.style.display='none'" />
             <div class="biz">${biz}</div>
             <div class="sub">${STORE_ADDRESS}</div>
-            <div class="sub">Phone: ${STORE_PHONE}</div>
+            <div class="sub">Store Contact: ${STORE_PHONE}</div>
           </div>
           <div class="meta">
             <div><strong>Invoice:</strong> ${inv}</div>
             <div><strong>Date:</strong> ${dt}</div>
-            <div><strong>Customer:</strong> ${cust}</div>
-            <div><strong>Payment:</strong> ${pay}</div>
+            <div><strong>Customer:</strong> ${custDisplay}</div>
+            <div><strong>Payment Mode:</strong> ${pay}</div>
           </div>
           <table>
             <thead>
@@ -609,7 +632,7 @@
 
           <div class="footer">
             <p>Thank you for shopping with us!</p>
-            <p style="margin-top: 4px;">📍 Location: ${STORE_MAPS_LINK}</p>
+            <p style="margin-top: 4px;">📍 Bangladesh Cloth Market, Musheerabad, Hyderabad</p>
           </div>
         </body>
         </html>
@@ -637,40 +660,49 @@
       }, 300);
     }
 
-    function makePDFObject(biz, inv, dt, cust, pay, tot, items) {
+    function makePDFObject(biz, inv, dt, cust, custPhone, pay, tot, items) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
         orientation: 'p',
         unit: 'mm',
-        format: [80, 200]
+        format: [80, 215]
       });
 
+      // Header Banner
       doc.setFillColor(254, 243, 199);
-      doc.rect(0, 0, 80, 22, 'F');
+      doc.rect(0, 0, 80, 26, 'F');
+
+      if (cachedLogoBase64) {
+        try {
+          doc.addImage(cachedLogoBase64, 'PNG', 34, 2, 12, 12);
+        } catch (e) {}
+      }
 
       doc.setTextColor(146, 64, 14);
-      doc.setFontSize(9);
+      doc.setFontSize(8.5);
       doc.setFont(undefined, 'bold');
-      doc.text(biz, 40, 9, { align: 'center' });
+      doc.text(biz, 40, cachedLogoBase64 ? 18 : 10, { align: 'center' });
 
       doc.setTextColor(100, 116, 139);
-      doc.setFontSize(5.5);
+      doc.setFontSize(5);
       doc.setFont(undefined, 'normal');
-      doc.text("Musheerabad, Hyderabad • Ph: +91 91217 57822", 40, 15, { align: 'center' });
+      doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, cachedLogoBase64 ? 22 : 15, { align: 'center' });
 
+      // Invoice Details Block
       doc.setTextColor(30, 41, 59);
       doc.setFontSize(7.5);
       doc.setFont(undefined, 'bold');
-      doc.text(`Invoice: ${inv}`, 6, 27);
-      doc.text(`Date: ${dt}`, 74, 27, { align: 'right' });
+      doc.text(`Invoice: ${inv}`, 6, 31);
+      doc.text(`Date: ${dt}`, 74, 31, { align: 'right' });
       
       doc.setFont(undefined, 'normal');
-      doc.text(`Customer: ${cust}`, 6, 32);
-      doc.text(`Payment: ${pay}`, 6, 37);
+      const custDisplay = custPhone ? `${cust} (+91 ${custPhone})` : cust;
+      doc.text(`Customer: ${custDisplay}`, 6, 36);
+      doc.text(`Payment: ${pay}`, 6, 41);
 
       const rows = (items || []).map(it => [it.name, it.qty, `Rs. ${it.price}`, `Rs. ${it.total}`]);
       doc.autoTable({
-        startY: 41,
+        startY: 45,
         margin: { left: 5, right: 5 },
         head: [['Item', 'Qty', 'Price', 'Total']],
         body: rows,
@@ -718,7 +750,7 @@
 
       finalY += 4;
       doc.setTextColor(37, 99, 235);
-      doc.textWithLink("📍 Google Maps Location", 40, finalY, { url: STORE_MAPS_LINK, align: 'center' });
+      doc.textWithLink("📍 Google Maps Location", 40, finalY, { url: STORE_MAPS_SEARCH, align: 'center' });
 
       return doc;
     }
@@ -731,36 +763,40 @@
       }
 
       const inv = document.getElementById('invNum').value.trim();
-      const phone = document.getElementById('custPhone').value.trim();
+      const custPhone = document.getElementById('custPhone').value.trim();
       const cust = document.getElementById('custName').value.trim() || DEFAULT_CUST;
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
       const dt = document.getElementById('invDate').value;
       const pay = document.getElementById('paymentMode').value;
       const items = getItems();
+      const itemsSummary = formatItemsForWhatsApp(items);
 
       if (mode === 'print') {
-        executeNativePrint(biz, inv, dt, cust, pay, total.toFixed(2), items);
+        executeNativePrint(biz, inv, dt, cust, custPhone, pay, total.toFixed(2), items);
       } else if (mode === 'pdf') {
-        const doc = makePDFObject(biz, inv, dt, cust, pay, total.toFixed(2), items);
+        const doc = makePDFObject(biz, inv, dt, cust, custPhone, pay, total.toFixed(2), items);
         doc.save(`${inv}.pdf`);
       } else if (mode === 'wa') {
-        if (phone.length < 10) {
+        if (custPhone.length < 10) {
           alert('Please enter a valid 10-digit mobile number.');
           return;
         }
+
         const text = encodeURIComponent(
           `Hello ${cust},\n\n` +
           `Thank you for shopping at *${biz}*!\n\n` +
           `🧾 *Invoice:* #${inv}\n` +
           `📅 *Date:* ${dt}\n` +
-          `💳 *Payment:* ${pay}\n` +
+          `📱 *Customer Phone:* +91 ${custPhone}\n` +
+          `💳 *Payment Mode:* ${pay}\n\n` +
+          `🛍️ *Purchased Items:*\n${itemsSummary}\n\n` +
           `💰 *Total Amount:* ₹${total.toFixed(2)}\n\n` +
-          `📍 *Store Location:* ${STORE_ADDRESS}\n` +
-          `🗺️ *Google Maps:* ${STORE_MAPS_LINK}\n` +
-          `📞 *Contact:* ${STORE_PHONE}\n\n` +
-          `Thank you!`
+          `📍 *Store Location:*\n${STORE_ADDRESS}\n` +
+          `🗺️ *Maps:* ${STORE_MAPS_SEARCH}\n` +
+          `📞 *Store Contact:* ${STORE_PHONE}\n\n` +
+          `Thank you for choosing us!`
         );
-        window.open(`https://wa.me/91${phone}?text=${text}`, '_blank');
+        window.open(`https://wa.me/91${custPhone}?text=${text}`, '_blank');
       }
 
       saveRecord();
@@ -772,7 +808,7 @@
       const b = list[idx];
       if (!b) return;
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
-      executeNativePrint(biz, b.invNum, b.date, b.custName, b.payment, b.total, b.items);
+      executeNativePrint(biz, b.invNum, b.date, b.custName, b.phone, b.payment, b.total, b.items);
     }
 
     function pdfPastBill(idx) {
@@ -780,7 +816,7 @@
       const b = list[idx];
       if (!b) return;
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
-      const doc = makePDFObject(biz, b.invNum, b.date, b.custName, b.payment, b.total, b.items);
+      const doc = makePDFObject(biz, b.invNum, b.date, b.custName, b.phone, b.payment, b.total, b.items);
       doc.save(`${b.invNum}.pdf`);
     }
 
@@ -793,17 +829,21 @@
         return;
       }
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
+      const itemsSummary = formatItemsForWhatsApp(b.items);
+
       const text = encodeURIComponent(
         `Hello ${b.custName},\n\n` +
         `Thank you for shopping at *${biz}*!\n\n` +
         `🧾 *Invoice:* #${b.invNum}\n` +
         `📅 *Date:* ${b.date}\n` +
-        `💳 *Payment:* ${b.payment}\n` +
+        `📱 *Customer Phone:* +91 ${b.phone}\n` +
+        `💳 *Payment Mode:* ${b.payment}\n\n` +
+        `🛍️ *Purchased Items:*\n${itemsSummary}\n\n` +
         `💰 *Total Amount:* ₹${b.total}\n\n` +
-        `📍 *Store Location:* ${STORE_ADDRESS}\n` +
-        `🗺️ *Google Maps:* ${STORE_MAPS_LINK}\n` +
-        `📞 *Contact:* ${STORE_PHONE}\n\n` +
-        `Thank you!`
+        `📍 *Store Location:*\n${STORE_ADDRESS}\n` +
+        `🗺️ *Maps:* ${STORE_MAPS_SEARCH}\n` +
+        `📞 *Store Contact:* ${STORE_PHONE}\n\n` +
+        `Thank you for choosing us!`
       );
       window.open(`https://wa.me/91${b.phone}?text=${text}`, '_blank');
     }
@@ -813,6 +853,7 @@
       const inv = data ? data.invNum : document.getElementById('invNum').value;
       const dt = data ? data.date : document.getElementById('invDate').value;
       const cust = data ? data.custName : document.getElementById('custName').value;
+      const custPhone = data ? (data.phone ? '+91 ' + data.phone : 'Not provided') : (document.getElementById('custPhone').value ? '+91 ' + document.getElementById('custPhone').value : 'Not provided');
       const pay = data ? data.payment : document.getElementById('paymentMode').value;
       const tot = data ? data.total : calcTotal();
       const items = data ? data.items : getItems();
@@ -821,6 +862,7 @@
       document.getElementById('pvInv').innerText = inv;
       document.getElementById('pvDate').innerText = dt;
       document.getElementById('pvCust').innerText = cust;
+      document.getElementById('pvCustPhone').innerText = custPhone;
       document.getElementById('pvPay').innerText = pay;
       document.getElementById('pvTot').innerText = tot;
 
@@ -856,7 +898,7 @@
             <div class="flex justify-between items-start">
               <div>
                 <p class="font-extrabold text-slate-900 text-xs sm:text-sm">${b.invNum} • ${b.custName}</p>
-                <p class="text-[10px] text-slate-500">${b.date} • <span class="text-amber-700 font-semibold">${b.payment}</span> ${b.phone ? '• ' + b.phone : ''}</p>
+                <p class="text-[10px] text-slate-500">${b.date} • <span class="text-amber-700 font-semibold">${b.payment}</span> ${b.phone ? '• 📱 +91 ' + b.phone : ''}</p>
               </div>
               <p class="font-black text-amber-700 text-sm">₹${b.total}</p>
             </div>
