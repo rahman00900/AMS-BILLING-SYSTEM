@@ -13,6 +13,8 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-amber-500 selection:text-white pb-28">
@@ -92,15 +94,29 @@
       </div>
     </div>
 
-    <!-- Card 3: Categorized Items Cart (Category -> Code -> Description -> Price) -->
+    <!-- Quick Category Buttons Bar -->
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2.5">
+      <div class="flex justify-between items-center">
+        <div>
+          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">⚡ Quick Categories</span>
+          <span class="text-[10px] text-slate-400">Tap a category to quickly add to bill</span>
+        </div>
+        <button type="button" onclick="openCategoryModal()" class="text-xs text-amber-700 hover:text-amber-800 font-bold transition">
+          ⚙️ Manage Categories
+        </button>
+      </div>
+      <div id="quickCategoryBar" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 text-xs"></div>
+    </div>
+
+    <!-- Card 3: Categorized Items Cart -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100">
         <div>
-          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Items & Categories</span>
-          <span class="text-[10px] text-slate-400">Category • Item Code • Description • Price</span>
+          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Items in Bill</span>
+          <span class="text-[10px] text-slate-400">Category • Code • Description • Price</span>
         </div>
         <button type="button" onclick="addRow()" class="flex items-center gap-1 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-800 border border-amber-200 font-bold px-3 py-1.5 rounded-xl text-xs transition">
-          + Add Item
+          + Add Empty Item
         </button>
       </div>
 
@@ -208,6 +224,40 @@
     </div>
   </div>
 
+  <!-- Category Manager Modal (Add / Edit / Delete Categories) -->
+  <div id="categoryModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700">
+      <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div>
+          <h3 class="font-extrabold text-sm text-slate-900">Manage Categories</h3>
+          <p class="text-[10px] text-slate-400">Add, edit, or delete categories</p>
+        </div>
+        <button type="button" onclick="closeCategoryModal()" class="text-slate-400 text-lg font-bold p-1">×</button>
+      </div>
+      <div class="p-4 space-y-3 overflow-y-auto flex-grow">
+        <!-- Add New Category Form -->
+        <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-200 space-y-2">
+          <p class="font-bold text-amber-900">Add New Category</p>
+          <div class="grid grid-cols-12 gap-2">
+            <input id="newCatName" type="text" placeholder="Category (e.g. Hijab)" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:border-amber-500 font-semibold" />
+            <input id="newCatCode" type="text" placeholder="Code (e.g. HJ-01)" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs outline-none focus:border-amber-500 font-bold" />
+            <input id="newCatPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs outline-none focus:border-amber-500 font-bold" />
+          </div>
+          <input id="newCatDesc" type="text" placeholder="Default Description (e.g. Premium Silk Hijab)" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:border-amber-500" />
+          <button type="button" onclick="addNewCategory()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-2 rounded-xl text-xs transition shadow-xs">
+            + Save Category
+          </button>
+        </div>
+
+        <!-- Editable Category Items List -->
+        <div id="categoryItemsList" class="space-y-2 pt-1"></div>
+      </div>
+      <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-end">
+        <button type="button" onclick="closeCategoryModal()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-xl font-bold">Done</button>
+      </div>
+    </div>
+  </div>
+
   <!-- History Modal -->
   <div id="historyModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-3xl border border-slate-200 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-700">
@@ -240,14 +290,20 @@
     const DEFAULT_CUST = "Dear Customer";
     const DEFAULT_UPI = "9121757822@upi";
 
-    // High-Resolution Gold Boutique Emblem Generated In-Memory (Zero Dependency, 100% Reliable in PDF)
+    const DEFAULT_CATEGORIES = [
+      { name: "Abaya", code: "AB-101", desc: "Black Designer Abaya", price: 1800 },
+      { name: "Handbag", code: "BG-201", desc: "Ladies Shoulder Bag", price: 650 },
+      { name: "Hijab", code: "HJ-301", desc: "Premium Silk Hijab", price: 250 },
+      { name: "Scarf", code: "SC-401", desc: "Printed Cotton Scarf", price: 150 },
+      { name: "Burqa", code: "BQ-501", desc: "Classic Daily Burqa", price: 1200 }
+    ];
+
     function generateBrandLogoBase64() {
       const canvas = document.createElement("canvas");
       canvas.width = 240;
       canvas.height = 240;
       const ctx = canvas.getContext("2d");
 
-      // Circular Badge with Soft Radial Gradient
       const grad = ctx.createRadialGradient(120, 120, 20, 120, 120, 115);
       grad.addColorStop(0, "#fffbeb");
       grad.addColorStop(0.7, "#fef3c7");
@@ -257,7 +313,6 @@
       ctx.arc(120, 120, 110, 0, Math.PI * 2);
       ctx.fill();
 
-      // Outer Gold Rings
       ctx.lineWidth = 6;
       ctx.strokeStyle = "#d97706";
       ctx.stroke();
@@ -268,7 +323,6 @@
       ctx.arc(120, 120, 102, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Brand Typography
       ctx.fillStyle = "#78350f";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -288,8 +342,8 @@
       initSettings();
       initDate();
       initInvoice();
+      renderQuickCategoryBar();
       addRow("Abaya", "AB-101", "Black Designer Abaya", 1, 1800);
-      addRow("Handbag", "BG-201", "Luxury Ladies Shoulder Bag", 1, 650);
     };
 
     function initSettings() {
@@ -370,7 +424,102 @@
       }
     }
 
-    // Dynamic Row with Category, Code, Description, Qty, Price
+    // Category Store Handlers
+    function getCategories() {
+      return JSON.parse(localStorage.getItem('ams_categories') || JSON.stringify(DEFAULT_CATEGORIES));
+    }
+
+    function renderQuickCategoryBar() {
+      const bar = document.getElementById('quickCategoryBar');
+      const cats = getCategories();
+      bar.innerHTML = cats.map((c) => `
+        <button type="button" onclick="quickAddCategoryItem('${c.name}', '${c.code || ''}', '${c.desc || c.name}', ${c.price || 0})" class="shrink-0 bg-slate-100 hover:bg-amber-100 active:scale-95 text-slate-700 font-semibold px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs transition">
+          ${c.name} <span class="font-bold text-amber-700">₹${c.price || 0}</span>
+        </button>
+      `).join('');
+    }
+
+    function quickAddCategoryItem(name, code, desc, price) {
+      const names = document.querySelectorAll('.row-name');
+      const prices = document.querySelectorAll('.row-price');
+      const cats = document.querySelectorAll('.row-cat');
+      const codes = document.querySelectorAll('.row-code');
+
+      if (names.length === 1 && names[0].value.trim() === '' && (prices[0].value === '' || prices[0].value === '0')) {
+        cats[0].value = name;
+        codes[0].value = code;
+        names[0].value = desc;
+        prices[0].value = price;
+        calcTotal();
+        return;
+      }
+      addRow(name, code, desc, 1, price);
+    }
+
+    function openCategoryModal() {
+      renderCategoryManager();
+      document.getElementById('categoryModal').classList.remove('hidden');
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('categoryModal').classList.add('hidden');
+      renderQuickCategoryBar();
+    }
+
+    function renderCategoryManager() {
+      const list = getCategories();
+      const box = document.getElementById('categoryItemsList');
+      box.innerHTML = list.map((c, idx) => `
+        <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 space-y-2">
+          <div class="grid grid-cols-12 gap-2">
+            <input type="text" value="${c.name}" onchange="updateCategory(${idx}, 'name', this.value)" placeholder="Category" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 font-semibold outline-none" />
+            <input type="text" value="${c.code || ''}" onchange="updateCategory(${idx}, 'code', this.value)" placeholder="Code" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-amber-800 font-bold outline-none" />
+            <input type="number" value="${c.price || 0}" onchange="updateCategory(${idx}, 'price', this.value)" placeholder="Price" class="col-span-2 bg-white border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs text-right font-bold text-slate-800 outline-none" />
+            <button type="button" onclick="deleteCategory(${idx})" class="col-span-1 text-rose-600 font-black text-center text-sm hover:bg-rose-50 rounded">×</button>
+          </div>
+          <input type="text" value="${c.desc || ''}" onchange="updateCategory(${idx}, 'desc', this.value)" placeholder="Default Item Description" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1 text-xs text-slate-600 outline-none" />
+        </div>
+      `).join('');
+    }
+
+    function addNewCategory() {
+      const name = document.getElementById('newCatName').value.trim();
+      const code = document.getElementById('newCatCode').value.trim();
+      const price = parseFloat(document.getElementById('newCatPrice').value) || 0;
+      const desc = document.getElementById('newCatDesc').value.trim() || name;
+
+      if (!name) return alert('Please enter category name');
+
+      const cats = getCategories();
+      cats.push({ name, code, desc, price });
+      localStorage.setItem('ams_categories', JSON.stringify(cats));
+
+      document.getElementById('newCatName').value = '';
+      document.getElementById('newCatCode').value = '';
+      document.getElementById('newCatPrice').value = '';
+      document.getElementById('newCatDesc').value = '';
+
+      renderCategoryManager();
+    }
+
+    function updateCategory(idx, field, value) {
+      const cats = getCategories();
+      if (field === 'price') {
+        cats[idx].price = parseFloat(value) || 0;
+      } else {
+        cats[idx][field] = value.trim();
+      }
+      localStorage.setItem('ams_categories', JSON.stringify(cats));
+    }
+
+    function deleteCategory(idx) {
+      const cats = getCategories();
+      cats.splice(idx, 1);
+      localStorage.setItem('ams_categories', JSON.stringify(cats));
+      renderCategoryManager();
+    }
+
+    // Dynamic Invoice Item Rows
     function addRow(category = '', code = '', name = '', qty = 1, price = '') {
       const id = 'row_' + Date.now() + Math.floor(Math.random() * 100);
       const div = document.createElement('div');
@@ -593,7 +742,6 @@
       }, 300);
     }
 
-    // High-End Luxury Boutique PDF with Instant Embedded Logo
     function makePDFObject(biz, inv, dt, cust, custPhone, pay, tot, items) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
@@ -606,7 +754,7 @@
       doc.setFillColor(15, 23, 42);
       doc.rect(0, 0, 80, 30, 'F');
 
-      // 2. Guaranteed In-Memory Gold Emblem Injection
+      // 2. Guaranteed In-Memory Gold Emblem
       try {
         doc.addImage(EMBEDDED_LOGO_BASE64, 'PNG', 32.5, 2.5, 15, 15);
       } catch (e) {}
@@ -671,7 +819,7 @@
 
       let finalY = doc.lastAutoTable.finalY + 4;
 
-      // 6. Grand Total Highlight Box
+      // 6. Grand Total Box
       doc.setFillColor(15, 23, 42);
       doc.roundedRect(5, finalY, 70, 10, 2, 2, 'F');
 
@@ -700,7 +848,7 @@
         }
       }
 
-      // 8. Footer Clean Address
+      // 8. Footer Address
       finalY += 6;
       doc.setFontSize(6);
       doc.setFont(undefined, 'bold');
