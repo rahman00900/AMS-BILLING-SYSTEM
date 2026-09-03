@@ -26,7 +26,7 @@
 </head>
 <body class="bg-[#F8F9FA] text-slate-800 min-h-screen antialiased selection:bg-amber-500 selection:text-white pb-32">
 
-  <div id="loginGateway" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
+  <div id="loginGateway" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
     <div id="loginCard" class="bg-white w-full max-w-sm rounded-[2.5rem] border border-amber-200/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] p-7 text-center space-y-6">
       
       <div class="flex justify-center">
@@ -38,7 +38,7 @@
       <div>
         <span class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-900 text-[10px] font-bold rounded-full uppercase tracking-wider">Store Terminal</span>
         <h2 class="font-extrabold text-xl text-slate-900 tracking-tight mt-2">AMS Bags & Abayas</h2>
-        <p class="text-xs text-slate-400 mt-0.5 font-medium">Enter 4-digit PIN to access POS</p>
+        <p class="text-xs text-slate-400 mt-0.5 font-medium">Enter PIN to access billing</p>
       </div>
 
       <div class="space-y-4">
@@ -48,7 +48,6 @@
           <div id="dot3" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
           <div id="dot4" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
         </div>
-        <input id="loginPinInput" type="password" maxlength="4" class="sr-only" autofocus />
         <p id="loginErrorMsg" class="text-xs text-rose-500 font-bold hidden">Invalid PIN. Try again.</p>
       </div>
 
@@ -149,7 +148,7 @@
       <div class="flex justify-between items-center">
         <div>
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Category Presets</span>
-          <span class="text-[10px] text-slate-400">Tap to populate bill item</span>
+          <span class="text-[10px] text-slate-400">Tap to add directly to items</span>
         </div>
         <button type="button" onclick="openCategoryModal()" class="text-xs font-bold text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-xl transition border border-amber-200">
           ⚙️ Manage
@@ -174,7 +173,7 @@
       <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-amber-950 p-4.5 rounded-3xl text-white flex justify-between items-center shadow-lg mt-4 border border-amber-500/20">
         <div>
           <span class="text-[10px] font-bold uppercase tracking-widest text-amber-200/70 block">Total Due</span>
-          <span class="text-xs text-slate-400 font-medium">All item taxes & rates included</span>
+          <span class="text-xs text-slate-400 font-medium">All item rates included</span>
         </div>
         <div class="text-right">
           <span class="text-3xl font-black text-amber-300 tracking-tight">₹<span id="grandTotal">0.00</span></span>
@@ -405,14 +404,17 @@
       drawLogoToCanvas('navLogoCanvas');
       drawLogoToCanvas('previewLogoCanvas');
       drawLogoToCanvas('loginLogoCanvas');
-      checkAuthSession();
+      
+      // Force Login Screen on Every Load
+      document.getElementById('loginGateway').classList.remove('hidden');
+      clearKeys();
+
       initSettings();
       initDate();
       initInvoice();
       renderQuickCategoryBar();
       addRow("Abaya", "AB-101", "Black Designer Abaya", 1, 1800);
 
-      // Listen to physical keyboard on desktop/tablets
       window.addEventListener('keydown', (e) => {
         if (!document.getElementById('loginGateway').classList.contains('hidden')) {
           if (e.key >= '0' && e.key <= '9') pressKey(e.key);
@@ -422,7 +424,6 @@
       });
     };
 
-    // Modern Keypad Logic with Reactive Dots
     function updatePinDots() {
       for (let i = 1; i <= 4; i++) {
         const dot = document.getElementById('dot' + i);
@@ -457,23 +458,11 @@
       document.getElementById('loginErrorMsg').classList.add('hidden');
     }
 
-    function checkAuthSession() {
-      const isAuth = sessionStorage.getItem('ams_pos_auth') === 'true';
-      const gateway = document.getElementById('loginGateway');
-      if (isAuth) {
-        gateway.classList.add('hidden');
-      } else {
-        gateway.classList.remove('hidden');
-        clearKeys();
-      }
-    }
-
     function verifyPin() {
       const err = document.getElementById('loginErrorMsg');
       const card = document.getElementById('loginCard');
 
       if (enteredPin === TERMINAL_PIN) {
-        sessionStorage.setItem('ams_pos_auth', 'true');
         err.classList.add('hidden');
         document.getElementById('loginGateway').classList.add('hidden');
         clearKeys();
@@ -488,7 +477,6 @@
     }
 
     function lockTerminal() {
-      sessionStorage.removeItem('ams_pos_auth');
       document.getElementById('loginGateway').classList.remove('hidden');
       clearKeys();
     }
