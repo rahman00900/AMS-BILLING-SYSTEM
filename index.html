@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -14,15 +15,23 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 pb-20">
 
-  <header class="bg-indigo-700 text-white shadow sticky top-0 z-20">
+  <header class="bg-slate-900 text-white shadow sticky top-0 z-20 border-b border-amber-500/30">
     <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div>
-        <h1 class="font-bold text-base sm:text-lg leading-tight">AMS Ladies Bags & Abayas</h1>
-        <p class="text-xs text-indigo-200">Billing & Receipt App</p>
+      <div class="flex items-center gap-2.5">
+        <img src="logo.png" alt="AMS Logo" class="w-10 h-10 object-contain rounded-full border border-amber-400 bg-amber-50/10" onerror="this.style.display='none'" />
+        <div>
+          <h1 id="topStoreName" class="font-extrabold text-sm sm:text-base tracking-tight text-amber-200">AMS Ladies Bags & Abayas</h1>
+          <p class="text-[10px] text-slate-400 font-medium">Musheerabad, Hyderabad • 📞 +91 91217 57822</p>
+        </div>
       </div>
-      <button type="button" onclick="showHistory()" class="bg-indigo-800 hover:bg-indigo-900 px-3 py-1.5 rounded-lg text-xs font-bold border border-indigo-500">
-        📋 History
-      </button>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="showHistory()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-700 text-slate-200">
+          📋 History
+        </button>
+        <button type="button" onclick="openSettings()" class="bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg text-xs font-bold border border-slate-700">
+          ⚙️
+        </button>
+      </div>
     </div>
   </header>
 
@@ -32,25 +41,23 @@
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-bold text-slate-500 mb-1">INVOICE NO. ✏️</label>
-          <input id="invNum" type="text" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-bold text-slate-800 focus:bg-white focus:border-indigo-600 outline-none" />
+          <input id="invNum" type="text" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-bold text-slate-800 focus:bg-white focus:border-amber-600 outline-none" />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-500 mb-1">DATE</label>
           <input id="invDate" type="text" class="w-full bg-slate-100 border border-slate-200 rounded-lg p-2 text-sm font-semibold text-slate-600 outline-none" readonly />
         </div>
       </div>
-
-      <div>
-        <label class="block text-xs font-bold text-slate-500 mb-1">STORE NAME</label>
-        <input id="bizName" type="text" value="AMS Ladies Bags and Abayas" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-semibold outline-none" />
-      </div>
     </div>
 
     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="block text-xs font-bold text-slate-500 mb-1">CUSTOMER NAME</label>
-          <input id="custName" type="text" value="Dear Customer" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm outline-none" />
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-xs font-bold text-slate-500">CUSTOMER NAME</label>
+            <span class="text-[10px] text-slate-400 font-medium">🔒 Default in ⚙️</span>
+          </div>
+          <input id="custName" type="text" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm outline-none" />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-500 mb-1">WHATSAPP NUMBER</label>
@@ -70,24 +77,35 @@
       </div>
     </div>
 
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-2">
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">⚡ Quick Items</span>
+        <button type="button" onclick="openPresetModal()" class="text-xs text-amber-600 hover:text-amber-700 font-bold">
+          ⚙️ Manage Presets
+        </button>
+      </div>
+      <div id="quickPresetsBar" class="flex gap-2 overflow-x-auto pb-1 text-xs">
+        </div>
+    </div>
+
     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-3">
       <div class="flex justify-between items-center border-b pb-2">
         <h2 class="text-xs font-bold text-slate-500 uppercase">Items List</h2>
-        <button type="button" onclick="addRow()" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-3 py-1 rounded-lg text-xs">
+        <button type="button" onclick="addRow()" class="bg-amber-50 text-amber-800 hover:bg-amber-100 font-bold px-3 py-1 rounded-lg text-xs border border-amber-200">
           + Add Item
         </button>
       </div>
 
       <div id="itemsBox" class="space-y-2"></div>
 
-      <div class="bg-slate-900 text-white p-4 rounded-xl flex justify-between items-center mt-3">
+      <div class="bg-slate-900 text-white p-4 rounded-xl flex justify-between items-center mt-3 border border-slate-800">
         <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">Grand Total:</span>
-        <span class="text-2xl font-black text-indigo-400">₹<span id="grandTotal">0.00</span></span>
+        <span class="text-2xl font-black text-amber-400">₹<span id="grandTotal">0.00</span></span>
       </div>
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1">
-      <button type="button" onclick="saveOnly()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-2 rounded-xl text-xs col-span-2 sm:col-span-1 shadow">
+      <button type="button" onclick="saveOnly()" class="bg-slate-900 hover:bg-black text-white font-bold py-3 px-2 rounded-xl text-xs col-span-2 sm:col-span-1 shadow border border-amber-500/30">
         💾 Save
       </button>
       <button type="button" onclick="showPreview()" class="bg-white hover:bg-slate-50 border border-slate-300 font-bold py-3 px-2 rounded-xl text-xs shadow-sm">
@@ -109,8 +127,10 @@
   <div id="previewModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl overflow-hidden p-5 space-y-4 text-xs">
       <div class="text-center border-b pb-2">
+        <img src="logo.png" alt="Logo" class="w-12 h-12 mx-auto mb-1 rounded-full object-contain" onerror="this.style.display='none'" />
         <h3 id="pvBiz" class="font-bold text-sm text-slate-900"></h3>
-        <p class="text-slate-400">Retail Bill</p>
+        <p class="text-[10px] text-slate-500">Bangladesh Cloth Market, Musheerabad, Hyd</p>
+        <p class="text-[10px] text-slate-500">📞 +91 91217 57822</p>
       </div>
       <div class="space-y-1">
         <p><strong>Invoice:</strong> <span id="pvInv"></span></p>
@@ -139,11 +159,72 @@
     </div>
   </div>
 
+  <div id="settingsModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden flex flex-col text-xs">
+      <div class="p-4 border-b flex justify-between items-center bg-slate-50">
+        <h3 class="font-bold text-sm text-slate-800">⚙️ Store Settings</h3>
+        <button type="button" onclick="closeSettings()" class="text-slate-400 text-lg font-bold">&times;</button>
+      </div>
+      <div class="p-4 space-y-3">
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">STORE NAME</label>
+          <input id="setBizName" type="text" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold outline-none" />
+        </div>
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">DEFAULT CUSTOMER NAME</label>
+          <input id="setCustName" type="text" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 outline-none" />
+        </div>
+        <div>
+          <label class="block font-bold text-slate-600 mb-1">STORE UPI ID (For Scan & Pay QR)</label>
+          <input id="setUpiId" type="text" placeholder="e.g. 9121757822@upi" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold outline-none" />
+        </div>
+      </div>
+      <div class="p-3 border-t bg-slate-50 flex justify-end gap-2">
+        <button type="button" onclick="closeSettings()" class="bg-slate-200 px-4 py-2 rounded-lg font-bold">Cancel</button>
+        <button type="button" onclick="saveSettings()" class="bg-slate-900 text-white px-4 py-2 rounded-lg font-bold">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="presetsModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[85vh] text-xs">
+      <div class="p-4 border-b flex justify-between items-center bg-slate-50">
+        <h3 class="font-bold text-sm text-slate-800">Manage Quick Items</h3>
+        <button type="button" onclick="closePresetModal()" class="text-slate-400 text-lg font-bold">&times;</button>
+      </div>
+      <div class="p-4 space-y-3 overflow-y-auto flex-grow">
+        <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-200 space-y-2">
+          <p class="font-bold text-amber-900">Add New Quick Item</p>
+          <div class="grid grid-cols-7 gap-2">
+            <input id="newPresetName" type="text" placeholder="Item Name" class="col-span-4 bg-white border border-slate-300 rounded-lg p-2 text-xs outline-none" />
+            <input id="newPresetPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-300 rounded-lg p-2 text-xs outline-none" />
+          </div>
+          <button type="button" onclick="addNewPreset()" class="w-full bg-slate-900 text-white font-bold py-2 rounded-lg text-xs">
+            + Save Preset
+          </button>
+        </div>
+
+        <div id="presetItemsList" class="space-y-1.5 pt-2"></div>
+      </div>
+      <div class="p-3 border-t bg-slate-50 flex justify-end">
+        <button type="button" onclick="closePresetModal()" class="bg-slate-200 px-4 py-1.5 rounded-lg font-bold">Done</button>
+      </div>
+    </div>
+  </div>
+
   <div id="historyModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden max-h-[85vh] flex flex-col">
       <div class="p-4 border-b flex justify-between items-center bg-slate-50">
-        <h3 class="font-bold text-sm">Sales History</h3>
-        <button type="button" onclick="closeHistory()" class="text-slate-400 text-lg font-bold">&times;</button>
+        <div>
+          <h3 class="font-bold text-sm">Sales History</h3>
+          <p class="text-[10px] text-slate-500">All saved customer bills</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-xs font-bold">
+            📥 Export CSV
+          </button>
+          <button type="button" onclick="closeHistory()" class="text-slate-400 text-lg font-bold">&times;</button>
+        </div>
       </div>
       <div id="historyContent" class="p-4 overflow-y-auto space-y-3 flex-grow text-xs"></div>
       <div class="p-3 border-t bg-slate-50 flex justify-between">
@@ -154,13 +235,83 @@
   </div>
 
   <iframe id="printFrame" class="hidden" style="position:fixed;right:0;bottom:0;width:0;height:0;border:0;"></iframe>
+  <div id="qrHiddenHolder" style="display:none;"></div>
 
   <script>
+    const DEFAULT_STORE = "AMS Ladies Bags and Abayas";
+    const STORE_ADDRESS = "Bangladesh Cloth Market, Musheerabad, Hyderabad";
+    const STORE_PHONE = "+91 91217 57822";
+    const STORE_MAPS_LINK = "https://maps.app.goo.gl/k9e4d5z7m3gX7XW88";
+    const DEFAULT_CUST = "Dear Customer";
+    const DEFAULT_UPI = "9121757822@upi";
+    const DEFAULT_PRESETS = [
+      { name: "Abaya Classic", price: 1200 },
+      { name: "Designer Abaya", price: 1800 },
+      { name: "Ladies Handbag", price: 650 },
+      { name: "Shoulder Bag", price: 450 },
+      { name: "Premium Hijab", price: 250 }
+    ];
+
+    let cachedLogoBase64 = null;
+
     window.onload = function() {
+      initSettings();
       initDate();
       initInvoice();
+      renderQuickPresetsBar();
       addRow();
+      preloadLogoBase64();
     };
+
+    function preloadLogoBase64() {
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = function() {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        cachedLogoBase64 = canvas.toDataURL("image/png");
+      };
+      img.src = "logo.png";
+    }
+
+    function initSettings() {
+      const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
+      const cust = localStorage.getItem('ams_default_cust') || DEFAULT_CUST;
+      const upi = localStorage.getItem('ams_upi') || DEFAULT_UPI;
+
+      document.getElementById('topStoreName').innerText = biz;
+      document.getElementById('custName').value = cust;
+      document.getElementById('setBizName').value = biz;
+      document.getElementById('setCustName').value = cust;
+      document.getElementById('setUpiId').value = upi;
+    }
+
+    function openSettings() {
+      document.getElementById('settingsModal').classList.remove('hidden');
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
+
+    function saveSettings() {
+      const biz = document.getElementById('setBizName').value.trim() || DEFAULT_STORE;
+      const cust = document.getElementById('setCustName').value.trim() || DEFAULT_CUST;
+      const upi = document.getElementById('setUpiId').value.trim() || DEFAULT_UPI;
+
+      localStorage.setItem('ams_biz', biz);
+      localStorage.setItem('ams_default_cust', cust);
+      localStorage.setItem('ams_upi', upi);
+
+      document.getElementById('topStoreName').innerText = biz;
+      document.getElementById('custName').value = cust;
+
+      closeSettings();
+      alert('Settings updated successfully!');
+    }
 
     function initDate() {
       const d = new Date();
@@ -190,15 +341,99 @@
       }
     }
 
-    function addRow() {
+    function getPresets() {
+      return JSON.parse(localStorage.getItem('ams_presets') || JSON.stringify(DEFAULT_PRESETS));
+    }
+
+    function renderQuickPresetsBar() {
+      const bar = document.getElementById('quickPresetsBar');
+      const presets = getPresets();
+      bar.innerHTML = presets.map((p, idx) => `
+        <button type="button" onclick="addPresetRow('${p.name}', ${p.price})" class="shrink-0 bg-slate-200/80 hover:bg-amber-100 text-slate-800 hover:text-amber-900 font-semibold px-2.5 py-1 rounded-lg border border-slate-300 transition">
+          ${p.name} <span class="font-bold text-amber-700">₹${p.price}</span>
+        </button>
+      `).join('');
+    }
+
+    function addPresetRow(name, price) {
+      const names = document.querySelectorAll('.row-name');
+      const qtys = document.querySelectorAll('.row-qty');
+      const prices = document.querySelectorAll('.row-price');
+
+      if (names.length === 1 && names[0].value.trim() === '' && (prices[0].value === '' || prices[0].value === '0')) {
+        names[0].value = name;
+        qtys[0].value = '1';
+        prices[0].value = price;
+        calcTotal();
+        return;
+      }
+
+      addRow(name, 1, price);
+    }
+
+    function openPresetModal() {
+      renderPresetManager();
+      document.getElementById('presetsModal').classList.remove('hidden');
+    }
+
+    function closePresetModal() {
+      document.getElementById('presetsModal').classList.add('hidden');
+      renderQuickPresetsBar();
+    }
+
+    function renderPresetManager() {
+      const list = getPresets();
+      const box = document.getElementById('presetItemsList');
+      box.innerHTML = list.map((p, idx) => `
+        <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
+          <input type="text" value="${p.name}" onchange="updatePreset(${idx}, 'name', this.value)" class="w-1/2 bg-white border border-slate-300 rounded p-1.5 text-xs font-semibold outline-none" />
+          <div class="flex items-center w-1/3 bg-white border border-slate-300 rounded px-1.5">
+            <span class="text-slate-400">₹</span>
+            <input type="number" value="${p.price}" onchange="updatePreset(${idx}, 'price', this.value)" class="w-full p-1.5 text-xs font-bold outline-none" />
+          </div>
+          <button type="button" onclick="deletePreset(${idx})" class="text-rose-600 font-bold px-2 py-1 hover:bg-rose-50 rounded">&times;</button>
+        </div>
+      `).join('');
+    }
+
+    function addNewPreset() {
+      const name = document.getElementById('newPresetName').value.trim();
+      const price = parseFloat(document.getElementById('newPresetPrice').value) || 0;
+      if (!name) return alert('Enter item name');
+      const presets = getPresets();
+      presets.push({ name, price });
+      localStorage.setItem('ams_presets', JSON.stringify(presets));
+      document.getElementById('newPresetName').value = '';
+      document.getElementById('newPresetPrice').value = '';
+      renderPresetManager();
+    }
+
+    function updatePreset(idx, field, value) {
+      const presets = getPresets();
+      if (field === 'price') {
+        presets[idx].price = parseFloat(value) || 0;
+      } else {
+        presets[idx].name = value.trim() || 'Item';
+      }
+      localStorage.setItem('ams_presets', JSON.stringify(presets));
+    }
+
+    function deletePreset(idx) {
+      const presets = getPresets();
+      presets.splice(idx, 1);
+      localStorage.setItem('ams_presets', JSON.stringify(presets));
+      renderPresetManager();
+    }
+
+    function addRow(name = '', qty = 1, price = '') {
       const id = 'row_' + Date.now();
       const div = document.createElement('div');
       div.className = 'grid grid-cols-12 gap-2 items-center';
       div.id = id;
       div.innerHTML = `
-        <input type="text" placeholder="Item Name" class="row-name col-span-6 bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs outline-none" />
-        <input type="number" placeholder="Qty" value="1" min="1" oninput="calcTotal()" class="row-qty col-span-2 bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-center outline-none" />
-        <input type="number" placeholder="Price" min="0" oninput="calcTotal()" class="row-price col-span-3 bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-right outline-none" />
+        <input type="text" placeholder="Item Name" value="${name}" class="row-name col-span-6 bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs outline-none" />
+        <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="calcTotal()" class="row-qty col-span-2 bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-center outline-none" />
+        <input type="number" placeholder="Price" value="${price}" min="0" oninput="calcTotal()" class="row-price col-span-3 bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs text-right outline-none" />
         <button type="button" onclick="removeRow('${id}')" class="col-span-1 text-slate-400 hover:text-rose-600 font-bold text-center text-sm">&times;</button>
       `;
       document.getElementById('itemsBox').appendChild(div);
@@ -240,7 +475,7 @@
       const total = calcTotal();
       const items = getItems();
       const invNum = document.getElementById('invNum').value.trim();
-      const custName = document.getElementById('custName').value.trim() || 'Dear Customer';
+      const custName = document.getElementById('custName').value.trim() || DEFAULT_CUST;
       const phone = document.getElementById('custPhone').value.trim();
       const date = document.getElementById('invDate').value;
       const payment = document.getElementById('paymentMode').value;
@@ -257,14 +492,14 @@
       document.getElementById('itemsBox').innerHTML = '';
       addRow();
       document.getElementById('custPhone').value = '';
-      document.getElementById('custName').value = 'Dear Customer';
+      document.getElementById('custName').value = localStorage.getItem('ams_default_cust') || DEFAULT_CUST;
       calcTotal();
     }
 
     function saveOnly() {
       const total = parseFloat(calcTotal());
       if (total <= 0) {
-        alert('Please enter a price before saving.');
+        alert('Please enter an item price before saving.');
         return;
       }
       saveRecord();
@@ -272,14 +507,35 @@
       resetInputs();
     }
 
-    // Direct Browser Printing (Eliminates mobile popup blockers)
+    function generateUpiQrDataUrl(amount) {
+      const upiId = localStorage.getItem('ams_upi') || DEFAULT_UPI;
+      const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(biz)}&am=${encodeURIComponent(amount)}&cu=INR`;
+
+      const holder = document.getElementById('qrHiddenHolder');
+      holder.innerHTML = '';
+      new QRCode(holder, {
+        text: upiUrl,
+        width: 120,
+        height: 120,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      const qrCanvas = holder.querySelector('canvas');
+      if (qrCanvas) {
+        return qrCanvas.toDataURL("image/png");
+      }
+      return null;
+    }
+
     function executeNativePrint(biz, inv, dt, cust, pay, tot, items) {
+      const qrDataUrl = generateUpiQrDataUrl(tot);
       const rowsHtml = (items || []).map(it => `
         <tr>
-          <td style="padding: 4px 0; border-bottom: 1px dashed #ddd;">${it.name}</td>
-          <td style="padding: 4px 0; border-bottom: 1px dashed #ddd; text-align: center;">${it.qty}</td>
-          <td style="padding: 4px 0; border-bottom: 1px dashed #ddd; text-align: right;">Rs. ${it.price}</td>
-          <td style="padding: 4px 0; border-bottom: 1px dashed #ddd; text-align: right;">Rs. ${it.total}</td>
+          <td style="padding: 5px 0; border-bottom: 1px dashed #e2e8f0;">${it.name}</td>
+          <td style="padding: 5px 0; border-bottom: 1px dashed #e2e8f0; text-align: center;">${it.qty}</td>
+          <td style="padding: 5px 0; border-bottom: 1px dashed #e2e8f0; text-align: right;">₹${it.price}</td>
+          <td style="padding: 5px 0; border-bottom: 1px dashed #e2e8f0; text-align: right; font-weight: bold;">₹${it.total}</td>
         </tr>
       `).join('');
 
@@ -289,20 +545,28 @@
         <head>
           <title>${inv}</title>
           <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 12px; margin: 0; color: #111; font-size: 12px; }
-            .biz { font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 4px; }
-            .sub { text-align: center; font-size: 10px; margin-bottom: 12px; color: #555; }
-            .info { margin-bottom: 12px; line-height: 1.4; }
-            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 12px; }
-            th { text-align: left; border-bottom: 1px solid #000; padding: 4px 0; }
-            .tot-box { border-top: 1px dashed #000; padding-top: 8px; font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; }
-            .footer { text-align: center; margin-top: 18px; font-size: 10px; color: #666; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 15px; margin: 0 auto; max-width: 380px; color: #1e293b; font-size: 12px; }
+            .header { text-align: center; border-bottom: 2px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
+            .logo { width: 64px; height: 64px; border-radius: 50%; object-fit: contain; margin: 0 auto 6px auto; display: block; }
+            .biz { font-size: 16px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin-bottom: 2px; }
+            .sub { font-size: 10px; color: #64748b; line-height: 1.4; }
+            .meta { margin-bottom: 12px; font-size: 11px; line-height: 1.5; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 11px; }
+            th { text-align: left; padding: 6px 0; border-bottom: 1px solid #0f172a; text-transform: uppercase; font-size: 10px; color: #475569; }
+            .tot-box { border-top: 2px dashed #94a3b8; padding-top: 10px; font-size: 15px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+            .qr-sec { text-align: center; margin-top: 18px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
+            .qr-sec img { width: 100px; height: 100px; margin: 0 auto; display: block; }
+            .footer { text-align: center; margin-top: 14px; font-size: 10px; color: #64748b; line-height: 1.4; }
           </style>
         </head>
         <body>
-          <div class="biz">${biz}</div>
-          <div class="sub">Retail Sales Receipt</div>
-          <div class="info">
+          <div class="header">
+            <img src="logo.png" alt="Logo" class="logo" onerror="this.style.display='none'" />
+            <div class="biz">${biz}</div>
+            <div class="sub">${STORE_ADDRESS}</div>
+            <div class="sub">Phone: ${STORE_PHONE}</div>
+          </div>
+          <div class="meta">
             <div><strong>Invoice:</strong> ${inv}</div>
             <div><strong>Date:</strong> ${dt}</div>
             <div><strong>Customer:</strong> ${cust}</div>
@@ -320,10 +584,21 @@
             <tbody>${rowsHtml}</tbody>
           </table>
           <div class="tot-box">
-            <span>Grand Total:</span>
-            <span>Rs. ${tot}</span>
+            <span>GRAND TOTAL</span>
+            <span>₹${tot}</span>
           </div>
-          <div class="footer">Thank you for your visit!</div>
+
+          ${qrDataUrl ? `
+            <div class="qr-sec">
+              <p style="font-size: 10px; font-weight: bold; margin: 0 0 6px 0;">SCAN TO PAY (UPI)</p>
+              <img src="${qrDataUrl}" alt="UPI QR" />
+            </div>
+          ` : ''}
+
+          <div class="footer">
+            <p>Thank you for shopping with us!</p>
+            <p style="margin-top: 4px;">📍 Google Maps: ${STORE_MAPS_LINK}</p>
+          </div>
         </body>
         </html>
       `;
@@ -340,7 +615,6 @@
           frame.contentWindow.focus();
           frame.contentWindow.print();
         } catch (e) {
-          // Fallback if cross-origin iframe focus fails on older WebViews
           const w = window.open('', '_blank');
           w.document.write(printHtml);
           w.document.close();
@@ -348,192 +622,35 @@
           w.print();
           w.close();
         }
-      }, 250);
+      }, 300);
     }
 
+    // High-End Branded PDF Slip
     function makePDFObject(biz, inv, dt, cust, pay, tot, items) {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      doc.setFontSize(16);
-      doc.text(biz, 14, 20);
-      doc.setFontSize(10);
-      doc.text(`Invoice: ${inv}`, 14, 28);
-      doc.text(`Date: ${dt}`, 14, 34);
-      doc.text(`Customer: ${cust}`, 14, 40);
-      doc.text(`Payment: ${pay}`, 14, 46);
-
-      const rows = (items || []).map(it => [it.name, it.qty, `Rs. ${it.price}`, `Rs. ${it.total}`]);
-      doc.autoTable({
-        startY: 52,
-        head: [['Item', 'Qty', 'Price', 'Total']],
-        body: rows,
-        theme: 'grid'
+      const doc = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: [80, 220]
       });
 
-      const y = doc.lastAutoTable.finalY + 10;
-      doc.setFontSize(12);
-      doc.text(`Total Amount: Rs. ${tot}`, 14, y);
-      return doc;
-    }
+      // Top Luxury Header Accent
+      doc.setFillColor(15, 23, 42); // Elegant slate-900
+      doc.rect(0, 0, 80, 24, 'F');
 
-    function runBill(mode) {
-      const total = parseFloat(calcTotal());
-      if (total <= 0) {
-        alert('Please enter a price first.');
-        return;
+      // Add logo in PDF if cached
+      if (cachedLogoBase64) {
+        try {
+          doc.addImage(cachedLogoBase64, 'PNG', 33, 2, 14, 14);
+        } catch(e) {}
       }
 
-      const inv = document.getElementById('invNum').value.trim();
-      const phone = document.getElementById('custPhone').value.trim();
-      const cust = document.getElementById('custName').value.trim() || 'Dear Customer';
-      const biz = document.getElementById('bizName').value.trim() || 'AMS Ladies Bags and Abayas';
-      const dt = document.getElementById('invDate').value;
-      const pay = document.getElementById('paymentMode').value;
-      const items = getItems();
+      doc.setTextColor(253, 230, 138); // Warm Gold text
+      doc.setFontSize(8.5);
+      doc.setFont(undefined, 'bold');
+      doc.text(biz, 40, cachedLogoBase64 ? 19 : 12, { align: 'center' });
 
-      if (mode === 'print') {
-        executeNativePrint(biz, inv, dt, cust, pay, total.toFixed(2), items);
-      } else if (mode === 'pdf') {
-        const doc = makePDFObject(biz, inv, dt, cust, pay, total.toFixed(2), items);
-        doc.save(`${inv}.pdf`);
-      } else if (mode === 'wa') {
-        if (phone.length < 10) {
-          alert('Please enter a valid 10-digit mobile number.');
-          return;
-        }
-        const text = encodeURIComponent(
-          `Hello ${cust},\n\n` +
-          `Thank you for choosing *${biz}*.\n` +
-          `Your invoice *#${inv}* for *₹${total.toFixed(2)}* (${pay}) on ${dt} has been generated.\n\n` +
-          `Thank you!`
-        );
-        window.open(`https://wa.me/91${phone}?text=${text}`, '_blank');
-      }
-
-      saveRecord();
-      resetInputs();
-    }
-
-    // Past Bill Print
-    function printPastBill(idx) {
-      const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
-      const b = list[idx];
-      if (!b) return;
-      const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
-      executeNativePrint(biz, b.invNum, b.date, b.custName, b.payment, b.total, b.items);
-    }
-
-    function pdfPastBill(idx) {
-      const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
-      const b = list[idx];
-      if (!b) return;
-      const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
-      const doc = makePDFObject(biz, b.invNum, b.date, b.custName, b.payment, b.total, b.items);
-      doc.save(`${b.invNum}.pdf`);
-    }
-
-    function waPastBill(idx) {
-      const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
-      const b = list[idx];
-      if (!b) return;
-      if (!b.phone || b.phone.length < 10) {
-        alert('No 10-digit phone number was saved with this bill.');
-        return;
-      }
-      const biz = document.getElementById('bizName').value || 'AMS Ladies Bags and Abayas';
-      const text = encodeURIComponent(
-        `Hello ${b.custName},\n\n` +
-        `Thank you for choosing *${biz}*.\n` +
-        `Your invoice *#${b.invNum}* for *₹${b.total}* (${b.payment}) on ${b.date} has been generated.\n\n` +
-        `Thank you!`
-      );
-      window.open(`https://wa.me/91${b.phone}?text=${text}`, '_blank');
-    }
-
-    function showPreview(data) {
-      const biz = document.getElementById('bizName').value;
-      const inv = data ? data.invNum : document.getElementById('invNum').value;
-      const dt = data ? data.date : document.getElementById('invDate').value;
-      const cust = data ? data.custName : document.getElementById('custName').value;
-      const pay = data ? data.payment : document.getElementById('paymentMode').value;
-      const tot = data ? data.total : calcTotal();
-      const items = data ? data.items : getItems();
-
-      document.getElementById('pvBiz').innerText = biz;
-      document.getElementById('pvInv').innerText = inv;
-      document.getElementById('pvDate').innerText = dt;
-      document.getElementById('pvCust').innerText = cust;
-      document.getElementById('pvPay').innerText = pay;
-      document.getElementById('pvTot').innerText = tot;
-
-      const tb = document.getElementById('pvList');
-      tb.innerHTML = '';
-      (items || []).forEach(it => {
-        tb.innerHTML += `
-          <tr class="border-b">
-            <td class="py-1">${it.name}</td>
-            <td class="py-1 text-center">${it.qty}</td>
-            <td class="py-1 text-right">₹${it.price}</td>
-            <td class="py-1 text-right font-bold">₹${it.total}</td>
-          </tr>
-        `;
-      });
-
-      document.getElementById('previewModal').classList.remove('hidden');
-    }
-
-    function closePreview() {
-      document.getElementById('previewModal').classList.add('hidden');
-    }
-
-    function showHistory() {
-      const box = document.getElementById('historyContent');
-      const list = JSON.parse(localStorage.getItem('ams_history') || '[]');
-
-      if (list.length === 0) {
-        box.innerHTML = '<p class="text-center text-slate-400 py-6">No bills recorded yet.</p>';
-      } else {
-        box.innerHTML = list.map((b, idx) => `
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-            <div class="flex justify-between items-start">
-              <div>
-                <p class="font-bold text-slate-800 text-sm">${b.invNum} • ${b.custName}</p>
-                <p class="text-[11px] text-slate-500">${b.date} • ${b.payment} ${b.phone ? '• 📱 +91 ' + b.phone : ''}</p>
-              </div>
-              <p class="font-black text-indigo-700 text-sm">₹${b.total}</p>
-            </div>
-            <div class="grid grid-cols-4 gap-1 pt-1 border-t border-slate-200">
-              <button type="button" onclick='showPreview(${JSON.stringify(b)})' class="bg-white hover:bg-slate-100 border border-slate-300 py-1.5 rounded-lg font-bold text-[10px] text-center shadow-xs">
-                👁️ View
-              </button>
-              <button type="button" onclick='printPastBill(${idx})' class="bg-white hover:bg-slate-100 border border-slate-300 py-1.5 rounded-lg font-bold text-[10px] text-center shadow-xs">
-                🖨️ Print
-              </button>
-              <button type="button" onclick='pdfPastBill(${idx})' class="bg-white hover:bg-slate-100 border border-slate-300 py-1.5 rounded-lg font-bold text-[10px] text-center shadow-xs">
-                📄 PDF
-              </button>
-              <button type="button" onclick='waPastBill(${idx})' class="bg-emerald-600 hover:bg-emerald-700 text-white py-1.5 rounded-lg font-bold text-[10px] text-center shadow-xs">
-                💬 WA
-              </button>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      document.getElementById('historyModal').classList.remove('hidden');
-    }
-
-    function closeHistory() {
-      document.getElementById('historyModal').classList.add('hidden');
-    }
-
-    function wipeHistory() {
-      if (confirm('Delete all history?')) {
-        localStorage.removeItem('ams_history');
-        showHistory();
-      }
-    }
-  </script>
-</body>
-</html>
+      doc.setTextColor(203, 213, 225);
+      doc.setFontSize(5.5);
+      doc.setFont(undefined, 'normal');
+      doc.text("Musheerabad, Hyderabad • Ph: +91 91217 57822", 40, cachedLogoBase64 ?
