@@ -3,37 +3,96 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AMS Ladies Bags and Abayas</title>
+  <title>AMS Ladies Bags & Abayas - Modern POS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .shake-animate { animation: shake 0.35s cubic-bezier(.36,.07,.19,.97) both; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen antialiased selection:bg-amber-500 selection:text-white pb-28">
+<body class="bg-[#F8F9FA] text-slate-800 min-h-screen antialiased selection:bg-amber-500 selection:text-white pb-32">
 
-  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/80 shadow-xs">
-    <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <canvas id="navLogoCanvas" width="80" height="80" class="w-10 h-10 rounded-2xl border border-amber-300 shadow-xs"></canvas>
-        <div>
-          <h1 id="topStoreName" class="font-extrabold text-sm sm:text-base tracking-tight text-slate-900 leading-tight">AMS Bags & Abayas</h1>
-          <p class="text-[10px] text-amber-700 font-semibold">Musheerabad, HYD • +91 91217 57822</p>
+  <div id="loginGateway" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
+    <div id="loginCard" class="bg-white w-full max-w-sm rounded-[2.5rem] border border-amber-200/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] p-7 text-center space-y-6">
+      
+      <div class="flex justify-center">
+        <div class="relative p-1 rounded-3xl bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 shadow-md">
+          <canvas id="loginLogoCanvas" width="100" height="100" class="w-20 h-20 rounded-[1.3rem]"></canvas>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <button type="button" onclick="showHistory()" class="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 active:scale-95 px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-700 shadow-xs transition">
+
+      <div>
+        <span class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-900 text-[10px] font-bold rounded-full uppercase tracking-wider">Store Terminal</span>
+        <h2 class="font-extrabold text-xl text-slate-900 tracking-tight mt-2">AMS Bags & Abayas</h2>
+        <p class="text-xs text-slate-400 mt-0.5 font-medium">Enter 4-digit PIN to access POS</p>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex justify-center items-center gap-3 py-2">
+          <div id="dot1" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
+          <div id="dot2" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
+          <div id="dot3" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
+          <div id="dot4" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
+        </div>
+        <input id="loginPinInput" type="password" maxlength="4" class="sr-only" autofocus />
+        <p id="loginErrorMsg" class="text-xs text-rose-500 font-bold hidden">Invalid PIN. Try again.</p>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 max-w-[240px] mx-auto pt-1">
+        <button type="button" onclick="pressKey('1')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">1</button>
+        <button type="button" onclick="pressKey('2')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">2</button>
+        <button type="button" onclick="pressKey('3')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">3</button>
+        <button type="button" onclick="pressKey('4')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">4</button>
+        <button type="button" onclick="pressKey('5')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">5</button>
+        <button type="button" onclick="pressKey('6')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">6</button>
+        <button type="button" onclick="pressKey('7')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">7</button>
+        <button type="button" onclick="pressKey('8')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">8</button>
+        <button type="button" onclick="pressKey('9')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">9</button>
+        <button type="button" onclick="clearKeys()" class="h-14 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-600 font-semibold text-xs transition">CLR</button>
+        <button type="button" onclick="pressKey('0')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">0</button>
+        <button type="button" onclick="backspaceKey()" class="h-14 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold text-sm transition">⌫</button>
+      </div>
+
+    </div>
+  </div>
+
+  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-slate-200/80 shadow-xs">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="p-0.5 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 shadow-xs">
+          <canvas id="navLogoCanvas" width="80" height="80" class="w-10 h-10 rounded-[14px]"></canvas>
+        </div>
+        <div>
+          <h1 id="topStoreName" class="font-bold text-sm sm:text-base tracking-tight text-slate-900 leading-tight">AMS Bags & Abayas</h1>
+          <p class="text-[10px] font-semibold text-amber-700 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+            Musheerabad, HYD • +91 91217 57822
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button type="button" onclick="showHistory()" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 active:scale-95 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 transition border border-slate-200">
           📋 Records
         </button>
-        <button type="button" onclick="openSettings()" class="bg-slate-100 hover:bg-slate-200 active:scale-95 p-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-700 shadow-xs transition">
+        <button type="button" onclick="openSettings()" class="bg-slate-100 hover:bg-slate-200 active:scale-95 p-2 rounded-xl text-xs font-semibold text-slate-700 transition border border-slate-200">
           ⚙️
+        </button>
+        <button type="button" onclick="lockTerminal()" title="Lock Screen" class="bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-800 p-2 rounded-xl text-xs font-bold border border-amber-200 transition">
+          🔒
         </button>
       </div>
     </div>
@@ -41,44 +100,44 @@
 
   <main class="max-w-2xl mx-auto px-4 py-4 space-y-4">
 
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+    <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Invoice No. ✏️</label>
-          <input id="invNum" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-amber-800 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition" />
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Invoice ID ✏️</label>
+          <input id="invNum" type="text" class="w-full bg-slate-50/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-sm font-bold text-amber-900 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition" />
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Date</label>
-          <input id="invDate" type="text" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-500 outline-none select-none" readonly />
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Date</label>
+          <input id="invDate" type="text" class="w-full bg-slate-100/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-sm font-semibold text-slate-500 outline-none select-none" readonly />
         </div>
       </div>
     </div>
 
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3.5">
+    <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <div class="flex justify-between items-center mb-1.5">
-            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Customer Name</label>
-            <span class="text-[10px] text-amber-600 font-medium">Default in ⚙️</span>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer Name</label>
+            <span class="text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">Default in ⚙️</span>
           </div>
-          <input id="custName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition" />
+          <input id="custName" type="text" class="w-full bg-slate-50/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition" />
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Customer Number</label>
-          <div class="flex rounded-xl overflow-hidden border border-slate-200 focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/20 transition">
-            <span class="inline-flex items-center px-3 bg-slate-100 text-slate-600 text-xs font-bold border-r border-slate-200">+91</span>
-            <input id="custPhone" type="tel" maxlength="10" placeholder="10-digit number" class="w-full bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 outline-none focus:bg-white" />
+          <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Customer Number</label>
+          <div class="flex rounded-2xl overflow-hidden border border-slate-200 focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 transition">
+            <span class="inline-flex items-center px-3.5 bg-slate-100 text-slate-500 text-xs font-bold border-r border-slate-200">+91</span>
+            <input id="custPhone" type="tel" maxlength="10" placeholder="10-digit number" class="w-full bg-slate-50/70 px-3.5 py-2 text-sm font-semibold text-slate-800 outline-none focus:bg-white" />
           </div>
         </div>
       </div>
 
       <div>
-        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Payment Mode</label>
-        <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200">
-          <button type="button" id="btnCash" onclick="setPaymentMode('Cash')" class="py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-amber-500 text-white shadow-xs transition">
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Payment Method</label>
+        <div class="grid grid-cols-2 gap-2 bg-slate-100/80 p-1 rounded-2xl border border-slate-200">
+          <button type="button" id="btnCash" onclick="setPaymentMode('Cash')" class="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-xs transition">
             <span>💵</span> Cash
           </button>
-          <button type="button" id="btnOnline" onclick="setPaymentMode('Online / UPI')" class="py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 transition">
+          <button type="button" id="btnOnline" onclick="setPaymentMode('Online / UPI')" class="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 transition">
             <span>📱</span> PhonePe / UPI
           </button>
         </div>
@@ -86,74 +145,74 @@
       </div>
     </div>
 
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2.5">
+    <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-xs space-y-2.5">
       <div class="flex justify-between items-center">
         <div>
-          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">⚡ Quick Categories</span>
-          <span class="text-[10px] text-slate-400">Tap to add categorized items directly</span>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Category Presets</span>
+          <span class="text-[10px] text-slate-400">Tap to populate bill item</span>
         </div>
-        <button type="button" onclick="openCategoryModal()" class="text-xs text-amber-700 hover:text-amber-800 font-bold transition">
-          ⚙️ Manage Categories
+        <button type="button" onclick="openCategoryModal()" class="text-xs font-bold text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-xl transition border border-amber-200">
+          ⚙️ Manage
         </button>
       </div>
       <div id="quickCategoryBar" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 text-xs"></div>
     </div>
 
-    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+    <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100">
         <div>
-          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Items in Bill</span>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Billed Items</span>
           <span class="text-[10px] text-slate-400">Category • Code • Description • Price</span>
         </div>
-        <button type="button" onclick="addRow()" class="flex items-center gap-1 bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-800 border border-amber-200 font-bold px-3 py-1.5 rounded-xl text-xs transition">
-          + Add Empty Item
+        <button type="button" onclick="addRow()" class="flex items-center gap-1 bg-slate-900 hover:bg-black active:scale-95 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition shadow-xs">
+          + Add Item
         </button>
       </div>
 
       <div id="itemsBox" class="space-y-3"></div>
 
-      <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 p-4 rounded-2xl text-white flex justify-between items-center shadow-sm mt-4">
+      <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-amber-950 p-4.5 rounded-3xl text-white flex justify-between items-center shadow-lg mt-4 border border-amber-500/20">
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-widest text-amber-100 block">Grand Total</span>
-          <span class="text-xs text-amber-50 font-medium">All item totals included</span>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-amber-200/70 block">Total Due</span>
+          <span class="text-xs text-slate-400 font-medium">All item taxes & rates included</span>
         </div>
         <div class="text-right">
-          <span class="text-2xl sm:text-3xl font-black text-white tracking-tight">₹<span id="grandTotal">0.00</span></span>
+          <span class="text-3xl font-black text-amber-300 tracking-tight">₹<span id="grandTotal">0.00</span></span>
         </div>
       </div>
     </div>
 
   </main>
 
-  <div class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 z-30 shadow-lg">
-    <div class="max-w-2xl mx-auto grid grid-cols-5 gap-2">
-      <button type="button" onclick="saveOnly()" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black py-3 rounded-xl text-xs flex flex-col items-center justify-center transition shadow-xs">
+  <div class="fixed bottom-3 inset-x-3 z-30 max-w-xl mx-auto">
+    <div class="bg-white/90 backdrop-blur-xl border border-slate-200/90 shadow-2xl p-2 rounded-3xl grid grid-cols-5 gap-1.5">
+      <button type="button" onclick="saveOnly()" class="bg-slate-900 hover:bg-black active:scale-95 text-white font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-xs">
         <span>💾</span> Save
       </button>
-      <button type="button" onclick="showPreview()" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 font-bold py-3 rounded-xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="showPreview()" class="bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-700 border border-slate-200 font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
         <span>👁️</span> View
       </button>
-      <button type="button" onclick="runBill('print')" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 font-bold py-3 rounded-xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="runBill('print')" class="bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-700 border border-slate-200 font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
         <span>🖨️</span> Print
       </button>
-      <button type="button" onclick="runBill('pdf')" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 font-bold py-3 rounded-xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="runBill('pdf')" class="bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-700 border border-slate-200 font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
         <span>📄</span> PDF
       </button>
-      <button type="button" onclick="runBill('wa')" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black py-3 rounded-xl text-xs flex flex-col items-center justify-center transition shadow-xs">
+      <button type="button" onclick="runBill('wa')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-md">
         <span>💬</span> WhatsApp
       </button>
     </div>
   </div>
 
-  <div id="previewModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl border border-slate-200 shadow-2xl overflow-hidden p-5 space-y-4 text-xs text-slate-700">
+  <div id="previewModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden p-6 space-y-4 text-xs text-slate-700">
       <div class="text-center border-b border-slate-100 pb-3">
         <canvas id="previewLogoCanvas" width="80" height="80" class="w-14 h-14 mx-auto mb-2 rounded-2xl border border-amber-300 shadow-xs"></canvas>
         <h3 id="pvBiz" class="font-extrabold text-sm text-slate-900"></h3>
         <p class="text-[10px] text-slate-500 mt-0.5">Bangladesh Cloth Market, Musheerabad, HYD</p>
         <p class="text-[10px] text-slate-500">📞 +91 91217 57822</p>
       </div>
-      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+      <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-1">
         <div class="flex justify-between"><span>Invoice:</span> <strong id="pvInv" class="text-amber-800"></strong></div>
         <div class="flex justify-between"><span>Date:</span> <span id="pvDate"></span></div>
         <div class="flex justify-between"><span>Customer:</span> <span id="pvCust"></span></div>
@@ -175,99 +234,103 @@
         <span>Grand Total:</span>
         <span class="text-amber-600">₹<span id="pvTot"></span></span>
       </div>
-      <button type="button" onclick="closePreview()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 rounded-xl transition">
+      <button type="button" onclick="closePreview()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl transition">
         Close Preview
       </button>
     </div>
   </div>
 
-  <div id="settingsModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col text-xs text-slate-700">
-      <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+  <div id="settingsModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col text-xs text-slate-700">
+      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <h3 class="font-extrabold text-sm text-slate-900">⚙️ Store Settings</h3>
         <button type="button" onclick="closeSettings()" class="text-slate-400 text-lg font-bold p-1">×</button>
       </div>
-      <div class="p-4 space-y-3.5">
+      <div class="p-5 space-y-3.5">
         <div>
-          <label class="block font-bold text-slate-500 mb-1.5">STORE NAME</label>
-          <input id="setBizName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
+          <label class="block font-bold text-slate-400 mb-1">STORE NAME</label>
+          <input id="setBizName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
         </div>
         <div>
-          <label class="block font-bold text-slate-500 mb-1.5">DEFAULT CUSTOMER NAME</label>
-          <input id="setCustName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-amber-500" />
+          <label class="block font-bold text-slate-400 mb-1">DEFAULT CUSTOMER NAME</label>
+          <input id="setCustName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 outline-none focus:border-amber-500" />
         </div>
         <div>
-          <label class="block font-bold text-slate-500 mb-1.5">PHONEPE MERCHANT UPI VPA</label>
-          <input id="setUpiId" type="text" value="Q059185009@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
-          <p class="text-[10px] text-slate-400 mt-1">Verified: Q059185009@ybl (PhonePe Standee)</p>
+          <label class="block font-bold text-slate-400 mb-1">PHONEPE MERCHANT UPI VPA</label>
+          <input id="setUpiId" type="text" value="Q059185009@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
+          <p class="text-[10px] text-slate-400 mt-1">Verified: Q059185009@ybl</p>
         </div>
       </div>
-      <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
-        <button type="button" onclick="closeSettings()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-xl font-bold">Cancel</button>
-        <button type="button" onclick="saveSettings()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl font-bold">Save Settings</button>
+      <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
+        <button type="button" onclick="closeSettings()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2.5 rounded-2xl font-bold">Cancel</button>
+        <button type="button" onclick="saveSettings()" class="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-2xl font-bold shadow-xs">Save Changes</button>
       </div>
     </div>
   </div>
 
-  <div id="categoryModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700">
-      <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+  <div id="categoryModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700">
+      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <div>
           <h3 class="font-extrabold text-sm text-slate-900">Manage Categories</h3>
-          <p class="text-[10px] text-slate-400">Add, edit, or delete store categories</p>
+          <p class="text-[10px] text-slate-400">Quick presets for one-tap item entry</p>
         </div>
         <button type="button" onclick="closeCategoryModal()" class="text-slate-400 text-lg font-bold p-1">×</button>
       </div>
-      <div class="p-4 space-y-3 overflow-y-auto flex-grow">
-        <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-200 space-y-2">
+      <div class="p-5 space-y-3 overflow-y-auto flex-grow">
+        <div class="bg-amber-50/70 p-3.5 rounded-3xl border border-amber-200/80 space-y-2.5">
           <p class="font-bold text-amber-900">Add New Category</p>
           <div class="grid grid-cols-12 gap-2">
-            <input id="newCatName" type="text" placeholder="Category (e.g. Hijab)" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:border-amber-500 font-semibold" />
-            <input id="newCatCode" type="text" placeholder="Code (e.g. HJ-01)" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:border-amber-500 font-bold" />
-            <input id="newCatPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs outline-none focus:border-amber-500 font-bold" />
+            <input id="newCatName" type="text" placeholder="Category" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-semibold" />
+            <input id="newCatCode" type="text" placeholder="Code" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
+            <input id="newCatPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-2 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
           </div>
-          <input id="newCatDesc" type="text" placeholder="Default Description (e.g. Premium Silk Hijab)" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs outline-none focus:border-amber-500" />
-          <button type="button" onclick="addNewCategory()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-2 rounded-xl text-xs transition shadow-xs">
-            + Save Category
+          <input id="newCatDesc" type="text" placeholder="Default Description" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500" />
+          <button type="button" onclick="addNewCategory()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition shadow-xs">
+            + Save Preset
           </button>
         </div>
         <div id="categoryItemsList" class="space-y-2 pt-1"></div>
       </div>
-      <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-end">
-        <button type="button" onclick="closeCategoryModal()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-xl font-bold">Done</button>
+      <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+        <button type="button" onclick="closeCategoryModal()" class="bg-slate-200 hover:bg-slate-300 px-5 py-2 rounded-2xl font-bold">Done</button>
       </div>
     </div>
   </div>
 
-  <div id="historyModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-3xl border border-slate-200 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-700">
-      <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+  <div id="historyModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-700">
+      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <div>
           <h3 class="font-extrabold text-sm text-slate-900">Sales Records</h3>
-          <p class="text-[10px] text-slate-400">Past customer transactions</p>
+          <p class="text-[10px] text-slate-400">Past customer orders</p>
         </div>
         <div class="flex items-center gap-2">
-          <button type="button" onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-xl text-xs font-bold transition">
+          <button type="button" onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs">
             📥 CSV
           </button>
           <button type="button" onclick="closeHistory()" class="text-slate-400 text-lg font-bold p-1">×</button>
         </div>
       </div>
-      <div id="historyContent" class="p-4 overflow-y-auto space-y-2.5 flex-grow"></div>
-      <div class="p-3 border-t border-slate-100 bg-slate-50 flex justify-between">
-        <button type="button" onclick="wipeHistory()" class="text-rose-600 font-bold text-xs p-1">Clear History</button>
-        <button type="button" onclick="closeHistory()" class="bg-slate-200 hover:bg-slate-300 px-4 py-1.5 rounded-xl font-bold text-xs">Close</button>
+      <div id="historyContent" class="p-5 overflow-y-auto space-y-2.5 flex-grow"></div>
+      <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-between">
+        <button type="button" onclick="wipeHistory()" class="text-rose-600 font-bold text-xs p-1">Clear Records</button>
+        <button type="button" onclick="closeHistory()" class="bg-slate-200 hover:bg-slate-300 px-5 py-2 rounded-2xl font-bold text-xs">Close</button>
       </div>
     </div>
   </div>
 
   <iframe id="printFrame" class="hidden" style="position:fixed;right:0;bottom:0;width:0;height:0;border:0;"></iframe>
+  <div id="qrRendererContainer" style="display:none;"></div>
 
   <script>
+    const TERMINAL_PIN = "1234";
+    let enteredPin = "";
+
     const DEFAULT_STORE = "AMS Ladies Bags and Abayas";
     const STORE_ADDRESS = "Bangladesh Cloth Market, Musheerabad, Hyderabad";
     const STORE_PHONE = "+91 91217 57822";
-    const STORE_MAPS_LINK = "https://maps.google.com/?q=AMS+Ladies+Bags+and+Abayas+Bangladesh+Cloth+Market+Musheerabad+Hyderabad";
+    const STORE_MAPS_LINK = "https://maps.google.com/?q=AMS+Ladies+Bags+and+Abayas+Musheerabad";
     const DEFAULT_CUST = "Dear Customer";
     const DEFAULT_UPI = "Q059185009@ybl";
 
@@ -341,12 +404,94 @@
     window.onload = function() {
       drawLogoToCanvas('navLogoCanvas');
       drawLogoToCanvas('previewLogoCanvas');
+      drawLogoToCanvas('loginLogoCanvas');
+      checkAuthSession();
       initSettings();
       initDate();
       initInvoice();
       renderQuickCategoryBar();
       addRow("Abaya", "AB-101", "Black Designer Abaya", 1, 1800);
+
+      // Listen to physical keyboard on desktop/tablets
+      window.addEventListener('keydown', (e) => {
+        if (!document.getElementById('loginGateway').classList.contains('hidden')) {
+          if (e.key >= '0' && e.key <= '9') pressKey(e.key);
+          else if (e.key === 'Backspace') backspaceKey();
+          else if (e.key === 'Escape') clearKeys();
+        }
+      });
     };
+
+    // Modern Keypad Logic with Reactive Dots
+    function updatePinDots() {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById('dot' + i);
+        if (i <= enteredPin.length) {
+          dot.className = "w-3.5 h-3.5 rounded-full bg-amber-500 border-2 border-amber-500 scale-110 shadow-xs transition-all duration-200";
+        } else {
+          dot.className = "w-3.5 h-3.5 rounded-full border-2 border-slate-300 scale-100 transition-all duration-200";
+        }
+      }
+    }
+
+    function pressKey(num) {
+      if (enteredPin.length < 4) {
+        enteredPin += num;
+        updatePinDots();
+        if (enteredPin.length === 4) {
+          setTimeout(verifyPin, 100);
+        }
+      }
+    }
+
+    function backspaceKey() {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updatePinDots();
+      }
+    }
+
+    function clearKeys() {
+      enteredPin = "";
+      updatePinDots();
+      document.getElementById('loginErrorMsg').classList.add('hidden');
+    }
+
+    function checkAuthSession() {
+      const isAuth = sessionStorage.getItem('ams_pos_auth') === 'true';
+      const gateway = document.getElementById('loginGateway');
+      if (isAuth) {
+        gateway.classList.add('hidden');
+      } else {
+        gateway.classList.remove('hidden');
+        clearKeys();
+      }
+    }
+
+    function verifyPin() {
+      const err = document.getElementById('loginErrorMsg');
+      const card = document.getElementById('loginCard');
+
+      if (enteredPin === TERMINAL_PIN) {
+        sessionStorage.setItem('ams_pos_auth', 'true');
+        err.classList.add('hidden');
+        document.getElementById('loginGateway').classList.add('hidden');
+        clearKeys();
+      } else {
+        err.classList.remove('hidden');
+        card.classList.add('shake-animate');
+        setTimeout(() => {
+          card.classList.remove('shake-animate');
+          clearKeys();
+        }, 400);
+      }
+    }
+
+    function lockTerminal() {
+      sessionStorage.removeItem('ams_pos_auth');
+      document.getElementById('loginGateway').classList.remove('hidden');
+      clearKeys();
+    }
 
     function drawLogoToCanvas(canvasId) {
       const cvs = document.getElementById(canvasId);
@@ -427,11 +572,11 @@
       const btnOnline = document.getElementById('btnOnline');
 
       if (mode === 'Cash') {
-        btnCash.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-amber-500 text-white shadow-xs transition';
-        btnOnline.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 transition';
+        btnCash.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-xs transition';
+        btnOnline.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 transition';
       } else {
-        btnOnline.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 bg-amber-500 text-white shadow-xs transition';
-        btnCash.className = 'py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900 transition';
+        btnOnline.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-xs transition';
+        btnCash.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 transition';
       }
     }
 
@@ -443,8 +588,9 @@
       const bar = document.getElementById('quickCategoryBar');
       const cats = getCategories();
       bar.innerHTML = cats.map((c) => `
-        <button type="button" onclick="quickAddCategoryItem('${c.name}', '${c.code || ''}', '${c.desc || c.name}', ${c.price || 0})" class="shrink-0 bg-slate-100 hover:bg-amber-100 active:scale-95 text-slate-700 font-semibold px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs transition">
-          ${c.name} <span class="font-bold text-amber-700">₹${c.price || 0}</span>
+        <button type="button" onclick="quickAddCategoryItem('${c.name}', '${c.code || ''}', '${c.desc || c.name}', ${c.price || 0})" class="shrink-0 bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-700 font-semibold px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs transition flex items-center gap-2">
+          <span>${c.name}</span>
+          <span class="font-bold text-amber-800 text-[11px] bg-amber-100/80 px-1.5 py-0.5 rounded-md">₹${c.price || 0}</span>
         </button>
       `).join('');
     }
@@ -480,14 +626,14 @@
       const list = getCategories();
       const box = document.getElementById('categoryItemsList');
       box.innerHTML = list.map((c, idx) => `
-        <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 space-y-2">
+        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
           <div class="grid grid-cols-12 gap-2">
-            <input type="text" value="${c.name}" onchange="updateCategory(${idx}, 'name', this.value)" placeholder="Category" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-slate-800 font-semibold outline-none" />
-            <input type="text" value="${c.code || ''}" onchange="updateCategory(${idx}, 'code', this.value)" placeholder="Code" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs text-amber-800 font-bold outline-none" />
+            <input type="text" value="${c.name}" onchange="updateCategory(${idx}, 'name', this.value)" placeholder="Category" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 font-semibold outline-none" />
+            <input type="text" value="${c.code || ''}" onchange="updateCategory(${idx}, 'code', this.value)" placeholder="Code" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-amber-800 font-bold outline-none" />
             <input type="number" value="${c.price || 0}" onchange="updateCategory(${idx}, 'price', this.value)" placeholder="Price" class="col-span-2 bg-white border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs text-right font-bold text-slate-800 outline-none" />
             <button type="button" onclick="deleteCategory(${idx})" class="col-span-1 text-rose-600 font-black text-center text-sm hover:bg-rose-50 rounded">×</button>
           </div>
-          <input type="text" value="${c.desc || ''}" onchange="updateCategory(${idx}, 'desc', this.value)" placeholder="Default Description" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1 text-xs text-slate-600 outline-none" />
+          <input type="text" value="${c.desc || ''}" onchange="updateCategory(${idx}, 'desc', this.value)" placeholder="Default Description" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1 text-xs text-slate-600 outline-none" />
         </div>
       `).join('');
     }
@@ -532,35 +678,35 @@
     function addRow(category = '', code = '', name = '', qty = 1, price = '') {
       const id = 'row_' + Date.now() + Math.floor(Math.random() * 100);
       const div = document.createElement('div');
-      div.className = 'bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2 relative transition-all';
+      div.className = 'bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200 space-y-2.5 transition-all shadow-xs';
       div.id = id;
       div.innerHTML = `
         <div class="grid grid-cols-12 gap-2 items-center">
           <div class="col-span-6">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5">Category</label>
-            <input type="text" placeholder="e.g. Abaya / Bag" value="${category}" class="row-cat w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-amber-500" />
+            <input type="text" placeholder="Abaya / Bag" value="${category}" class="row-cat w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-amber-500" />
           </div>
           <div class="col-span-5">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5">Item Code</label>
-            <input type="text" placeholder="e.g. AB-101" value="${code}" class="row-code w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-amber-800 font-bold outline-none focus:border-amber-500" />
+            <input type="text" placeholder="AB-101" value="${code}" class="row-code w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-amber-800 font-bold outline-none focus:border-amber-500" />
           </div>
-          <div class="col-span-1 text-right pt-4">
-            <button type="button" onclick="removeRow('${id}')" class="text-slate-400 hover:text-rose-600 font-black text-base transition">×</button>
+          <div class="col-span-1 text-right pt-3.5">
+            <button type="button" onclick="removeRow('${id}')" class="text-slate-400 hover:text-rose-600 font-bold text-lg leading-none transition">×</button>
           </div>
         </div>
 
         <div class="grid grid-cols-12 gap-2 items-center">
           <div class="col-span-6">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5">Description</label>
-            <input type="text" placeholder="Item Name" value="${name}" class="row-name w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-medium outline-none focus:border-amber-500" />
+            <input type="text" placeholder="Item Name" value="${name}" class="row-name w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-medium outline-none focus:border-amber-500" />
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5 text-center">Qty</label>
-            <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="calcTotal()" class="row-qty w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1.5 text-xs text-center text-slate-800 font-bold outline-none focus:border-amber-500" />
+            <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="calcTotal()" class="row-qty w-full bg-white border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs text-center text-slate-800 font-bold outline-none focus:border-amber-500" />
           </div>
           <div class="col-span-4">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5 text-right">Price (₹)</label>
-            <input type="number" placeholder="Price" value="${price}" min="0" oninput="calcTotal()" class="row-price w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-right text-amber-800 font-bold outline-none focus:border-amber-500" />
+            <input type="number" placeholder="Price" value="${price}" min="0" oninput="calcTotal()" class="row-price w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-right text-amber-900 font-bold outline-none focus:border-amber-500" />
           </div>
         </div>
       `;
@@ -644,15 +790,38 @@
       resetInputs();
     }
 
-    function getUpiQrUrl(amount) {
-      const upiId = localStorage.getItem('ams_upi') || DEFAULT_UPI;
-      const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
-      const upiString = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(biz)}&am=${encodeURIComponent(amount)}&cu=INR`;
-      return `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiString)}`;
+    function generateScannableUpiQr(amount) {
+      const upiId = (localStorage.getItem('ams_upi') || DEFAULT_UPI).trim();
+      const upiString = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=PhonePeMerchant&am=${encodeURIComponent(amount)}&cu=INR`;
+
+      const holder = document.getElementById('qrRendererContainer');
+      holder.innerHTML = '';
+
+      new QRCode(holder, {
+        text: upiString,
+        width: 320,
+        height: 320,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const qrCanvas = holder.querySelector('canvas');
+      if (qrCanvas) {
+        const paddedCanvas = document.createElement('canvas');
+        paddedCanvas.width = 360;
+        paddedCanvas.height = 360;
+        const pCtx = paddedCanvas.getContext('2d');
+        pCtx.fillStyle = '#ffffff';
+        pCtx.fillRect(0, 0, 360, 360);
+        pCtx.drawImage(qrCanvas, 20, 20, 320, 320);
+        return paddedCanvas.toDataURL('image/png');
+      }
+      return null;
     }
 
     function executeNativePrint(biz, inv, dt, cust, custPhone, pay, tot, items) {
-      const qrUrl = getUpiQrUrl(tot);
+      const qrDataUrl = generateScannableUpiQr(tot);
       const rowsHtml = (items || []).map(it => `
         <tr>
           <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0;">
@@ -683,7 +852,7 @@
             th { text-align: left; padding: 6px 0; border-bottom: 1px solid #0f172a; text-transform: uppercase; font-size: 10px; color: #475569; }
             .tot-box { border-top: 2px dashed #94a3b8; padding-top: 10px; font-size: 15px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
             .qr-sec { text-align: center; margin-top: 18px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
-            .qr-sec img { width: 105px; height: 105px; margin: 0 auto; display: block; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px; }
+            .qr-sec img { width: 120px; height: 120px; margin: 0 auto; display: block; border: 1px solid #cbd5e1; border-radius: 8px; }
             .footer { text-align: center; margin-top: 14px; font-size: 10px; color: #64748b; line-height: 1.4; }
           </style>
         </head>
@@ -717,9 +886,9 @@
           </div>
 
           <div class="qr-sec">
-            <p style="font-size: 10px; font-weight: bold; margin: 0 0 6px 0;">SCAN TO PAY VIA PHONEPE / UPI</p>
-            <img src="${qrUrl}" alt="UPI QR" />
-            <p style="font-size: 9px; color: #64748b; margin-top: 4px;">Merchant ID: ${DEFAULT_UPI}</p>
+            <p style="font-size: 10px; font-weight: 800; margin: 0 0 6px 0;">SCAN TO PAY VIA PHONEPE / ANY UPI</p>
+            <img src="${qrDataUrl}" alt="UPI QR" />
+            <p style="font-size: 9px; color: #64748b; margin-top: 4px;">Merchant: ${DEFAULT_UPI}</p>
           </div>
 
           <div class="footer">
@@ -757,19 +926,16 @@
       const doc = new jsPDF({
         orientation: 'p',
         unit: 'mm',
-        format: [80, 220]
+        format: [80, 225]
       });
 
-      // 1. Header Obsidian Block
       doc.setFillColor(15, 23, 42);
       doc.rect(0, 0, 80, 31, 'F');
 
-      // 2. Guaranteed In-Memory Gold Emblem Injection
       try {
         doc.addImage(EMBEDDED_LOGO_BASE64, 'PNG', 32, 2.5, 16, 16);
       } catch (e) {}
 
-      // 3. Store Typography
       doc.setTextColor(254, 243, 199);
       doc.setFontSize(8.5);
       doc.setFont(undefined, 'bold');
@@ -780,7 +946,6 @@
       doc.setFont(undefined, 'normal');
       doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, 27, { align: 'center' });
 
-      // 4. Metadata Details Box
       doc.setFillColor(248, 250, 252);
       doc.roundedRect(5, 34, 70, 15, 2, 2, 'F');
       doc.setDrawColor(226, 232, 240);
@@ -797,7 +962,6 @@
       doc.text(`CUSTOMER: ${custDisplay}`, 8, 43);
       doc.text(`PAYMENT: ${pay}`, 8, 47);
 
-      // 5. Line Items Table with Code & Category
       const rows = (items || []).map(it => [
         `${it.name}\n[${it.code}] ${it.category}`,
         it.qty,
@@ -829,7 +993,6 @@
 
       let finalY = doc.lastAutoTable.finalY + 4;
 
-      // 6. Grand Total Highlight Box
       doc.setFillColor(15, 23, 42);
       doc.roundedRect(5, finalY, 70, 10, 2, 2, 'F');
 
@@ -842,23 +1005,21 @@
       doc.setFontSize(9);
       doc.text(`Rs. ${tot}`, 71, finalY + 6.5, { align: 'right' });
 
-      // 7. Dynamic UPI QR Section
       finalY += 13;
-      const qrUrl = getUpiQrUrl(tot);
-      if (qrUrl) {
+      const qrDataUrl = generateScannableUpiQr(tot);
+      if (qrDataUrl) {
         try {
-          doc.addImage(qrUrl, 'PNG', 28, finalY, 24, 24);
-          finalY += 27;
+          doc.addImage(qrDataUrl, 'PNG', 26.5, finalY, 27, 27);
+          finalY += 30;
           doc.setFontSize(6);
           doc.setFont(undefined, 'bold');
-          doc.setTextColor(100, 116, 139);
+          doc.setTextColor(15, 23, 42);
           doc.text("SCAN WITH PHONEPE / GPAY TO PAY", 40, finalY, { align: 'center' });
         } catch (e) {
           finalY += 6;
         }
       }
 
-      // 8. Footer Clean Text Address (No Link in PDF)
       finalY += 6;
       doc.setFontSize(6);
       doc.setFont(undefined, 'bold');
