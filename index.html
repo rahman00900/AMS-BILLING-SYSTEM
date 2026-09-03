@@ -255,9 +255,14 @@
           <input id="setCustName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 outline-none focus:border-amber-500" />
         </div>
         <div>
-          <label class="block font-bold text-slate-400 mb-1">PHONEPE MERCHANT UPI VPA</label>
+          <div class="flex justify-between items-center mb-1">
+            <label class="font-bold text-slate-400">PHONEPE MERCHANT UPI VPA</label>
+            <button type="button" onclick="testCurrentUpi()" class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg hover:bg-emerald-100 transition">
+              🧪 Test UPI VPA
+            </button>
+          </div>
           <input id="setUpiId" type="text" value="Q059185009@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
-          <p class="text-[10px] text-slate-400 mt-1">Verified: Q059185009@ybl</p>
+          <p class="text-[10px] text-slate-400 mt-1">Verified: <span class="font-mono text-slate-600">Q059185009@ybl</span> or your personal UPI ID (e.g. 9121757822@ybl).</p>
         </div>
       </div>
       <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
@@ -405,7 +410,6 @@
       drawLogoToCanvas('previewLogoCanvas');
       drawLogoToCanvas('loginLogoCanvas');
       
-      // Force Login Screen on Every Load
       document.getElementById('loginGateway').classList.remove('hidden');
       clearKeys();
 
@@ -493,7 +497,13 @@
     function initSettings() {
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
       const cust = localStorage.getItem('ams_default_cust') || DEFAULT_CUST;
-      const upi = localStorage.getItem('ams_upi') || DEFAULT_UPI;
+      let upi = localStorage.getItem('ams_upi');
+      
+      // Upgrade any old/invalid cached UPI to verified PhonePe VPA
+      if (!upi || upi.includes('@upi') || upi.includes('amsbags')) {
+        upi = DEFAULT_UPI;
+        localStorage.setItem('ams_upi', upi);
+      }
 
       document.getElementById('topStoreName').innerText = biz;
       document.getElementById('custName').value = cust;
@@ -524,6 +534,15 @@
 
       closeSettings();
       alert('Settings updated successfully!');
+    }
+
+    function testCurrentUpi() {
+      const upi = document.getElementById('setUpiId').value.trim();
+      if (!upi || !upi.includes('@')) {
+        alert('Please enter a valid UPI address containing @');
+        return;
+      }
+      window.location.href = `upi://pay?pa=${encodeURIComponent(upi)}&pn=AMS&am=1.00&cu=INR`;
     }
 
     function initDate() {
@@ -778,9 +797,16 @@
       resetInputs();
     }
 
+    // NPCI-Standardized Strict UPI Generator
     function generateScannableUpiQr(amount) {
-      const upiId = (localStorage.getItem('ams_upi') || DEFAULT_UPI).trim();
-      const upiString = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=PhonePeMerchant&am=${encodeURIComponent(amount)}&cu=INR`;
+      let upiId = (localStorage.getItem('ams_upi') || DEFAULT_UPI).trim();
+      if (!upiId || upiId.includes('amsbags') || upiId.includes('@upi')) {
+        upiId = DEFAULT_UPI;
+      }
+
+      // NPCI Standard merchant URI specification (Strict order & clean alphanumeric name)
+      const formattedAmount = parseFloat(amount || 0).toFixed(2);
+      const upiString = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=AMS&am=${formattedAmount}&cu=INR`;
 
       const holder = document.getElementById('qrRendererContainer');
       holder.innerHTML = '';
@@ -791,7 +817,7 @@
         height: 320,
         colorDark: "#000000",
         colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
+        correctLevel: QRCode.CorrectLevel.M
       });
 
       const qrCanvas = holder.querySelector('canvas');
@@ -823,6 +849,7 @@
       `).join('');
 
       const custDisplay = custPhone ? `${cust} (+91 ${custPhone})` : cust;
+      const upiId = (localStorage.getItem('ams_upi') || DEFAULT_UPI).trim();
 
       const printHtml = `
         <!DOCTYPE html>
@@ -876,7 +903,7 @@
           <div class="qr-sec">
             <p style="font-size: 10px; font-weight: 800; margin: 0 0 6px 0;">SCAN TO PAY VIA PHONEPE / ANY UPI</p>
             <img src="${qrDataUrl}" alt="UPI QR" />
-            <p style="font-size: 9px; color: #64748b; margin-top: 4px;">Merchant: ${DEFAULT_UPI}</p>
+            <p style="font-size: 9px; color: #64748b; margin-top: 4px;">Merchant VPA: ${upiId}</p>
           </div>
 
           <div class="footer">
