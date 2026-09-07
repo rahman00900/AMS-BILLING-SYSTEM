@@ -3,19 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AMS Ladies Bags & Abayas - Modern POS</title>
+  <title>AMS • Core Retail Architecture</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-main: #F3F4F7;
+      --panel-surface: rgba(255, 255, 255, 0.75);
+      --amber-glow: #F59E0B;
+    }
     body { 
       font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: var(--bg-main);
       -webkit-tap-highlight-color: transparent; 
-      background: #FDFBF7;
+    }
+    .mono-num {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .grid-mesh {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+    }
+    .futuristic-card {
+      background: var(--panel-surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.02), 
+        0 20px 25px -5px rgba(15, 23, 42, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+    .futuristic-card:hover {
+      box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.03), 
+        0 25px 30px -5px rgba(15, 23, 42, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { 
       -webkit-appearance: none; 
@@ -23,139 +53,152 @@
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .pulse-glow { animation: pulse-ring 3s infinite ease-in-out; }
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20%, 60% { transform: translateX(-6px); }
       40%, 80% { transform: translateX(6px); }
     }
     .shake-animate { animation: shake 0.35s cubic-bezier(.36,.07,.19,.97) both; }
-    .boutique-card {
-      background: #FFFFFF;
-      border: 1px solid #EFECE6;
-      box-shadow: 0 4px 20px -2px rgba(180, 140, 75, 0.05);
-    }
   </style>
 </head>
-<body class="min-h-screen text-slate-900 antialiased selection:bg-amber-500 selection:text-white pb-36">
+<body class="min-h-screen text-slate-900 antialiased selection:bg-amber-500 selection:text-white pb-36 grid-mesh relative overflow-x-hidden">
+
+  <!-- Ambient Light Orbs -->
+  <div class="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] rounded-full bg-gradient-to-br from-amber-200/40 via-amber-100/20 to-transparent blur-3xl pointer-events-none -z-10"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-tl from-slate-200/60 via-amber-50/40 to-transparent blur-3xl pointer-events-none -z-10"></div>
 
   <!-- Terminal Lockscreen Gateway -->
-  <div id="loginGateway" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xl flex items-center justify-center p-4">
-    <div id="loginCard" class="bg-white w-full max-w-sm rounded-[2.5rem] border border-amber-200/90 shadow-[0_25px_60px_-15px_rgba(180,140,75,0.25)] p-7 text-center space-y-6">
+  <div id="loginGateway" class="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-2xl flex items-center justify-center p-4">
+    <div id="loginCard" class="futuristic-card w-full max-w-sm rounded-[2.5rem] p-8 text-center space-y-7 border border-white/80">
       
-      <div class="flex justify-center">
-        <div class="relative p-1 rounded-3xl bg-gradient-to-tr from-amber-400 via-amber-200 to-amber-50 shadow-md">
+      <div class="flex justify-center relative">
+        <div class="absolute inset-0 bg-amber-400/20 rounded-full blur-xl pulse-glow"></div>
+        <div class="relative p-1.5 rounded-3xl bg-gradient-to-tr from-amber-400 via-amber-200 to-white shadow-lg shadow-amber-500/10">
           <canvas id="loginLogoCanvas" width="100" height="100" class="w-20 h-20 rounded-[1.3rem]"></canvas>
         </div>
       </div>
 
       <div>
-        <span class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-900 text-[10px] font-extrabold rounded-full uppercase tracking-wider">Boutique Terminal</span>
-        <h2 class="font-extrabold text-xl text-slate-900 tracking-tight mt-2">AMS Bags & Abayas</h2>
-        <p class="text-xs text-slate-400 mt-0.5 font-medium">Enter 4-digit security PIN</p>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200/80 rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+          <span class="text-[10px] font-black tracking-widest uppercase text-amber-900 mono-num">QUANTUM-AUTH v2.6</span>
+        </div>
+        <h2 class="font-black text-2xl text-slate-900 tracking-tight mt-2.5">AMS OS Terminal</h2>
+        <p class="text-xs text-slate-400 mt-0.5 font-medium">Authenticate terminal token PIN</p>
       </div>
 
       <div class="space-y-4">
-        <div class="flex justify-center items-center gap-3 py-2">
-          <div id="dot1" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
-          <div id="dot2" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
-          <div id="dot3" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
-          <div id="dot4" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-200"></div>
+        <div class="flex justify-center items-center gap-3.5 py-1">
+          <div id="dot1" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-300"></div>
+          <div id="dot2" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-300"></div>
+          <div id="dot3" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-300"></div>
+          <div id="dot4" class="w-3.5 h-3.5 rounded-full border-2 border-slate-300 transition-all duration-300"></div>
         </div>
-        <p id="loginErrorMsg" class="text-xs text-rose-500 font-bold hidden">Invalid PIN. Try again.</p>
+        <p id="loginErrorMsg" class="text-xs text-rose-500 font-bold hidden mono-num">Security Token Mismatch</p>
       </div>
 
-      <!-- Keypad -->
-      <div class="grid grid-cols-3 gap-2.5 max-w-[240px] mx-auto pt-1">
-        <button type="button" onclick="pressKey('1')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">1</button>
-        <button type="button" onclick="pressKey('2')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">2</button>
-        <button type="button" onclick="pressKey('3')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">3</button>
-        <button type="button" onclick="pressKey('4')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">4</button>
-        <button type="button" onclick="pressKey('5')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">5</button>
-        <button type="button" onclick="pressKey('6')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">6</button>
-        <button type="button" onclick="pressKey('7')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">7</button>
-        <button type="button" onclick="pressKey('8')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">8</button>
-        <button type="button" onclick="pressKey('9')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">9</button>
-        <button type="button" onclick="clearKeys()" class="h-14 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-600 font-bold text-xs transition">CLR</button>
-        <button type="button" onclick="pressKey('0')" class="h-14 rounded-2xl bg-slate-50 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition shadow-xs">0</button>
-        <button type="button" onclick="backspaceKey()" class="h-14 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold text-sm transition">⌫</button>
+      <!-- Holographic Tactile Matrix Keypad -->
+      <div class="grid grid-cols-3 gap-2.5 max-w-[250px] mx-auto pt-1">
+        <button type="button" onclick="pressKey('1')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">1</button>
+        <button type="button" onclick="pressKey('2')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">2</button>
+        <button type="button" onclick="pressKey('3')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">3</button>
+        <button type="button" onclick="pressKey('4')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">4</button>
+        <button type="button" onclick="pressKey('5')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">5</button>
+        <button type="button" onclick="pressKey('6')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">6</button>
+        <button type="button" onclick="pressKey('7')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">7</button>
+        <button type="button" onclick="pressKey('8')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">8</button>
+        <button type="button" onclick="pressKey('9')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">9</button>
+        <button type="button" onclick="clearKeys()" class="h-14 rounded-2xl bg-slate-100 hover:bg-rose-50 active:scale-90 text-slate-500 hover:text-rose-600 font-black text-xs transition border border-slate-200/70 mono-num">CLR</button>
+        <button type="button" onclick="pressKey('0')" class="h-14 rounded-2xl bg-white/80 hover:bg-amber-50/80 active:scale-90 text-slate-900 font-black text-lg border border-slate-200/70 transition shadow-xs mono-num">0</button>
+        <button type="button" onclick="backspaceKey()" class="h-14 rounded-2xl bg-slate-100 hover:bg-amber-50 active:scale-90 text-slate-700 font-black text-sm transition border border-slate-200/70">⌫</button>
       </div>
 
     </div>
   </div>
 
-  <!-- Bright Luxury Header -->
-  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-amber-200/70 shadow-xs">
-    <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
+  <!-- Futuristic Minimal Floating Glass Header -->
+  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-2xl border-b border-slate-200/80 shadow-xs">
+    <div class="max-w-2xl mx-auto px-4 py-3.5 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <div class="p-0.5 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 shadow-sm">
-          <canvas id="navLogoCanvas" width="80" height="80" class="w-10 h-10 rounded-[14px]"></canvas>
+        <div class="relative">
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-amber-300 rounded-2xl blur-xs opacity-70"></div>
+          <canvas id="navLogoCanvas" width="80" height="80" class="relative w-11 h-11 rounded-[14px] bg-white"></canvas>
         </div>
         <div>
-          <h1 id="topStoreName" class="font-black text-sm sm:text-base tracking-tight text-slate-900 leading-tight">AMS Bags & Abayas</h1>
-          <p class="text-[10px] font-bold text-amber-800 flex items-center gap-1.5">
+          <div class="flex items-center gap-1.5">
+            <h1 id="topStoreName" class="font-extrabold text-sm sm:text-base tracking-tight text-slate-900 leading-tight">AMS Bags & Abayas</h1>
+            <span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded-md text-[9px] font-bold uppercase mono-num">v2.6</span>
+          </div>
+          <p class="text-[10px] font-bold text-amber-800 flex items-center gap-1.5 mt-0.5">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
             Musheerabad, HYD • +91 91217 57822
           </p>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button type="button" onclick="showHistory()" class="flex items-center gap-1.5 bg-slate-50 hover:bg-amber-50 active:scale-95 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition border border-slate-200 shadow-xs">
+        <button type="button" onclick="showHistory()" class="flex items-center gap-1.5 bg-white/80 hover:bg-amber-50 active:scale-95 px-3.5 py-2 rounded-2xl text-xs font-bold text-slate-700 transition border border-slate-200/80 shadow-xs">
           📋 Records
         </button>
-        <button type="button" onclick="openSettings()" class="bg-slate-50 hover:bg-amber-50 active:scale-95 p-2 rounded-xl text-xs font-bold text-slate-700 transition border border-slate-200 shadow-xs">
+        <button type="button" onclick="openSettings()" class="bg-white/80 hover:bg-amber-50 active:scale-95 p-2 rounded-2xl text-xs font-bold text-slate-700 transition border border-slate-200/80 shadow-xs">
           ⚙️
         </button>
-        <button type="button" onclick="lockTerminal()" title="Lock Screen" class="bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-900 p-2 rounded-xl text-xs font-black border border-amber-300 transition shadow-xs">
+        <button type="button" onclick="lockTerminal()" title="Lock Screen" class="bg-amber-500/10 hover:bg-amber-500/20 active:scale-95 text-amber-900 p-2 rounded-2xl text-xs font-black border border-amber-300/60 transition shadow-xs">
           🔒
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-2xl mx-auto px-4 py-4 space-y-4">
+  <main class="max-w-2xl mx-auto px-4 py-5 space-y-4">
 
     <!-- Card 1: Invoice Meta -->
-    <div class="boutique-card p-4.5 rounded-3xl space-y-3">
-      <div class="grid grid-cols-2 gap-3">
+    <div class="futuristic-card p-5 rounded-3xl space-y-3">
+      <div class="grid grid-cols-2 gap-3.5">
         <div>
-          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Invoice ID ✏️</label>
-          <input id="invNum" type="text" class="w-full bg-[#FAF8F5] border border-slate-200/90 rounded-2xl px-3.5 py-2.5 text-sm font-black text-amber-900 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition" />
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">INVOICE SERIAL #</label>
+          <input id="invNum" type="text" class="w-full bg-white/80 border border-slate-200/80 rounded-2xl px-4 py-2.5 text-sm font-black text-amber-900 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition mono-num" />
         </div>
         <div>
-          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Date</label>
-          <input id="invDate" type="text" class="w-full bg-slate-100/80 border border-slate-200/80 rounded-2xl px-3.5 py-2.5 text-sm font-bold text-slate-500 outline-none select-none" readonly />
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">TIMESTAMP</label>
+          <input id="invDate" type="text" class="w-full bg-slate-100/60 border border-slate-200/60 rounded-2xl px-4 py-2.5 text-sm font-bold text-slate-500 outline-none select-none mono-num" readonly />
         </div>
       </div>
     </div>
 
     <!-- Card 2: Customer, Payment & Status -->
-    <div class="boutique-card p-4.5 rounded-3xl space-y-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div class="futuristic-card p-5 rounded-3xl space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Customer Name</label>
-            <span class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">Default in ⚙️</span>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">CUSTOMER NAME</label>
+            <span class="text-[9px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">System Default in ⚙️</span>
           </div>
-          <input id="custName" type="text" class="w-full bg-[#FAF8F5] border border-slate-200/90 rounded-2xl px-3.5 py-2.5 text-sm font-bold text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition" />
+          <input id="custName" type="text" class="w-full bg-white/80 border border-slate-200/80 rounded-2xl px-4 py-2.5 text-sm font-bold text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition" />
         </div>
         <div>
-          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Customer Number</label>
-          <div class="flex rounded-2xl overflow-hidden border border-slate-200/90 focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 transition bg-[#FAF8F5]">
-            <span class="inline-flex items-center px-3.5 bg-slate-100 text-slate-600 text-xs font-black border-r border-slate-200">+91</span>
-            <input id="custPhone" type="tel" maxlength="10" placeholder="10-digit number" class="w-full bg-transparent px-3.5 py-2.5 text-sm font-bold text-slate-800 outline-none focus:bg-white" />
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">CUSTOMER CELLULAR</label>
+          <div class="flex rounded-2xl overflow-hidden border border-slate-200/80 focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 transition bg-white/80">
+            <span class="inline-flex items-center px-3.5 bg-slate-100/70 text-slate-600 text-xs font-black border-r border-slate-200 mono-num">+91</span>
+            <input id="custPhone" type="tel" maxlength="10" placeholder="10-digit cellular" class="w-full bg-transparent px-4 py-2.5 text-sm font-bold text-slate-800 outline-none focus:bg-white mono-num" />
           </div>
         </div>
       </div>
 
-      <!-- Payment Method & Status -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+      <!-- Segmented State Controllers -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
         <div>
-          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1.5">Payment Method</label>
-          <div class="grid grid-cols-2 gap-1.5 bg-slate-100/90 p-1 rounded-2xl border border-slate-200">
-            <button type="button" id="btnCash" onclick="setPaymentMode('Cash')" class="py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 bg-white text-slate-900 shadow-sm transition">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">SETTLEMENT CHANNEL</label>
+          <div class="grid grid-cols-2 gap-1.5 bg-slate-200/50 p-1.5 rounded-2xl border border-slate-200/60">
+            <button type="button" id="btnCash" onclick="setPaymentMode('Cash')" class="py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-sm transition">
               <span>💵</span> Cash
             </button>
-            <button type="button" id="btnOnline" onclick="setPaymentMode('Online / UPI')" class="py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 text-slate-500 hover:text-slate-900 transition">
+            <button type="button" id="btnOnline" onclick="setPaymentMode('Online / UPI')" class="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-900 transition">
               <span>📱</span> UPI
             </button>
           </div>
@@ -163,12 +206,12 @@
         </div>
 
         <div>
-          <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1.5">Payment Status</label>
-          <div class="grid grid-cols-2 gap-1.5 bg-slate-100/90 p-1 rounded-2xl border border-slate-200">
-            <button type="button" id="btnPaid" onclick="setPaymentStatus('PAID')" class="py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 bg-emerald-600 text-white shadow-sm transition">
+          <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">LEDGER STATE</label>
+          <div class="grid grid-cols-2 gap-1.5 bg-slate-200/50 p-1.5 rounded-2xl border border-slate-200/60">
+            <button type="button" id="btnPaid" onclick="setPaymentStatus('PAID')" class="py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-sm transition">
               <span>✅</span> PAID
             </button>
-            <button type="button" id="btnUnpaid" onclick="setPaymentStatus('UNPAID')" class="py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 text-slate-500 hover:text-rose-600 transition">
+            <button type="button" id="btnUnpaid" onclick="setPaymentStatus('UNPAID')" class="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-rose-600 transition">
               <span>⏳</span> UNPAID
             </button>
           </div>
@@ -177,93 +220,102 @@
       </div>
     </div>
 
-    <!-- Quick Item Buttons Bar -->
-    <div class="boutique-card p-4.5 rounded-3xl space-y-2.5">
+    <!-- Quick Micro-Pill Items Dock -->
+    <div class="futuristic-card p-5 rounded-3xl space-y-3">
       <div class="flex justify-between items-center">
-        <div>
-          <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider block">⚡ Quick Item Presets</span>
-          <span class="text-[10px] text-slate-400">Tap to populate invoice line item</span>
+        <div class="flex items-center gap-2">
+          <span class="flex h-2 w-2 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+          </span>
+          <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest block">QUICK INVENTORY CAPSULES</span>
         </div>
         <button type="button" onclick="openCatalogModal()" class="text-xs font-black text-amber-800 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-xl border border-amber-300 transition shadow-xs">
-          ⚙️ Edit Buttons
+          ⚙️ Manage
         </button>
       </div>
       <div id="quickItemsBar" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 text-xs"></div>
     </div>
 
-    <!-- Itemized List Card -->
-    <div class="boutique-card p-4.5 rounded-3xl space-y-3">
-      <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+    <!-- Itemized Matrix Card -->
+    <div class="futuristic-card p-5 rounded-3xl space-y-3.5">
+      <div class="flex justify-between items-center pb-2.5 border-b border-slate-100">
         <div>
-          <span class="text-[11px] font-black text-slate-500 uppercase tracking-wider block">Billed Items</span>
-          <span class="text-[10px] text-slate-400">Category • Code • Description • Price</span>
+          <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block">TRANSACTION ITEMS</span>
+          <span class="text-[10px] text-slate-400">Class • SKU Code • Identity • Price</span>
         </div>
-        <button type="button" onclick="addRow()" class="bg-slate-900 hover:bg-black active:scale-95 text-white font-black px-3.5 py-1.5 rounded-xl text-xs transition shadow-sm">
-          + Add Empty Item
+        <button type="button" onclick="addRow()" class="bg-slate-900 hover:bg-black active:scale-95 text-white font-black px-4 py-2 rounded-2xl text-xs transition shadow-md flex items-center gap-1">
+          <span>+</span> Add Line
         </button>
       </div>
 
       <div id="itemsBox" class="space-y-3"></div>
 
-      <!-- Grand Total Bar -->
-      <div class="bg-gradient-to-tr from-amber-600 via-amber-500 to-amber-700 p-5 rounded-3xl text-white flex justify-between items-center shadow-lg mt-4 border border-amber-300/40">
-        <div>
-          <span class="text-[10px] font-black uppercase tracking-widest text-amber-100 block">Total Due</span>
-          <span class="text-xs text-amber-50 font-medium">All item rates & taxes included</span>
-        </div>
-        <div class="text-right">
-          <span class="text-3xl font-black text-white tracking-tight">₹<span id="grandTotal">0.00</span></span>
+      <!-- Quantum Cyber Grand Total Display -->
+      <div class="relative overflow-hidden bg-gradient-to-tr from-slate-950 via-slate-900 to-amber-950 p-6 rounded-3xl text-white shadow-2xl mt-4 border border-amber-500/20">
+        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="flex justify-between items-center relative z-10">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              <span class="text-[10px] font-black uppercase tracking-widest text-amber-200">AGGREGATE BALANCE</span>
+            </div>
+            <span class="text-xs text-slate-400 font-medium mt-0.5 block">Zero-tax gross ledger balance</span>
+          </div>
+          <div class="text-right">
+            <span class="text-3xl sm:text-4xl font-black text-amber-300 tracking-tight mono-num">₹<span id="grandTotal">0.00</span></span>
+          </div>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- Bottom Floating Action Dock -->
+  <!-- Futuristic Floating Glass Command Center Dock -->
   <div class="fixed bottom-4 inset-x-4 z-30 max-w-xl mx-auto">
-    <div class="bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl p-2 rounded-3xl grid grid-cols-5 gap-1.5">
-      <button type="button" onclick="saveOnly()" class="bg-slate-900 hover:bg-black active:scale-95 text-white font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-xs">
+    <div class="bg-white/80 backdrop-blur-2xl border border-white shadow-[0_20px_50px_rgba(15,23,42,0.15)] p-2 rounded-[2rem] grid grid-cols-5 gap-2">
+      <button type="button" onclick="saveOnly()" class="bg-slate-900 hover:bg-black active:scale-95 text-white font-black py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-xs">
         <span>💾</span> Save
       </button>
-      <button type="button" onclick="showPreview()" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="showPreview()" class="bg-slate-100/80 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200/80 font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
         <span>👁️</span> View
       </button>
-      <button type="button" onclick="runBill('print')" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="runBill('print')" class="bg-slate-100/80 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200/80 font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
         <span>🖨️</span> Print
       </button>
-      <button type="button" onclick="runBill('pdf')" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200 font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="runBill('pdf')" class="bg-slate-100/80 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200/80 font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
         <span>📄</span> PDF
       </button>
-      <button type="button" onclick="runBill('wa')" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-md">
+      <button type="button" onclick="runBill('wa')" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-md shadow-emerald-600/20">
         <span>💬</span> WhatsApp
       </button>
     </div>
   </div>
 
   <!-- Preview Modal -->
-  <div id="previewModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden p-6 space-y-4 text-xs text-slate-700">
+  <div id="previewModal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="futuristic-card bg-white w-full max-w-sm rounded-[2.5rem] p-6 space-y-4 text-xs text-slate-700 border border-white">
       <div class="text-center border-b border-slate-100 pb-3">
         <canvas id="previewLogoCanvas" width="80" height="80" class="w-14 h-14 mx-auto mb-2 rounded-2xl border border-amber-300 shadow-xs"></canvas>
         <h3 id="pvBiz" class="font-extrabold text-sm text-slate-900"></h3>
         <p class="text-[10px] text-slate-500 mt-0.5">Bangladesh Cloth Market, Musheerabad, HYD</p>
         <p class="text-[10px] text-slate-500">📞 +91 91217 57822</p>
       </div>
-      <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1">
-        <div class="flex justify-between"><span>Invoice:</span> <strong id="pvInv" class="text-amber-800"></strong></div>
-        <div class="flex justify-between"><span>Date:</span> <span id="pvDate"></span></div>
+      <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/80 space-y-1">
+        <div class="flex justify-between"><span>Invoice:</span> <strong id="pvInv" class="text-amber-800 mono-num"></strong></div>
+        <div class="flex justify-between"><span>Date:</span> <span id="pvDate" class="mono-num"></span></div>
         <div class="flex justify-between"><span>Customer:</span> <span id="pvCust"></span></div>
-        <div class="flex justify-between"><span>Cust. Phone:</span> <strong id="pvCustPhone" class="text-slate-800"></strong></div>
-        <div class="flex justify-between"><span>Payment Mode:</span> <span id="pvPay"></span></div>
+        <div class="flex justify-between"><span>Cust. Cellular:</span> <strong id="pvCustPhone" class="text-slate-800 mono-num"></strong></div>
+        <div class="flex justify-between"><span>Channel:</span> <span id="pvPay"></span></div>
         <div class="flex justify-between items-center pt-1 border-t border-slate-200/60">
-          <span>Status:</span>
+          <span>Ledger Status:</span>
           <span id="pvStatus" class="font-black px-2 py-0.5 rounded-md text-[10px]"></span>
         </div>
       </div>
       <table class="w-full border-t border-b border-slate-200">
         <thead>
           <tr class="text-left text-[10px] text-slate-400 uppercase tracking-wider">
-            <th class="py-1.5">Item & Code</th>
+            <th class="py-1.5">SKU & Identity</th>
             <th class="py-1.5 text-center">Qty</th>
             <th class="py-1.5 text-right">Price</th>
             <th class="py-1.5 text-right">Total</th>
@@ -272,8 +324,8 @@
         <tbody id="pvList" class="divide-y divide-slate-100"></tbody>
       </table>
       <div class="flex justify-between font-black text-sm pt-1">
-        <span>Grand Total:</span>
-        <span class="text-amber-600">₹<span id="pvTot"></span></span>
+        <span>Total Settled:</span>
+        <span class="text-amber-600 mono-num">₹<span id="pvTot"></span></span>
       </div>
       <button type="button" onclick="closePreview()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-2xl transition">
         Close Preview
@@ -282,10 +334,10 @@
   </div>
 
   <!-- Settings Modal with Backup & Restore -->
-  <div id="settingsModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col text-xs text-slate-700">
-      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-        <h3 class="font-extrabold text-sm text-slate-900">⚙️ Store Settings</h3>
+  <div id="settingsModal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="futuristic-card bg-white w-full max-w-md rounded-[2.5rem] overflow-hidden flex flex-col text-xs text-slate-700 border border-white">
+      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/60">
+        <h3 class="font-black text-sm text-slate-900 uppercase tracking-wider">Terminal Configuration</h3>
         <button type="button" onclick="closeSettings()" class="text-slate-400 text-lg font-bold p-1">×</button>
       </div>
       <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
@@ -294,118 +346,118 @@
           <input id="setBizName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
         </div>
         <div>
-          <label class="block font-bold text-slate-400 mb-1">DEFAULT CUSTOMER NAME</label>
+          <label class="block font-bold text-slate-400 mb-1">DEFAULT CUSTOMER IDENTIFIER</label>
           <input id="setCustName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 outline-none focus:border-amber-500" />
         </div>
         <div>
-          <label class="block font-bold text-slate-400 mb-1">PHONEPE MERCHANT UPI VPA</label>
-          <input id="setUpiId" type="text" value="Q059185009@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" readonly />
-          <p class="text-[10px] text-slate-400 mt-1">Official Standee VPA: Q059185009@ybl</p>
+          <label class="block font-bold text-slate-400 mb-1">MERCHANT UPI ADDRESS (VPA)</label>
+          <input id="setUpiId" type="text" value="Q059185009@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-bold outline-none focus:border-amber-500 mono-num" readonly />
+          <p class="text-[10px] text-slate-400 mt-1">Verified Standee: Q059185009@ybl</p>
         </div>
 
         <div class="pt-3 border-t border-slate-100 space-y-2">
-          <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px]">Data Backup & Sync (Cross-Device)</label>
-          <p class="text-[10px] text-slate-400">Export a single file to transfer all sales, items, and settings to another phone or computer.</p>
+          <label class="block font-black text-slate-700 uppercase tracking-wider text-[10px]">Data Vault Snapshot (Cross-Device)</label>
+          <p class="text-[10px] text-slate-400">Export a verified cryptographic snapshot to migrate state to any browser instance.</p>
           
           <div class="grid grid-cols-2 gap-2 pt-1">
             <button type="button" onclick="exportBackupFile()" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold py-2.5 px-3 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-xs">
-              <span>📥</span> Backup Data
+              <span>📥</span> Export Snapshot
             </button>
             <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold py-2.5 px-3 rounded-2xl transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs text-center">
-              <span>📤</span> Restore Data
+              <span>📤</span> Restore Vault
               <input type="file" id="restoreFileInput" accept=".json" onchange="importBackupFile(event)" class="hidden" />
             </label>
           </div>
         </div>
       </div>
-      <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
+      <div class="p-4 border-t border-slate-100 bg-slate-50/60 flex justify-end gap-2">
         <button type="button" onclick="closeSettings()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2.5 rounded-2xl font-bold">Cancel</button>
-        <button type="button" onclick="saveSettings()" class="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-2xl font-bold shadow-xs">Save Changes</button>
+        <button type="button" onclick="saveSettings()" class="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-2xl font-bold shadow-xs">Save Settings</button>
       </div>
     </div>
   </div>
 
-  <!-- Quick Items Management Modal -->
-  <div id="catalogModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700">
-      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+  <!-- Quick Inventory Management Modal -->
+  <div id="catalogModal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="futuristic-card bg-white w-full max-w-md rounded-[2.5rem] overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700 border border-white">
+      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/60">
         <div>
-          <h3 class="font-extrabold text-sm text-slate-900">Manage Quick Buttons</h3>
-          <p class="text-[10px] text-slate-400">Add, edit, or delete items shown on the quick buttons bar</p>
+          <h3 class="font-black text-sm text-slate-900 uppercase tracking-wider">Configure Capsule Buttons</h3>
+          <p class="text-[10px] text-slate-400">Manage one-tap billing presets</p>
         </div>
         <button type="button" onclick="closeCatalogModal()" class="text-slate-400 text-lg font-bold p-1">×</button>
       </div>
       <div class="p-5 space-y-3 overflow-y-auto flex-grow">
-        <div class="bg-amber-50/70 p-3.5 rounded-3xl border border-amber-200/80 space-y-2.5">
-          <p class="font-bold text-amber-900">Add New Quick Button</p>
+        <div class="bg-amber-50/70 p-4 rounded-3xl border border-amber-200/80 space-y-2.5">
+          <p class="font-black text-amber-950 uppercase tracking-wider text-[10px]">Add Capsule Preset</p>
           <div class="grid grid-cols-12 gap-2">
-            <input id="newCatName" type="text" placeholder="Category (e.g. Abaya)" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-semibold" />
-            <input id="newCatCode" type="text" placeholder="Code (e.g. AB-101)" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
-            <input id="newCatPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-2 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
+            <input id="newCatName" type="text" placeholder="Category" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
+            <input id="newCatCode" type="text" placeholder="SKU Code" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-black mono-num" />
+            <input id="newCatPrice" type="number" placeholder="₹ Rate" class="col-span-3 bg-white border border-slate-200 rounded-xl px-2 py-2 text-xs outline-none focus:border-amber-500 font-bold mono-num" />
           </div>
-          <input id="newCatDesc" type="text" placeholder="Product Description (e.g. Designer Embroidered Abaya)" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500" />
-          <button type="button" onclick="addNewCatalogItem()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">
-            + Save Quick Button
+          <input id="newCatDesc" type="text" placeholder="Full Product Description" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-amber-500 font-medium" />
+          <button type="button" onclick="addNewCatalogItem()" class="w-full bg-slate-900 hover:bg-black text-white font-black py-2.5 rounded-xl text-xs transition shadow-sm">
+            + Append to Terminal Deck
           </button>
         </div>
         <div id="catalogItemsList" class="space-y-2 pt-1"></div>
       </div>
-      <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
-        <button type="button" onclick="closeCatalogModal()" class="bg-slate-900 hover:bg-black text-white px-5 py-2 rounded-2xl font-bold">Done</button>
+      <div class="p-4 border-t border-slate-100 bg-slate-50/60 flex justify-end">
+        <button type="button" onclick="closeCatalogModal()" class="bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-2xl font-bold">Done</button>
       </div>
     </div>
   </div>
 
-  <!-- Sales History Modal -->
-  <div id="historyModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-700">
+  <!-- Sales Records Ledger Modal -->
+  <div id="historyModal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="futuristic-card bg-white w-full max-w-lg rounded-[2.5rem] overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-700 border border-white">
       
-      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/60">
         <div>
-          <h3 class="font-extrabold text-sm text-slate-900">Sales Records & Reports</h3>
-          <p class="text-[10px] text-slate-400">Filter sales by date and manage records</p>
+          <h3 class="font-black text-sm text-slate-900 uppercase tracking-wider">Audit Trail & Ledger</h3>
+          <p class="text-[10px] text-slate-400">Temporal sales filtering and record inspection</p>
         </div>
         <div class="flex items-center gap-2">
-          <button type="button" onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs">
+          <button type="button" onclick="exportDataExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-xs mono-num">
             📥 CSV
           </button>
           <button type="button" onclick="closeHistory()" class="text-slate-400 text-lg font-bold p-1">×</button>
         </div>
       </div>
 
-      <div class="px-5 py-3 bg-amber-50/40 border-b border-slate-100 space-y-2.5">
+      <div class="px-5 py-3.5 bg-amber-50/30 border-b border-slate-100 space-y-2.5">
         <div class="flex items-center gap-2">
           <div class="flex-grow">
-            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Filter Sales by Date</label>
-            <input id="historyDateFilter" type="date" onchange="applyDateFilter()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-amber-500" />
+            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">CHRONO-FILTER</label>
+            <input id="historyDateFilter" type="date" onchange="applyDateFilter()" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-bold outline-none focus:border-amber-500 mono-num" />
           </div>
           <div class="pt-4">
-            <button type="button" onclick="resetDateFilter()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs transition">
-              Show All
+            <button type="button" onclick="resetDateFilter()" class="bg-slate-200/80 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+              All Epochs
             </button>
           </div>
         </div>
 
-        <div class="flex items-center justify-between bg-white px-3.5 py-2 rounded-xl border border-amber-200/70">
+        <div class="flex items-center justify-between bg-white/80 px-4 py-2 rounded-xl border border-amber-200/70">
           <div>
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Filtered Bills:</span>
-            <span id="filteredBillCount" class="font-bold text-slate-900 ml-1">0</span>
+            <span class="text-[10px] font-black text-slate-400 uppercase">Filtered Receipts:</span>
+            <span id="filteredBillCount" class="font-black text-slate-900 ml-1 mono-num">0</span>
           </div>
           <div>
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Total Sales:</span>
-            <span class="font-black text-amber-700 ml-1">₹<span id="filteredSalesTotal">0.00</span></span>
+            <span class="text-[10px] font-black text-slate-400 uppercase">Turnover:</span>
+            <span class="font-black text-amber-800 ml-1 mono-num">₹<span id="filteredSalesTotal">0.00</span></span>
           </div>
         </div>
       </div>
 
       <div id="historyContent" class="p-5 overflow-y-auto space-y-3 flex-grow"></div>
 
-      <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-between items-center">
-        <button type="button" onclick="wipeHistory()" class="text-rose-600 hover:text-rose-700 font-bold text-xs p-1 transition">
-          🗑️ Clear All History
+      <div class="p-4 border-t border-slate-100 bg-slate-50/60 flex justify-between items-center">
+        <button type="button" onclick="wipeHistory()" class="text-rose-600 hover:text-rose-700 font-black text-xs p-1 transition">
+          🗑️ Purge All State
         </button>
-        <button type="button" onclick="closeHistory()" class="bg-slate-200 hover:bg-slate-300 px-5 py-2 rounded-2xl font-bold text-xs transition">
-          Close
+        <button type="button" onclick="closeHistory()" class="bg-slate-200/80 hover:bg-slate-300 px-5 py-2 rounded-2xl font-bold text-xs transition">
+          Dismiss
         </button>
       </div>
     </div>
@@ -522,9 +574,9 @@
       for (let i = 1; i <= 4; i++) {
         const dot = document.getElementById('dot' + i);
         if (i <= enteredPin.length) {
-          dot.className = "w-3.5 h-3.5 rounded-full bg-amber-500 border-2 border-amber-500 scale-110 shadow-xs transition-all duration-200";
+          dot.className = "w-3.5 h-3.5 rounded-full bg-amber-500 border-2 border-amber-500 scale-125 shadow-md shadow-amber-500/40 transition-all duration-300";
         } else {
-          dot.className = "w-3.5 h-3.5 rounded-full border-2 border-slate-300 scale-100 transition-all duration-200";
+          dot.className = "w-3.5 h-3.5 rounded-full border-2 border-slate-300 scale-100 transition-all duration-300";
         }
       }
     }
@@ -613,7 +665,7 @@
       document.getElementById('custName').value = cust;
 
       closeSettings();
-      alert('Settings updated successfully!');
+      alert('Terminal Configuration Updated.');
     }
 
     function exportBackupFile() {
@@ -629,7 +681,7 @@
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `AMS_Backup_${new Date().toISOString().slice(0,10)}.json`);
+      downloadAnchor.setAttribute("download", `AMS_Snapshot_${new Date().toISOString().slice(0,10)}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
@@ -650,13 +702,13 @@
             if (data.ams_biz) localStorage.setItem('ams_biz', data.ams_biz);
             if (data.ams_default_cust) localStorage.setItem('ams_default_cust', data.ams_default_cust);
 
-            alert('Backup restored successfully!');
+            alert('Vault restored successfully!');
             window.location.reload();
           } else {
-            alert('Invalid backup file format.');
+            alert('Corrupt snapshot format.');
           }
         } catch (err) {
-          alert('Error reading backup file: ' + err.message);
+          alert('Read error: ' + err.message);
         }
       };
       reader.readAsText(file);
@@ -696,11 +748,11 @@
       const btnOnline = document.getElementById('btnOnline');
 
       if (mode === 'Cash') {
-        btnCash.className = 'py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 bg-white text-slate-900 shadow-sm transition';
-        btnOnline.className = 'py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 text-slate-500 hover:text-slate-900 transition';
+        btnCash.className = 'py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-sm transition';
+        btnOnline.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-900 transition';
       } else {
-        btnOnline.className = 'py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 bg-white text-slate-900 shadow-sm transition';
-        btnCash.className = 'py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 text-slate-500 hover:text-slate-900 transition';
+        btnOnline.className = 'py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-sm transition';
+        btnCash.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-900 transition';
       }
     }
 
@@ -710,11 +762,11 @@
       const btnUnpaid = document.getElementById('btnUnpaid');
 
       if (status === 'PAID') {
-        btnPaid.className = 'py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 bg-emerald-600 text-white shadow-sm transition';
-        btnUnpaid.className = 'py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 text-slate-500 hover:text-rose-600 transition';
+        btnPaid.className = 'py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-sm transition';
+        btnUnpaid.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-rose-600 transition';
       } else {
-        btnUnpaid.className = 'py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 bg-rose-600 text-white shadow-sm transition';
-        btnPaid.className = 'py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 text-slate-500 hover:text-emerald-600 transition';
+        btnUnpaid.className = 'py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-sm transition';
+        btnPaid.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-emerald-600 transition';
       }
     }
 
@@ -726,9 +778,9 @@
       const bar = document.getElementById('quickItemsBar');
       const items = getCatalog();
       bar.innerHTML = items.map((c) => `
-        <button type="button" onclick="quickAddItem('${c.name}', '${c.code || ''}', '${c.desc || c.name}', ${c.price || 0})" class="shrink-0 bg-[#FAF8F5] hover:bg-amber-50 active:scale-95 text-slate-800 font-bold px-3.5 py-2 rounded-2xl border border-slate-200 shadow-xs transition flex items-center gap-2">
+        <button type="button" onclick="quickAddItem('${c.name}', '${c.code || ''}', '${c.desc || c.name}', ${c.price || 0})" class="shrink-0 bg-white/90 hover:bg-amber-50 active:scale-95 text-slate-800 font-extrabold px-4 py-2.5 rounded-2xl border border-slate-200/80 shadow-xs transition flex items-center gap-2">
           <span>${c.desc || c.name}</span>
-          <span class="font-extrabold text-amber-900 text-[11px] bg-amber-200/70 px-2 py-0.5 rounded-lg">₹${c.price || 0}</span>
+          <span class="font-black text-amber-900 text-[11px] bg-amber-100 px-2 py-0.5 rounded-lg mono-num">₹${c.price || 0}</span>
         </button>
       `).join('');
     }
@@ -765,14 +817,14 @@
       const list = getCatalog();
       const box = document.getElementById('catalogItemsList');
       box.innerHTML = list.map((c, idx) => `
-        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2">
           <div class="grid grid-cols-12 gap-2">
-            <input type="text" value="${c.name}" onchange="updateCatalogItem(${idx}, 'name', this.value)" placeholder="Category" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 font-semibold outline-none" />
-            <input type="text" value="${c.code || ''}" onchange="updateCatalogItem(${idx}, 'code', this.value)" placeholder="Code" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-amber-800 font-bold outline-none" />
-            <input type="number" value="${c.price || 0}" onchange="updateCatalogItem(${idx}, 'price', this.value)" placeholder="Price" class="col-span-2 bg-white border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs text-right font-bold text-slate-800 outline-none" />
+            <input type="text" value="${c.name}" onchange="updateCatalogItem(${idx}, 'name', this.value)" placeholder="Category" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 font-bold outline-none" />
+            <input type="text" value="${c.code || ''}" onchange="updateCatalogItem(${idx}, 'code', this.value)" placeholder="Code" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-amber-900 font-black outline-none mono-num" />
+            <input type="number" value="${c.price || 0}" onchange="updateCatalogItem(${idx}, 'price', this.value)" placeholder="Price" class="col-span-2 bg-white border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs text-right font-black text-slate-800 outline-none mono-num" />
             <button type="button" onclick="deleteCatalogItem(${idx})" class="col-span-1 text-rose-600 font-black text-center text-sm hover:bg-rose-50 rounded">×</button>
           </div>
-          <input type="text" value="${c.desc || ''}" onchange="updateCatalogItem(${idx}, 'desc', this.value)" placeholder="Description" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1 text-xs text-slate-600 outline-none" />
+          <input type="text" value="${c.desc || ''}" onchange="updateCatalogItem(${idx}, 'desc', this.value)" placeholder="Description" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-600 outline-none font-medium" />
         </div>
       `).join('');
     }
@@ -783,7 +835,7 @@
       const price = parseFloat(document.getElementById('newCatPrice').value) || 0;
       const desc = document.getElementById('newCatDesc').value.trim() || name;
 
-      if (!name) return alert('Please enter product category/name');
+      if (!name) return alert('Enter product class / name');
 
       const catalog = getCatalog();
       catalog.push({ name, code, desc, price });
@@ -817,35 +869,35 @@
     function addRow(category = '', code = '', name = '', qty = 1, price = '') {
       const id = 'row_' + Date.now() + Math.floor(Math.random() * 100);
       const div = document.createElement('div');
-      div.className = 'bg-[#FAF8F5] p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5 transition-all shadow-xs';
+      div.className = 'bg-white/90 p-4 rounded-2xl border border-slate-200/90 space-y-2.5 transition-all shadow-xs';
       div.id = id;
       div.innerHTML = `
         <div class="grid grid-cols-12 gap-2 items-center">
           <div class="col-span-6">
-            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-0.5">Category</label>
-            <input type="text" placeholder="Abaya / Bag" value="${category}" class="row-cat w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-bold outline-none focus:border-amber-500" />
+            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5">CATEGORY / DEPT</label>
+            <input type="text" placeholder="Abaya / Bag" value="${category}" class="row-cat w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-bold outline-none focus:border-amber-500 focus:bg-white" />
           </div>
           <div class="col-span-5">
-            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-0.5">Item Code</label>
-            <input type="text" placeholder="AB-101" value="${code}" class="row-code w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-amber-900 font-black outline-none focus:border-amber-500" />
+            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5">SKU CODE</label>
+            <input type="text" placeholder="AB-101" value="${code}" class="row-code w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-amber-900 font-black outline-none focus:border-amber-500 focus:bg-white mono-num" />
           </div>
-          <div class="col-span-1 text-right pt-3.5">
-            <button type="button" onclick="removeRow('${id}')" class="text-slate-400 hover:text-rose-600 font-bold text-lg leading-none transition">×</button>
+          <div class="col-span-1 text-right pt-3">
+            <button type="button" onclick="removeRow('${id}')" class="text-slate-300 hover:text-rose-600 font-black text-xl leading-none transition">×</button>
           </div>
         </div>
 
         <div class="grid grid-cols-12 gap-2 items-center">
           <div class="col-span-6">
-            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-0.5">Description</label>
-            <input type="text" placeholder="Item Name" value="${name}" class="row-name w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-amber-500" />
+            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5">IDENTITY DESCRIPTION</label>
+            <input type="text" placeholder="Item Name" value="${name}" class="row-name w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-semibold outline-none focus:border-amber-500 focus:bg-white" />
           </div>
           <div class="col-span-2">
-            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-0.5 text-center">Qty</label>
-            <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="calcTotal()" class="row-qty w-full bg-white border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs text-center text-slate-800 font-black outline-none focus:border-amber-500" />
+            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5 text-center">QTY</label>
+            <input type="number" placeholder="Qty" value="${qty}" min="1" oninput="calcTotal()" class="row-qty w-full bg-slate-50 border border-slate-200 rounded-xl px-1.5 py-1.5 text-xs text-center text-slate-800 font-black outline-none focus:border-amber-500 focus:bg-white mono-num" />
           </div>
           <div class="col-span-4">
-            <label class="block text-[10px] font-extrabold text-slate-400 uppercase mb-0.5 text-right">Price (₹)</label>
-            <input type="number" placeholder="Price" value="${price}" min="0" oninput="calcTotal()" class="row-price w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-right text-amber-900 font-black outline-none focus:border-amber-500" />
+            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-0.5 text-right">PRICE (₹)</label>
+            <input type="number" placeholder="Price" value="${price}" min="0" oninput="calcTotal()" class="row-price w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-right text-amber-900 font-black outline-none focus:border-amber-500 focus:bg-white mono-num" />
           </div>
         </div>
       `;
@@ -923,11 +975,11 @@
     function saveOnly() {
       const total = parseFloat(calcTotal());
       if (total <= 0) {
-        alert('Please enter an item price before saving.');
+        alert('Set invoice item amounts before committing state.');
         return;
       }
       saveRecord();
-      alert('Bill saved successfully!');
+      alert('Transaction committed to ledger.');
       resetInputs();
     }
 
@@ -962,13 +1014,13 @@
       const qrDataUrl = getStandeeOfficialQrDataUrl();
       const rowsHtml = (items || []).map(it => `
         <tr>
-          <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0;">
+          <td style="padding: 6px 0; border-bottom: 1px dashed #cbd5e1;">
             <div style="font-weight: bold;">${it.name}</div>
-            <div style="font-size: 9px; color: #64748b;">Code: ${it.code} • Cat: ${it.category}</div>
+            <div style="font-size: 9px; color: #64748b;">SKU: ${it.code} • ${it.category}</div>
           </td>
-          <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0; text-align: center;">${it.qty}</td>
-          <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0; text-align: right;">₹${it.price}</td>
-          <td style="padding: 6px 0; border-bottom: 1px dashed #e2e8f0; text-align: right; font-weight: bold;">₹${it.total}</td>
+          <td style="padding: 6px 0; border-bottom: 1px dashed #cbd5e1; text-align: center;">${it.qty}</td>
+          <td style="padding: 6px 0; border-bottom: 1px dashed #cbd5e1; text-align: right;">₹${it.price}</td>
+          <td style="padding: 6px 0; border-bottom: 1px dashed #cbd5e1; text-align: right; font-weight: bold;">₹${it.total}</td>
         </tr>
       `).join('');
 
@@ -983,7 +1035,7 @@
         <head>
           <title>${inv}</title>
           <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 15px; margin: 0 auto; max-width: 380px; color: #1e293b; font-size: 12px; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 15px; margin: 0 auto; max-width: 380px; color: #0f172a; font-size: 12px; }
             .header { text-align: center; border-bottom: 2px dashed #94a3b8; padding-bottom: 12px; margin-bottom: 12px; }
             .logo-img { width: 60px; height: 60px; border-radius: 50%; object-fit: contain; margin: 0 auto 6px auto; border: 1px solid #d97706; display: block; }
             .biz { font-size: 16px; font-weight: 800; text-transform: uppercase; color: #0f172a; margin-bottom: 2px; }
@@ -993,7 +1045,7 @@
             th { text-align: left; padding: 6px 0; border-bottom: 1px solid #0f172a; text-transform: uppercase; font-size: 10px; color: #475569; }
             .tot-box { border-top: 2px dashed #94a3b8; padding-top: 10px; font-size: 15px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
             .qr-sec { text-align: center; margin-top: 18px; padding-top: 12px; border-top: 1px dashed #cbd5e1; position: relative; }
-            .qr-sec img { width: 125px; height: 125px; margin: 0 auto; display: block; border: 1px solid #cbd5e1; border-radius: 8px; }
+            .qr-sec img { width: 120px; height: 120px; margin: 0 auto; display: block; border: 1px solid #cbd5e1; border-radius: 8px; }
             .qr-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg); color: rgba(5, 150, 105, 0.85); border: 2px solid rgba(5, 150, 105, 0.85); font-weight: 900; font-size: 18px; padding: 4px 12px; border-radius: 6px; letter-spacing: 2px; pointer-events: none; background: rgba(255, 255, 255, 0.7); }
             .footer { text-align: center; margin-top: 14px; font-size: 10px; color: #64748b; line-height: 1.4; }
           </style>
@@ -1003,18 +1055,18 @@
             <img src="${EMBEDDED_LOGO_BASE64}" class="logo-img" />
             <div class="biz">${biz}</div>
             <div class="sub">${STORE_ADDRESS}</div>
-            <div class="sub">Store Contact: ${STORE_PHONE}</div>
+            <div class="sub">Contact: ${STORE_PHONE}</div>
           </div>
           <div class="meta">
             <div><strong>Invoice:</strong> ${inv}</div>
             <div><strong>Date:</strong> ${dt}</div>
             <div><strong>Customer:</strong> ${custDisplay}</div>
-            <div style="margin-top: 4px;"><strong>Payment Mode:</strong> ${pay} &nbsp; ${statusBadge}</div>
+            <div style="margin-top: 4px;"><strong>Channel:</strong> ${pay} &nbsp; ${statusBadge}</div>
           </div>
           <table>
             <thead>
               <tr>
-                <th>Item & Details</th>
+                <th>Item Details</th>
                 <th style="text-align: center;">Qty</th>
                 <th style="text-align: right;">Price</th>
                 <th style="text-align: right;">Total</th>
@@ -1023,21 +1075,21 @@
             <tbody>${rowsHtml}</tbody>
           </table>
           <div class="tot-box">
-            <span>GRAND TOTAL</span>
+            <span>TOTAL DUE</span>
             <span>₹${tot}</span>
           </div>
 
           <div class="qr-sec">
-            <p style="font-size: 10px; font-weight: 800; margin: 0 0 6px 0;">${status === 'PAID' ? 'PAYMENT COMPLETED' : 'SCAN TO PAY VIA PHONEPE / ANY UPI'}</p>
+            <p style="font-size: 10px; font-weight: 800; margin: 0 0 6px 0;">${status === 'PAID' ? 'SETTLED IN FULL' : 'SCAN VIA PHONEPE / ANY UPI'}</p>
             <div style="position: relative; display: inline-block;">
               <img src="${qrDataUrl}" alt="UPI QR" />
               ${status === 'PAID' ? '<div class="qr-watermark">PAID</div>' : ''}
             </div>
-            <p style="font-size: 9px; color: #64748b; margin-top: 4px;">Merchant VPA: Q059185009@ybl</p>
+            <p style="font-size: 9px; color: #64748b; margin-top: 4px;">VPA: Q059185009@ybl</p>
           </div>
 
           <div class="footer">
-            <p>Thank you for shopping with us!</p>
+            <p>Thank you for choosing AMS Ladies Bags & Abayas!</p>
             <p style="margin-top: 4px;">📍 ${STORE_ADDRESS}</p>
           </div>
         </body>
@@ -1066,7 +1118,7 @@
       }, 300);
     }
 
-    // PDF Generator with Official Boutique Stamp on Bottom Right
+    // PDF Generator with High-Precision Technical Aesthetics
     function makePDFObject(biz, inv, dt, cust, custPhone, pay, status, tot, items) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
@@ -1075,7 +1127,7 @@
         format: [80, 230]
       });
 
-      // 1. Top Luxury Dark Bar
+      // 1. Futuristic Header Header Plate
       doc.setFillColor(15, 23, 42);
       doc.rect(0, 0, 80, 31, 'F');
 
@@ -1093,8 +1145,8 @@
       doc.setFont(undefined, 'normal');
       doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, 27, { align: 'center' });
 
-      // 2. Metadata Box
-      doc.setFillColor(250, 248, 245);
+      // 2. Data Card Architecture
+      doc.setFillColor(248, 250, 252);
       doc.roundedRect(5, 34, 70, 16, 2, 2, 'F');
       doc.setDrawColor(226, 232, 240);
       doc.roundedRect(5, 34, 70, 16, 2, 2, 'S');
@@ -1108,19 +1160,19 @@
       doc.setFont(undefined, 'normal');
       const custDisplay = custPhone ? `${cust} (+91 ${custPhone})` : cust;
       doc.text(`CUSTOMER: ${custDisplay}`, 8, 43);
-      doc.text(`PAYMENT: ${pay}`, 8, 47);
+      doc.text(`CHANNEL: ${pay}`, 8, 47);
 
       if (status === 'PAID') {
         doc.setTextColor(5, 150, 105);
         doc.setFont(undefined, 'bold');
-        doc.text("STATUS: PAID", 72, 47, { align: 'right' });
+        doc.text("LEDGER: PAID", 72, 47, { align: 'right' });
       } else {
         doc.setTextColor(225, 29, 72);
         doc.setFont(undefined, 'bold');
-        doc.text("STATUS: UNPAID (DUE)", 72, 47, { align: 'right' });
+        doc.text("LEDGER: UNPAID (DUE)", 72, 47, { align: 'right' });
       }
 
-      // 3. Line Items Table
+      // 3. Structured Line Items
       const rows = (items || []).map(it => [
         `${it.name}\n[${it.code}] ${it.category}`,
         it.qty,
@@ -1131,7 +1183,7 @@
       doc.autoTable({
         startY: 53,
         margin: { left: 5, right: 5 },
-        head: [['Item & Details', 'Qty', 'Rate', 'Amount']],
+        head: [['SKU Details', 'Qty', 'Rate', 'Amount']],
         body: rows,
         theme: 'striped',
         headStyles: { 
@@ -1152,20 +1204,20 @@
 
       let finalY = doc.lastAutoTable.finalY + 4;
 
-      // 4. Grand Total Box
+      // 4. Grand Total Matrix
       doc.setFillColor(15, 23, 42);
       doc.roundedRect(5, finalY, 70, 10, 2, 2, 'F');
 
       doc.setFontSize(7.5);
       doc.setFont(undefined, 'bold');
       doc.setTextColor(255, 255, 255);
-      doc.text("GRAND TOTAL:", 10, finalY + 6.5);
+      doc.text("AGGREGATE DUE:", 10, finalY + 6.5);
 
       doc.setTextColor(251, 191, 36);
       doc.setFontSize(9);
       doc.text(`Rs. ${tot}`, 71, finalY + 6.5, { align: 'right' });
 
-      // 5. Dynamic UPI QR Section
+      // 5. Dynamic UPI QR on Bottom Left
       finalY += 13;
       const qrDataUrl = getStandeeOfficialQrDataUrl();
       if (qrDataUrl) {
@@ -1188,53 +1240,53 @@
         } catch (e) {}
       }
 
-      // 6. OFFICIAL EMBOSSED STAMP AT BOTTOM-RIGHT
+      // 6. OFFICIAL DIGITAL EMBOSSED STAMP (Bottom-Right)
       const isPaid = (status === 'PAID');
       const stampColor = isPaid ? [5, 150, 105] : [225, 29, 72];
       const stampText = isPaid ? 'PAID' : 'DUE';
-      const stampSub = isPaid ? 'VERIFIED' : 'PENDING';
+      const stampSub = isPaid ? 'AUTHENTICATED' : 'BALANCE DUE';
 
       doc.saveGraphicsState();
       
       const stampCenter = { x: 58, y: finalY + 13 };
-      doc.setGState(new doc.GState({ opacity: 0.88 }));
+      doc.setGState(new doc.GState({ opacity: 0.9 }));
       doc.setDrawColor(stampColor[0], stampColor[1], stampColor[2]);
       doc.setTextColor(stampColor[0], stampColor[1], stampColor[2]);
 
-      // Outer Circular Ring
+      // Outer Geometric Octagonal-Circular Boundary
       doc.setLineWidth(1.0);
       doc.circle(stampCenter.x, stampCenter.y, 12, 'S');
 
-      // Inner Dashed Circular Ring
+      // Inner Technical Calibrated Ring
       doc.setLineWidth(0.4);
-      doc.setLineDashPattern([1, 1], 0);
+      doc.setLineDashPattern([1.2, 0.8], 0);
       doc.circle(stampCenter.x, stampCenter.y, 10.3, 'S');
       doc.setLineDashPattern([], 0);
 
-      // Top & Bottom Stamp Arched Text
+      // Radial Precision Text
       doc.setFontSize(4.2);
       doc.setFont(undefined, 'bold');
       doc.text("AMS LADIES BAGS", stampCenter.x, stampCenter.y - 6.8, { align: 'center', angle: -6 });
       doc.text(stampSub, stampCenter.x, stampCenter.y + 7.5, { align: 'center', angle: -6 });
 
-      // Core Slanted Stamp Text
-      doc.setFontSize(10);
+      // Core Callout Typography
+      doc.setFontSize(10.5);
       doc.setFont(undefined, 'black');
       doc.text(stampText, stampCenter.x, stampCenter.y + 1.8, { align: 'center', angle: -12 });
 
-      // Clean Double Parallel Inner Bars
+      // Clean Accent Rails
       doc.setLineWidth(0.4);
       doc.line(stampCenter.x - 7.5, stampCenter.y - 3.2, stampCenter.x + 7.5, stampCenter.y - 3.2);
       doc.line(stampCenter.x - 7.5, stampCenter.y + 3.8, stampCenter.x + 7.5, stampCenter.y + 3.8);
 
       doc.restoreGraphicsState();
 
-      // 7. Footer Clean Text Address
+      // 7. Micro-Address Footer
       finalY += 34;
       doc.setFontSize(6);
       doc.setFont(undefined, 'bold');
       doc.setTextColor(71, 85, 105);
-      doc.text("Thank you for shopping with us!", 40, finalY, { align: 'center' });
+      doc.text("Thank you for choosing AMS Ladies Bags & Abayas!", 40, finalY, { align: 'center' });
 
       finalY += 4;
       doc.setFont(undefined, 'normal');
@@ -1248,7 +1300,7 @@
     function runBill(mode) {
       const total = parseFloat(calcTotal());
       if (total <= 0) {
-        alert('Please enter an item price first.');
+        alert('Allocate line items prior to executing bill issuance.');
         return;
       }
 
@@ -1269,7 +1321,7 @@
         doc.save(`${inv}.pdf`);
       } else if (mode === 'wa') {
         if (custPhone.length < 10) {
-          alert('Please enter a valid 10-digit customer mobile number.');
+          alert('Provide a verified 10-digit customer number.');
           return;
         }
 
@@ -1277,18 +1329,18 @@
 
         const text = encodeURIComponent(
           `Hello *${cust}*,\n\n` +
-          `Thank you for shopping at *${biz}*!\n\n` +
-          `🧾 *Invoice Number:* #${inv}\n` +
-          `📅 *Date:* ${dt}\n` +
-          `📱 *Customer Phone:* +91 ${custPhone}\n` +
-          `💳 *Payment Mode:* ${pay}\n` +
-          `📌 *Payment Status:* ${statusLabel}\n\n` +
-          `🛍️ *Items Purchased:*\n${itemsSummary}\n\n` +
+          `Thank you for choosing *${biz}*!\n\n` +
+          `🧾 *Invoice Reference:* #${inv}\n` +
+          `📅 *Issued:* ${dt}\n` +
+          `📱 *Customer Cellular:* +91 ${custPhone}\n` +
+          `💳 *Channel:* ${pay}\n` +
+          `📌 *Settlement State:* ${statusLabel}\n\n` +
+          `🛍️ *Purchased Articles:*\n${itemsSummary}\n\n` +
           `💰 *Total Amount:* ₹${total.toFixed(2)}\n\n` +
           `📍 *Store Address:*\n${STORE_ADDRESS}\n` +
-          `🗺️ *Google Maps Location:*\n${STORE_MAPS_LINK}\n` +
-          `📞 *Store Contact:* ${STORE_PHONE}\n\n` +
-          `Thank you for choosing us!`
+          `🗺️ *Maps Navigator:*\n${STORE_MAPS_LINK}\n` +
+          `📞 *Support:* ${STORE_PHONE}\n\n` +
+          `Thank you for your valued visit!`
         );
         window.open(`https://wa.me/91${custPhone}?text=${text}`, '_blank');
       }
@@ -1319,7 +1371,7 @@
       const b = list[origIdx];
       if (!b) return;
       if (!b.phone || b.phone.length < 10) {
-        alert('No phone number was recorded for this bill.');
+        alert('No registered cellular for this invoice record.');
         return;
       }
       const biz = localStorage.getItem('ams_biz') || DEFAULT_STORE;
@@ -1328,18 +1380,18 @@
 
       const text = encodeURIComponent(
         `Hello *${b.custName}*,\n\n` +
-        `Thank you for shopping at *${biz}*!\n\n` +
-        `🧾 *Invoice Number:* #${b.invNum}\n` +
-        `📅 *Date:* ${b.date}\n` +
-        `📱 *Customer Phone:* +91 ${b.phone}\n` +
-        `💳 *Payment Mode:* ${b.payment}\n` +
-        `📌 *Payment Status:* ${statusLabel}\n\n` +
-        `🛍️ *Items Purchased:*\n${itemsSummary}\n\n` +
+        `Thank you for choosing *${biz}*!\n\n` +
+        `🧾 *Invoice Reference:* #${b.invNum}\n` +
+        `📅 *Issued:* ${b.date}\n` +
+        `📱 *Customer Cellular:* +91 ${b.phone}\n` +
+        `💳 *Channel:* ${b.payment}\n` +
+        `📌 *Settlement State:* ${statusLabel}\n\n` +
+        `🛍️ *Purchased Articles:*\n${itemsSummary}\n\n` +
         `💰 *Total Amount:* ₹${b.total}\n\n` +
         `📍 *Store Address:*\n${STORE_ADDRESS}\n` +
-        `🗺️ *Google Maps Location:*\n${STORE_MAPS_LINK}\n` +
-        `📞 *Store Contact:* ${STORE_PHONE}\n\n` +
-        `Thank you for choosing us!`
+        `🗺️ *Maps Navigator:*\n${STORE_MAPS_LINK}\n` +
+        `📞 *Support:* ${STORE_PHONE}\n\n` +
+        `Thank you for your valued visit!`
       );
       window.open(`https://wa.me/91${b.phone}?text=${text}`, '_blank');
     }
@@ -1349,7 +1401,7 @@
       const b = list[origIdx];
       if (!b) return;
 
-      if (confirm(`Are you sure you want to delete invoice ${b.invNum} for ${b.custName}?`)) {
+      if (confirm(`Purge invoice entry ${b.invNum} for ${b.custName}?`)) {
         list.splice(origIdx, 1);
         localStorage.setItem('ams_history', JSON.stringify(list));
         renderFilteredHistory();
@@ -1361,7 +1413,7 @@
       const inv = data ? data.invNum : document.getElementById('invNum').value;
       const dt = data ? data.date : document.getElementById('invDate').value;
       const cust = data ? data.custName : document.getElementById('custName').value;
-      const custPhone = data ? (data.phone ? '+91 ' + data.phone : 'Not provided') : (document.getElementById('custPhone').value ? '+91 ' + document.getElementById('custPhone').value : 'Not provided');
+      const custPhone = data ? (data.phone ? '+91 ' + data.phone : 'Not specified') : (document.getElementById('custPhone').value ? '+91 ' + document.getElementById('custPhone').value : 'Not specified');
       const pay = data ? data.payment : document.getElementById('paymentMode').value;
       const status = data ? (data.status || 'PAID') : document.getElementById('paymentStatus').value;
       const tot = data ? data.total : calcTotal();
@@ -1377,11 +1429,11 @@
 
       const stBadge = document.getElementById('pvStatus');
       if (status === 'PAID') {
-        stBadge.innerText = 'PAID';
-        stBadge.className = 'font-black px-2 py-0.5 rounded-md text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300';
+        stBadge.innerText = 'PAID (VERIFIED)';
+        stBadge.className = 'font-black px-2 py-0.5 rounded-md text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 mono-num';
       } else {
-        stBadge.innerText = 'UNPAID / DUE';
-        stBadge.className = 'font-black px-2 py-0.5 rounded-md text-[10px] bg-rose-100 text-rose-800 border border-rose-300';
+        stBadge.innerText = 'UNPAID / OUTSTANDING';
+        stBadge.className = 'font-black px-2 py-0.5 rounded-md text-[10px] bg-rose-100 text-rose-800 border border-rose-300 mono-num';
       }
 
       const tb = document.getElementById('pvList');
@@ -1389,13 +1441,13 @@
       (items || []).forEach(it => {
         tb.innerHTML += `
           <tr class="border-b border-slate-100">
-            <td class="py-1.5 font-medium text-slate-800">
+            <td class="py-2 font-medium text-slate-800">
               <div>${it.name}</div>
-              <div class="text-[9px] text-slate-400">Code: ${it.code} • ${it.category}</div>
+              <div class="text-[9px] text-slate-400 mono-num">SKU: ${it.code} • ${it.category}</div>
             </td>
-            <td class="py-1.5 text-center text-slate-500">${it.qty}</td>
-            <td class="py-1.5 text-right text-slate-500">₹${it.price}</td>
-            <td class="py-1.5 text-right font-bold text-slate-900">₹${it.total}</td>
+            <td class="py-2 text-center text-slate-500 mono-num">${it.qty}</td>
+            <td class="py-2 text-right text-slate-500 mono-num">₹${it.price}</td>
+            <td class="py-2 text-right font-black text-slate-900 mono-num">₹${it.total}</td>
           </tr>
         `;
       });
@@ -1444,27 +1496,27 @@
       document.getElementById('filteredSalesTotal').innerText = sumTotal.toFixed(2);
 
       if (filtered.length === 0) {
-        box.innerHTML = '<p class="text-center text-slate-400 py-10 font-medium">No sales records found for this selection.</p>';
+        box.innerHTML = '<p class="text-center text-slate-400 py-10 font-medium">No recorded transactions match this query window.</p>';
       } else {
         box.innerHTML = filtered.map((b) => {
           const isPaid = (b.status || 'PAID') === 'PAID';
           const statusChip = isPaid 
-            ? '<span class="bg-emerald-100 text-emerald-800 text-[9px] font-black px-1.5 py-0.5 rounded-md border border-emerald-200">PAID</span>'
-            : '<span class="bg-rose-100 text-rose-800 text-[9px] font-black px-1.5 py-0.5 rounded-md border border-rose-200">UNPAID</span>';
+            ? '<span class="bg-emerald-100 text-emerald-800 text-[9px] font-black px-1.5 py-0.5 rounded-md border border-emerald-200 mono-num">PAID</span>'
+            : '<span class="bg-rose-100 text-rose-800 text-[9px] font-black px-1.5 py-0.5 rounded-md border border-rose-200 mono-num">UNPAID</span>';
 
           return `
-            <div class="bg-slate-50/90 p-3.5 rounded-2xl border border-slate-200 space-y-2.5 transition">
+            <div class="bg-slate-50/90 p-4 rounded-2xl border border-slate-200/80 space-y-2.5 transition shadow-xs">
               <div class="flex justify-between items-start">
                 <div>
                   <div class="flex items-center gap-2">
-                    <p class="font-extrabold text-slate-900 text-xs sm:text-sm">${b.invNum} • ${b.custName}</p>
+                    <p class="font-black text-slate-900 text-xs sm:text-sm mono-num">${b.invNum} • ${b.custName}</p>
                     ${statusChip}
                   </div>
-                  <p class="text-[10px] text-slate-500 font-medium mt-0.5">${b.date} • <span class="text-amber-800 font-bold">${b.payment}</span> ${b.phone ? '• 📱 +91 ' + b.phone : ''}</p>
+                  <p class="text-[10px] text-slate-500 font-medium mt-0.5 mono-num">${b.date} • <span class="text-amber-800 font-bold">${b.payment}</span> ${b.phone ? '• 📱 +91 ' + b.phone : ''}</p>
                 </div>
                 <div class="text-right">
-                  <p class="font-black text-amber-900 text-sm">₹${b.total}</p>
-                  <span class="text-[9px] text-slate-400">${b.items ? b.items.length : 0} items</span>
+                  <p class="font-black text-amber-900 text-sm mono-num">₹${b.total}</p>
+                  <span class="text-[9px] text-slate-400 font-semibold">${b.items ? b.items.length : 0} items</span>
                 </div>
               </div>
 
@@ -1516,7 +1568,7 @@
       });
 
       if (exportList.length === 0) {
-        alert('No data available to export for this selection.');
+        alert('No data points available for requested export filter.');
         return;
       }
 
@@ -1530,14 +1582,14 @@
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
       const filenameDate = filterVal || 'All_Dates';
-      link.setAttribute("download", `AMS_Sales_Report_${filenameDate}.csv`);
+      link.setAttribute("download", `AMS_Ledger_Export_${filenameDate}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
 
     function wipeHistory() {
-      if (confirm('Are you sure you want to delete ALL billing records permanently? This cannot be recovered.')) {
+      if (confirm('Permanently purge entire ledger state? Irreversible operation.')) {
         localStorage.removeItem('ams_history');
         renderFilteredHistory();
       }
