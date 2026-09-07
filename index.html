@@ -38,7 +38,7 @@
 </head>
 <body class="min-h-screen text-slate-900 antialiased selection:bg-amber-500 selection:text-white pb-36">
 
-  <!-- Terminal Lockscreen Gateway (Clean Luxury White/Ivory) -->
+  <!-- Terminal Lockscreen Gateway -->
   <div id="loginGateway" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xl flex items-center justify-center p-4">
     <div id="loginCard" class="bg-white w-full max-w-sm rounded-[2.5rem] border border-amber-200/90 shadow-[0_25px_60px_-15px_rgba(180,140,75,0.25)] p-7 text-center space-y-6">
       
@@ -128,7 +128,7 @@
       </div>
     </div>
 
-    <!-- Card 2: Customer, Payment & Payment Status (PAID / UNPAID) -->
+    <!-- Card 2: Customer, Payment & Status -->
     <div class="boutique-card p-4.5 rounded-3xl space-y-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
@@ -149,7 +149,6 @@
 
       <!-- Payment Method & Paid / Unpaid Status -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-        <!-- Payment Mode -->
         <div>
           <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1.5">Payment Method</label>
           <div class="grid grid-cols-2 gap-1.5 bg-slate-100/90 p-1 rounded-2xl border border-slate-200">
@@ -163,7 +162,6 @@
           <input type="hidden" id="paymentMode" value="Cash" />
         </div>
 
-        <!-- Payment Status (Paid vs Unpaid) -->
         <div>
           <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1.5">Payment Status</label>
           <div class="grid grid-cols-2 gap-1.5 bg-slate-100/90 p-1 rounded-2xl border border-slate-200">
@@ -221,7 +219,7 @@
 
   </main>
 
-  <!-- Bottom Floating Action Dock (Modern Light Glass) -->
+  <!-- Bottom Floating Action Dock -->
   <div class="fixed bottom-4 inset-x-4 z-30 max-w-xl mx-auto">
     <div class="bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-2xl p-2 rounded-3xl grid grid-cols-5 gap-1.5">
       <button type="button" onclick="saveOnly()" class="bg-slate-900 hover:bg-black active:scale-95 text-white font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-xs">
@@ -305,7 +303,6 @@
           <p class="text-[10px] text-slate-400 mt-1">Official Standee VPA: Q059185009@ybl</p>
         </div>
 
-        <!-- 1-Click Multi-Device Backup & Restore Section -->
         <div class="pt-3 border-t border-slate-100 space-y-2">
           <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px]">Data Backup & Sync (Cross-Device)</label>
           <p class="text-[10px] text-slate-400">Export a single file to transfer all sales, items, and settings to another phone or computer.</p>
@@ -344,7 +341,7 @@
           <div class="grid grid-cols-12 gap-2">
             <input id="newCatName" type="text" placeholder="Category (e.g. Abaya)" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-semibold" />
             <input id="newCatCode" type="text" placeholder="Code (e.g. AB-101)" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
-            <input id="newCatPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
+            <input id="newCatPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-2 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
           </div>
           <input id="newCatDesc" type="text" placeholder="Product Description (e.g. Designer Embroidered Abaya)" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500" />
           <button type="button" onclick="addNewCatalogItem()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">
@@ -995,8 +992,9 @@
             table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 11px; }
             th { text-align: left; padding: 6px 0; border-bottom: 1px solid #0f172a; text-transform: uppercase; font-size: 10px; color: #475569; }
             .tot-box { border-top: 2px dashed #94a3b8; padding-top: 10px; font-size: 15px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
-            .qr-sec { text-align: center; margin-top: 18px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
+            .qr-sec { text-align: center; margin-top: 18px; padding-top: 12px; border-top: 1px dashed #cbd5e1; position: relative; }
             .qr-sec img { width: 125px; height: 125px; margin: 0 auto; display: block; border: 1px solid #cbd5e1; border-radius: 8px; }
+            .qr-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-25deg); color: rgba(5, 150, 105, 0.85); border: 2px solid rgba(5, 150, 105, 0.85); font-weight: 900; font-size: 18px; padding: 4px 12px; border-radius: 6px; letter-spacing: 2px; pointer-events: none; background: rgba(255, 255, 255, 0.7); }
             .footer { text-align: center; margin-top: 14px; font-size: 10px; color: #64748b; line-height: 1.4; }
           </style>
         </head>
@@ -1030,8 +1028,11 @@
           </div>
 
           <div class="qr-sec">
-            <p style="font-size: 10px; font-weight: 800; margin: 0 0 6px 0;">SCAN TO PAY VIA PHONEPE / ANY UPI</p>
-            <img src="${qrDataUrl}" alt="UPI QR" />
+            <p style="font-size: 10px; font-weight: 800; margin: 0 0 6px 0;">${status === 'PAID' ? 'PAYMENT COMPLETED' : 'SCAN TO PAY VIA PHONEPE / ANY UPI'}</p>
+            <div style="position: relative; display: inline-block;">
+              <img src="${qrDataUrl}" alt="UPI QR" />
+              ${status === 'PAID' ? '<div class="qr-watermark">PAID</div>' : ''}
+            </div>
             <p style="font-size: 9px; color: #64748b; margin-top: 4px;">Merchant VPA: Q059185009@ybl</p>
           </div>
 
@@ -1065,7 +1066,7 @@
       }, 300);
     }
 
-    // PDF Generator with High-Level Design & Watermark Stamp
+    // PDF Generator with Watermarks across Invoice & Over QR Code
     function makePDFObject(biz, inv, dt, cust, custPhone, pay, status, tot, items) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
@@ -1109,7 +1110,6 @@
       doc.text(`CUSTOMER: ${custDisplay}`, 8, 43);
       doc.text(`PAYMENT: ${pay}`, 8, 47);
 
-      // Status Pill in Metadata
       if (status === 'PAID') {
         doc.setTextColor(5, 150, 105);
         doc.setFont(undefined, 'bold');
@@ -1152,7 +1152,7 @@
 
       let finalY = doc.lastAutoTable.finalY + 4;
 
-      // 4. Grand Total Highlight Box
+      // 4. Grand Total Box
       doc.setFillColor(15, 23, 42);
       doc.roundedRect(5, finalY, 70, 10, 2, 2, 'F');
 
@@ -1165,8 +1165,7 @@
       doc.setFontSize(9);
       doc.text(`Rs. ${tot}`, 71, finalY + 6.5, { align: 'right' });
 
-      // 5. OFFICIAL WATERMARK STAMP (PAID / UNPAID)
-      // Placed across the middle section with rotation
+      // 5. INVOICE CENTER WATERMARK STAMP
       const watermarkText = status === 'PAID' ? 'PAID' : 'UNPAID / DUE';
       const watermarkColor = status === 'PAID' ? [5, 150, 105] : [225, 29, 72];
 
@@ -1178,24 +1177,57 @@
       doc.setDrawColor(watermarkColor[0], watermarkColor[1], watermarkColor[2]);
       doc.setLineWidth(1.2);
 
-      // Stamp Box + Text with rotation (-20 degrees)
       const stampX = 22;
       const stampY = finalY - 28;
       doc.rect(stampX, stampY, 36, 14, null, { angle: -18 });
       doc.text(watermarkText, 40, stampY + 9.5, { align: 'center', angle: -18 });
       doc.restoreGraphicsState();
 
-      // 6. Dynamic UPI QR Section
+      // 6. Dynamic UPI QR Section with OVERLAY WATERMARK STAMP
       finalY += 13;
       const qrDataUrl = getStandeeOfficialQrDataUrl();
       if (qrDataUrl) {
         try {
-          doc.addImage(qrDataUrl, 'PNG', 26.5, finalY, 27, 27);
+          const qrX = 26.5;
+          const qrY = finalY;
+          const qrSize = 27;
+          
+          doc.addImage(qrDataUrl, 'PNG', qrX, qrY, qrSize, qrSize);
+
+          // If bill is PAID, place a dedicated high-opacity stamp over the QR
+          if (status === 'PAID') {
+            doc.saveGraphicsState();
+            
+            // Semi-transparent frosted backdrop over QR code
+            doc.setGState(new doc.GState({ opacity: 0.75 }));
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(qrX + 2, qrY + 8, qrSize - 4, 11, 2, 2, 'F');
+
+            // Crisp Emerald Stamp Border & Text
+            doc.setGState(new doc.GState({ opacity: 0.95 }));
+            doc.setDrawColor(5, 150, 105);
+            doc.setLineWidth(0.8);
+            doc.roundedRect(qrX + 2, qrY + 8, qrSize - 4, 11, 2, 2, 'S');
+
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(5, 150, 105);
+            doc.text("PAID", 40, qrY + 15.5, { align: 'center' });
+
+            doc.restoreGraphicsState();
+          }
+
           finalY += 30;
           doc.setFontSize(6);
           doc.setFont(undefined, 'bold');
-          doc.setTextColor(15, 23, 42);
-          doc.text("SCAN WITH PHONEPE / GPAY TO PAY", 40, finalY, { align: 'center' });
+          
+          if (status === 'PAID') {
+            doc.setTextColor(5, 150, 105);
+            doc.text("PAYMENT RECEIVED • THANK YOU", 40, finalY, { align: 'center' });
+          } else {
+            doc.setTextColor(15, 23, 42);
+            doc.text("SCAN WITH PHONEPE / GPAY TO PAY", 40, finalY, { align: 'center' });
+          }
         } catch (e) {
           finalY += 6;
         }
