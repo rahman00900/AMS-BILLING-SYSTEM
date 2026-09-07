@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AMS Ladies Bags & Abayas - POS</title>
+  <title>AMS Ladies Bags & Abayas - Modern POS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -12,8 +12,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      -webkit-tap-highlight-color: transparent; 
+      background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+    }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     @keyframes shake {
@@ -22,24 +29,29 @@
       40%, 80% { transform: translateX(6px); }
     }
     .shake-animate { animation: shake 0.35s cubic-bezier(.36,.07,.19,.97) both; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
   </style>
 </head>
-<body class="bg-[#F8F9FA] text-slate-800 min-h-screen antialiased selection:bg-amber-500 selection:text-white pb-32">
+<body class="min-h-screen text-slate-800 antialiased selection:bg-amber-500 selection:text-white pb-36">
 
   <!-- Terminal Lockscreen Gateway -->
-  <div id="loginGateway" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4">
-    <div id="loginCard" class="bg-white w-full max-w-sm rounded-[2.5rem] border border-amber-200/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] p-7 text-center space-y-6">
+  <div id="loginGateway" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-4">
+    <div id="loginCard" class="bg-white/95 w-full max-w-sm rounded-[2.5rem] border border-amber-300/40 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] p-7 text-center space-y-6">
       
       <div class="flex justify-center">
-        <div class="relative p-1 rounded-3xl bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 shadow-md">
+        <div class="relative p-1 rounded-3xl bg-gradient-to-tr from-amber-500 via-amber-300 to-amber-100 shadow-lg">
           <canvas id="loginLogoCanvas" width="100" height="100" class="w-20 h-20 rounded-[1.3rem]"></canvas>
         </div>
       </div>
 
       <div>
-        <span class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-900 text-[10px] font-bold rounded-full uppercase tracking-wider">Store Terminal</span>
+        <span class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-900 text-[10px] font-extrabold rounded-full uppercase tracking-wider">Terminal Access</span>
         <h2 class="font-extrabold text-xl text-slate-900 tracking-tight mt-2">AMS Bags & Abayas</h2>
-        <p class="text-xs text-slate-400 mt-0.5 font-medium">Enter PIN to access billing</p>
+        <p class="text-xs text-slate-400 mt-0.5 font-medium">Enter 4-digit PIN</p>
       </div>
 
       <div class="space-y-4">
@@ -53,61 +65,61 @@
       </div>
 
       <!-- Keypad -->
-      <div class="grid grid-cols-3 gap-2 max-w-[240px] mx-auto pt-1">
-        <button type="button" onclick="pressKey('1')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">1</button>
-        <button type="button" onclick="pressKey('2')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">2</button>
-        <button type="button" onclick="pressKey('3')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">3</button>
-        <button type="button" onclick="pressKey('4')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">4</button>
-        <button type="button" onclick="pressKey('5')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">5</button>
-        <button type="button" onclick="pressKey('6')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">6</button>
-        <button type="button" onclick="pressKey('7')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">7</button>
-        <button type="button" onclick="pressKey('8')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">8</button>
-        <button type="button" onclick="pressKey('9')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">9</button>
-        <button type="button" onclick="clearKeys()" class="h-14 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-600 font-semibold text-xs transition">CLR</button>
-        <button type="button" onclick="pressKey('0')" class="h-14 rounded-2xl bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-lg border border-slate-100 transition shadow-xs">0</button>
-        <button type="button" onclick="backspaceKey()" class="h-14 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold text-sm transition">⌫</button>
+      <div class="grid grid-cols-3 gap-2.5 max-w-[240px] mx-auto pt-1">
+        <button type="button" onclick="pressKey('1')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">1</button>
+        <button type="button" onclick="pressKey('2')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">2</button>
+        <button type="button" onclick="pressKey('3')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">3</button>
+        <button type="button" onclick="pressKey('4')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">4</button>
+        <button type="button" onclick="pressKey('5')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">5</button>
+        <button type="button" onclick="pressKey('6')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">6</button>
+        <button type="button" onclick="pressKey('7')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">7</button>
+        <button type="button" onclick="pressKey('8')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">8</button>
+        <button type="button" onclick="pressKey('9')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">9</button>
+        <button type="button" onclick="clearKeys()" class="h-14 rounded-2xl bg-slate-200/80 hover:bg-slate-300 active:scale-95 text-slate-600 font-bold text-xs transition">CLR</button>
+        <button type="button" onclick="pressKey('0')" class="h-14 rounded-2xl bg-slate-100/80 hover:bg-amber-50 active:scale-95 text-slate-900 font-bold text-lg border border-slate-200/80 transition">0</button>
+        <button type="button" onclick="backspaceKey()" class="h-14 rounded-2xl bg-slate-200/80 hover:bg-slate-300 active:scale-95 text-slate-700 font-bold text-sm transition">⌫</button>
       </div>
 
     </div>
   </div>
 
-  <!-- Header Navigation -->
-  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-slate-200/80 shadow-xs">
+  <!-- Modern Header Navigation -->
+  <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 shadow-xl">
     <div class="max-w-2xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <div class="p-0.5 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-200 shadow-xs">
+        <div class="p-0.5 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-200 shadow-md">
           <canvas id="navLogoCanvas" width="80" height="80" class="w-10 h-10 rounded-[14px]"></canvas>
         </div>
         <div>
-          <h1 id="topStoreName" class="font-bold text-sm sm:text-base tracking-tight text-slate-900 leading-tight">AMS Bags & Abayas</h1>
-          <p class="text-[10px] font-semibold text-amber-700 flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+          <h1 id="topStoreName" class="font-bold text-sm sm:text-base tracking-tight text-white leading-tight">AMS Bags & Abayas</h1>
+          <p class="text-[10px] font-semibold text-amber-400 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
             Musheerabad, HYD • +91 91217 57822
           </p>
         </div>
       </div>
       <div class="flex items-center gap-1.5">
-        <button type="button" onclick="showHistory()" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 active:scale-95 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 transition border border-slate-200">
+        <button type="button" onclick="showHistory()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:scale-95 px-3 py-2 rounded-xl text-xs font-semibold text-slate-200 transition border border-slate-700">
           📋 Records
         </button>
-        <button type="button" onclick="openSettings()" class="bg-slate-100 hover:bg-slate-200 active:scale-95 p-2 rounded-xl text-xs font-semibold text-slate-700 transition border border-slate-200">
+        <button type="button" onclick="openSettings()" class="bg-slate-800 hover:bg-slate-700 active:scale-95 p-2 rounded-xl text-xs font-semibold text-slate-200 transition border border-slate-700">
           ⚙️
         </button>
-        <button type="button" onclick="lockTerminal()" title="Lock Screen" class="bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-800 p-2 rounded-xl text-xs font-bold border border-amber-200 transition">
+        <button type="button" onclick="lockTerminal()" title="Lock Screen" class="bg-amber-500/20 hover:bg-amber-500/30 active:scale-95 text-amber-300 p-2 rounded-xl text-xs font-bold border border-amber-500/30 transition">
           🔒
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-2xl mx-auto px-4 py-4 space-y-4">
+  <main class="max-w-2xl mx-auto px-4 py-5 space-y-4">
 
-    <!-- Invoice Details -->
-    <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+    <!-- Invoice Details Card -->
+    <div class="glass-card p-4 rounded-3xl shadow-sm space-y-3">
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Invoice ID ✏️</label>
-          <input id="invNum" type="text" class="w-full bg-slate-50/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-sm font-bold text-amber-900 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition" />
+          <input id="invNum" type="text" class="w-full bg-slate-100/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-sm font-bold text-amber-900 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition" />
         </div>
         <div>
           <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Date</label>
@@ -116,21 +128,21 @@
       </div>
     </div>
 
-    <!-- Customer & Payment -->
-    <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+    <!-- Customer & Payment Card -->
+    <div class="glass-card p-4 rounded-3xl shadow-sm space-y-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <div class="flex justify-between items-center mb-1">
             <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer Name</label>
             <span class="text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">Default in ⚙️</span>
           </div>
-          <input id="custName" type="text" class="w-full bg-slate-50/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition" />
+          <input id="custName" type="text" class="w-full bg-slate-100/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-sm font-semibold text-slate-800 focus:bg-white focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition" />
         </div>
         <div>
           <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Customer Number</label>
           <div class="flex rounded-2xl overflow-hidden border border-slate-200 focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 transition">
             <span class="inline-flex items-center px-3.5 bg-slate-100 text-slate-500 text-xs font-bold border-r border-slate-200">+91</span>
-            <input id="custPhone" type="tel" maxlength="10" placeholder="10-digit number" class="w-full bg-slate-50/70 px-3.5 py-2 text-sm font-semibold text-slate-800 outline-none focus:bg-white" />
+            <input id="custPhone" type="tel" maxlength="10" placeholder="10-digit number" class="w-full bg-slate-100/70 px-3.5 py-2 text-sm font-semibold text-slate-800 outline-none focus:bg-white" />
           </div>
         </div>
       </div>
@@ -138,7 +150,7 @@
       <div>
         <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Payment Method</label>
         <div class="grid grid-cols-2 gap-2 bg-slate-100/80 p-1 rounded-2xl border border-slate-200">
-          <button type="button" id="btnCash" onclick="setPaymentMode('Cash')" class="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-xs transition">
+          <button type="button" id="btnCash" onclick="setPaymentMode('Cash')" class="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-sm transition">
             <span>💵</span> Cash
           </button>
           <button type="button" id="btnOnline" onclick="setPaymentMode('Online / UPI')" class="py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 transition">
@@ -149,30 +161,39 @@
       </div>
     </div>
 
-    <!-- Items Section with Dropdown Selection & Catalog Manager -->
-    <div class="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
+    <!-- Quick Item Buttons Bar -->
+    <div class="glass-card p-4 rounded-3xl shadow-sm space-y-2.5">
+      <div class="flex justify-between items-center">
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">⚡ Quick Items</span>
+          <span class="text-[10px] text-slate-400">Tap button to add item to invoice</span>
+        </div>
+        <button type="button" onclick="openCatalogModal()" class="text-xs font-bold text-amber-800 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-xs">
+          ⚙️ Manage Quick Buttons
+        </button>
+      </div>
+      <div id="quickItemsBar" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 text-xs"></div>
+    </div>
+
+    <!-- Itemized List Card -->
+    <div class="glass-card p-4 rounded-3xl shadow-sm space-y-3">
       <div class="flex justify-between items-center pb-2 border-b border-slate-100">
         <div>
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Billed Items</span>
-          <span class="text-[10px] text-slate-400">Select product from dropdown or enter manually</span>
+          <span class="text-[10px] text-slate-400">Category • Code • Description • Price</span>
         </div>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="openCatalogModal()" class="text-xs font-bold text-amber-800 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl border border-amber-200 transition">
-            📦 Manage Catalog
-          </button>
-          <button type="button" onclick="addRow()" class="bg-slate-900 hover:bg-black active:scale-95 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition shadow-xs">
-            + Add Row
-          </button>
-        </div>
+        <button type="button" onclick="addRow()" class="bg-slate-900 hover:bg-black active:scale-95 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs transition shadow-sm">
+          + Add Empty Row
+        </button>
       </div>
 
       <div id="itemsBox" class="space-y-3"></div>
 
       <!-- Grand Total Bar -->
-      <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-amber-950 p-4.5 rounded-3xl text-white flex justify-between items-center shadow-lg mt-4 border border-amber-500/20">
+      <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-amber-950 p-5 rounded-3xl text-white flex justify-between items-center shadow-lg mt-4 border border-amber-500/20">
         <div>
           <span class="text-[10px] font-bold uppercase tracking-widest text-amber-200/70 block">Total Due</span>
-          <span class="text-xs text-slate-400 font-medium">All item rates included</span>
+          <span class="text-xs text-slate-400 font-medium">All item rates & taxes included</span>
         </div>
         <div class="text-right">
           <span class="text-3xl font-black text-amber-300 tracking-tight">₹<span id="grandTotal">0.00</span></span>
@@ -183,28 +204,28 @@
   </main>
 
   <!-- Bottom Floating Action Dock -->
-  <div class="fixed bottom-3 inset-x-3 z-30 max-w-xl mx-auto">
-    <div class="bg-white/90 backdrop-blur-xl border border-slate-200/90 shadow-2xl p-2 rounded-3xl grid grid-cols-5 gap-1.5">
-      <button type="button" onclick="saveOnly()" class="bg-slate-900 hover:bg-black active:scale-95 text-white font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-xs">
+  <div class="fixed bottom-4 inset-x-4 z-30 max-w-xl mx-auto">
+    <div class="bg-slate-900/90 backdrop-blur-2xl border border-slate-700/80 shadow-2xl p-2 rounded-3xl grid grid-cols-5 gap-1.5">
+      <button type="button" onclick="saveOnly()" class="bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition border border-white/5">
         <span>💾</span> Save
       </button>
-      <button type="button" onclick="showPreview()" class="bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-700 border border-slate-200 font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="showPreview()" class="bg-white/10 hover:bg-white/20 active:scale-95 text-white font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition border border-white/5">
         <span>👁️</span> View
       </button>
-      <button type="button" onclick="runBill('print')" class="bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-700 border border-slate-200 font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="runBill('print')" class="bg-white/10 hover:bg-white/20 active:scale-95 text-white font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition border border-white/5">
         <span>🖨️</span> Print
       </button>
-      <button type="button" onclick="runBill('pdf')" class="bg-slate-50 hover:bg-slate-100 active:scale-95 text-slate-700 border border-slate-200 font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition">
+      <button type="button" onclick="runBill('pdf')" class="bg-white/10 hover:bg-white/20 active:scale-95 text-white font-semibold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition border border-white/5">
         <span>📄</span> PDF
       </button>
-      <button type="button" onclick="runBill('wa')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-md">
+      <button type="button" onclick="runBill('wa')" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold py-3 rounded-2xl text-xs flex flex-col items-center justify-center transition shadow-lg">
         <span>💬</span> WhatsApp
       </button>
     </div>
   </div>
 
   <!-- Preview Modal -->
-  <div id="previewModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+  <div id="previewModal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden p-6 space-y-4 text-xs text-slate-700">
       <div class="text-center border-b border-slate-100 pb-3">
         <canvas id="previewLogoCanvas" width="80" height="80" class="w-14 h-14 mx-auto mb-2 rounded-2xl border border-amber-300 shadow-xs"></canvas>
@@ -234,14 +255,14 @@
         <span>Grand Total:</span>
         <span class="text-amber-600">₹<span id="pvTot"></span></span>
       </div>
-      <button type="button" onclick="closePreview()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-2xl transition">
+      <button type="button" onclick="closePreview()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-2xl transition">
         Close Preview
       </button>
     </div>
   </div>
 
   <!-- Settings Modal with Backup & Restore -->
-  <div id="settingsModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+  <div id="settingsModal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col text-xs text-slate-700">
       <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <h3 class="font-extrabold text-sm text-slate-900">⚙️ Store Settings</h3>
@@ -250,22 +271,22 @@
       <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
         <div>
           <label class="block font-bold text-slate-400 mb-1">STORE NAME</label>
-          <input id="setBizName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
+          <input id="setBizName" type="text" class="w-full bg-slate-100/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" />
         </div>
         <div>
           <label class="block font-bold text-slate-400 mb-1">DEFAULT CUSTOMER NAME</label>
-          <input id="setCustName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 outline-none focus:border-amber-500" />
+          <input id="setCustName" type="text" class="w-full bg-slate-100/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 outline-none focus:border-amber-500" />
         </div>
         <div>
           <label class="block font-bold text-slate-400 mb-1">PHONEPE MERCHANT UPI VPA</label>
-          <input id="setUpiId" type="text" value="Q059185009@ybl" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" readonly />
+          <input id="setUpiId" type="text" value="Q059185009@ybl" class="w-full bg-slate-100/70 border border-slate-200 rounded-2xl px-3.5 py-2 text-slate-800 font-semibold outline-none focus:border-amber-500" readonly />
           <p class="text-[10px] text-slate-400 mt-1">Official Standee VPA: Q059185009@ybl</p>
         </div>
 
         <!-- 1-Click Multi-Device Backup & Restore Section -->
         <div class="pt-3 border-t border-slate-100 space-y-2">
           <label class="block font-bold text-slate-700 uppercase tracking-wider text-[10px]">Data Backup & Sync (Cross-Device)</label>
-          <p class="text-[10px] text-slate-400">Export a single backup file to load all your sales, invoices, and catalog onto another phone or PC.</p>
+          <p class="text-[10px] text-slate-400">Export a single file to transfer all sales, items, and settings to another phone or computer.</p>
           
           <div class="grid grid-cols-2 gap-2 pt-1">
             <button type="button" onclick="exportBackupFile()" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold py-2.5 px-3 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-xs">
@@ -285,39 +306,39 @@
     </div>
   </div>
 
-  <!-- Item Catalog Modal -->
-  <div id="catalogModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+  <!-- Quick Items Management Modal (Add, Edit, Delete Quick Buttons) -->
+  <div id="catalogModal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] text-xs text-slate-700">
       <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <div>
-          <h3 class="font-extrabold text-sm text-slate-900">Manage Item Catalog</h3>
-          <p class="text-[10px] text-slate-400">Add, edit, or delete items for the dropdown list</p>
+          <h3 class="font-extrabold text-sm text-slate-900">Manage Quick Buttons</h3>
+          <p class="text-[10px] text-slate-400">Add, edit, or delete items shown on the quick buttons bar</p>
         </div>
         <button type="button" onclick="closeCatalogModal()" class="text-slate-400 text-lg font-bold p-1">×</button>
       </div>
       <div class="p-5 space-y-3 overflow-y-auto flex-grow">
         <div class="bg-amber-50/70 p-3.5 rounded-3xl border border-amber-200/80 space-y-2.5">
-          <p class="font-bold text-amber-900">Add New Product</p>
+          <p class="font-bold text-amber-900">Add New Quick Button</p>
           <div class="grid grid-cols-12 gap-2">
             <input id="newCatName" type="text" placeholder="Category (e.g. Abaya)" class="col-span-5 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-semibold" />
             <input id="newCatCode" type="text" placeholder="Code (e.g. AB-101)" class="col-span-4 bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
             <input id="newCatPrice" type="number" placeholder="₹ Price" class="col-span-3 bg-white border border-slate-200 rounded-xl px-2 py-2 text-xs outline-none focus:border-amber-500 font-bold" />
           </div>
           <input id="newCatDesc" type="text" placeholder="Product Description (e.g. Designer Embroidered Abaya)" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs outline-none focus:border-amber-500" />
-          <button type="button" onclick="addNewCatalogItem()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition shadow-xs">
-            + Save to Catalog
+          <button type="button" onclick="addNewCatalogItem()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">
+            + Save Quick Button
           </button>
         </div>
         <div id="catalogItemsList" class="space-y-2 pt-1"></div>
       </div>
       <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
-        <button type="button" onclick="closeCatalogModal()" class="bg-slate-200 hover:bg-slate-300 px-5 py-2 rounded-2xl font-bold">Done</button>
+        <button type="button" onclick="closeCatalogModal()" class="bg-slate-900 hover:bg-black text-white px-5 py-2 rounded-2xl font-bold">Done</button>
       </div>
     </div>
   </div>
 
   <!-- Sales History Modal -->
-  <div id="historyModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+  <div id="historyModal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-[2.5rem] border border-slate-200 shadow-2xl overflow-hidden max-h-[85vh] flex flex-col text-xs text-slate-700">
       
       <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -465,7 +486,9 @@
       initSettings();
       initDate();
       initInvoice();
+      renderQuickItemsBar();
       
+      // Blank initial row ready for input
       addRow('', '', '', 1, '');
 
       window.addEventListener('keydown', (e) => {
@@ -575,9 +598,7 @@
       alert('Settings updated successfully!');
     }
 
-    // ==========================================
-    // BACKUP & RESTORE DATA HANDLERS
-    // ==========================================
+    // Backup & Restore Handlers
     function exportBackupFile() {
       const backupData = {
         ams_history: JSON.parse(localStorage.getItem('ams_history') || '[]'),
@@ -612,7 +633,7 @@
             if (data.ams_biz) localStorage.setItem('ams_biz', data.ams_biz);
             if (data.ams_default_cust) localStorage.setItem('ams_default_cust', data.ams_default_cust);
 
-            alert('Backup restored successfully! The page will now refresh.');
+            alert('Backup restored successfully!');
             window.location.reload();
           } else {
             alert('Invalid backup file format.');
@@ -658,17 +679,47 @@
       const btnOnline = document.getElementById('btnOnline');
 
       if (mode === 'Cash') {
-        btnCash.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-xs transition';
+        btnCash.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-sm transition';
         btnOnline.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 transition';
       } else {
-        btnOnline.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-xs transition';
+        btnOnline.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 bg-white text-slate-900 shadow-sm transition';
         btnCash.className = 'py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 transition';
       }
     }
 
-    // Catalog Handlers
+    // Quick Item Buttons Handlers
     function getCatalog() {
       return JSON.parse(localStorage.getItem('ams_catalog') || JSON.stringify(DEFAULT_CATALOG));
+    }
+
+    function renderQuickItemsBar() {
+      const bar = document.getElementById('quickItemsBar');
+      const items = getCatalog();
+      bar.innerHTML = items.map((c) => `
+        <button type="button" onclick="quickAddItem('${c.name}', '${c.code || ''}', '${c.desc || c.name}', ${c.price || 0})" class="shrink-0 bg-white hover:bg-amber-50 active:scale-95 text-slate-800 font-semibold px-3.5 py-2 rounded-2xl border border-slate-200/90 shadow-sm transition flex items-center gap-2">
+          <span>${c.desc || c.name}</span>
+          <span class="font-bold text-amber-800 text-[11px] bg-amber-100/80 px-2 py-0.5 rounded-lg">₹${c.price || 0}</span>
+        </button>
+      `).join('');
+    }
+
+    function quickAddItem(cat, code, name, price) {
+      const names = document.querySelectorAll('.row-name');
+      const prices = document.querySelectorAll('.row-price');
+      const cats = document.querySelectorAll('.row-cat');
+      const codes = document.querySelectorAll('.row-code');
+
+      // If the first row is completely empty, populate it directly
+      if (names.length === 1 && names[0].value.trim() === '' && (prices[0].value === '' || prices[0].value === '0')) {
+        cats[0].value = cat;
+        codes[0].value = code;
+        names[0].value = name;
+        prices[0].value = price;
+        calcTotal();
+        return;
+      }
+
+      addRow(cat, code, name, 1, price);
     }
 
     function openCatalogModal() {
@@ -678,7 +729,7 @@
 
     function closeCatalogModal() {
       document.getElementById('catalogModal').classList.add('hidden');
-      refreshAllRowDropdowns();
+      renderQuickItemsBar();
     }
 
     function renderCatalogManager() {
@@ -734,56 +785,12 @@
       renderCatalogManager();
     }
 
-    function generateDropdownOptionsHTML() {
-      const catalog = getCatalog();
-      return `
-        <option value="">-- Choose From Catalog (Optional) --</option>
-        ${catalog.map((c, idx) => `
-          <option value="${idx}">[${c.code || '-'}] ${c.desc || c.name} (${c.name}) - ₹${c.price || 0}</option>
-        `).join('')}
-      `;
-    }
-
-    function refreshAllRowDropdowns() {
-      const dropdowns = document.querySelectorAll('.row-catalog-select');
-      dropdowns.forEach(dd => {
-        const curVal = dd.value;
-        dd.innerHTML = generateDropdownOptionsHTML();
-        dd.value = curVal;
-      });
-    }
-
-    function onDropdownSelect(selectEl, rowId) {
-      const idx = selectEl.value;
-      if (idx === "") return;
-
-      const catalog = getCatalog();
-      const item = catalog[idx];
-      if (!item) return;
-
-      const row = document.getElementById(rowId);
-      if (!row) return;
-
-      row.querySelector('.row-cat').value = item.name;
-      row.querySelector('.row-code').value = item.code || '';
-      row.querySelector('.row-name').value = item.desc || item.name;
-      row.querySelector('.row-price').value = item.price || 0;
-      calcTotal();
-    }
-
     function addRow(category = '', code = '', name = '', qty = 1, price = '') {
       const id = 'row_' + Date.now() + Math.floor(Math.random() * 100);
       const div = document.createElement('div');
-      div.className = 'bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200 space-y-2.5 transition-all shadow-xs';
+      div.className = 'bg-slate-50/90 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5 transition-all shadow-xs';
       div.id = id;
       div.innerHTML = `
-        <div>
-          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Select Product Dropdown</label>
-          <select onchange="onDropdownSelect(this, '${id}')" class="row-catalog-select w-full bg-white border border-amber-200/80 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 outline-none focus:border-amber-500 shadow-xs">
-            ${generateDropdownOptionsHTML()}
-          </select>
-        </div>
-
         <div class="grid grid-cols-12 gap-2 items-center">
           <div class="col-span-6">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-0.5">Category</label>
