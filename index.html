@@ -147,7 +147,7 @@
         </div>
       </div>
 
-      <!-- Payment Method & Paid / Unpaid Status -->
+      <!-- Payment Method & Status -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
         <div>
           <label class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1.5">Payment Method</label>
@@ -1066,7 +1066,7 @@
       }, 300);
     }
 
-    // PDF Generator with Watermarks across Invoice & Over QR Code
+    // PDF Generator with Official Boutique Stamp on Bottom Right
     function makePDFObject(biz, inv, dt, cust, custPhone, pay, status, tot, items) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
@@ -1075,7 +1075,7 @@
         format: [80, 230]
       });
 
-      // 1. Top Luxury Gold/Dark Strip
+      // 1. Top Luxury Dark Bar
       doc.setFillColor(15, 23, 42);
       doc.rect(0, 0, 80, 31, 'F');
 
@@ -1093,7 +1093,7 @@
       doc.setFont(undefined, 'normal');
       doc.text(`Musheerabad, Hyderabad • Ph: ${STORE_PHONE}`, 40, 27, { align: 'center' });
 
-      // 2. Metadata Details Box
+      // 2. Metadata Box
       doc.setFillColor(250, 248, 245);
       doc.roundedRect(5, 34, 70, 16, 2, 2, 'F');
       doc.setDrawColor(226, 232, 240);
@@ -1165,76 +1165,72 @@
       doc.setFontSize(9);
       doc.text(`Rs. ${tot}`, 71, finalY + 6.5, { align: 'right' });
 
-      // 5. INVOICE CENTER WATERMARK STAMP
-      const watermarkText = status === 'PAID' ? 'PAID' : 'UNPAID / DUE';
-      const watermarkColor = status === 'PAID' ? [5, 150, 105] : [225, 29, 72];
-
-      doc.saveGraphicsState();
-      doc.setGState(new doc.GState({ opacity: 0.18 }));
-      doc.setFontSize(22);
-      doc.setFont(undefined, 'bold');
-      doc.setTextColor(watermarkColor[0], watermarkColor[1], watermarkColor[2]);
-      doc.setDrawColor(watermarkColor[0], watermarkColor[1], watermarkColor[2]);
-      doc.setLineWidth(1.2);
-
-      const stampX = 22;
-      const stampY = finalY - 28;
-      doc.rect(stampX, stampY, 36, 14, null, { angle: -18 });
-      doc.text(watermarkText, 40, stampY + 9.5, { align: 'center', angle: -18 });
-      doc.restoreGraphicsState();
-
-      // 6. Dynamic UPI QR Section with OVERLAY WATERMARK STAMP
+      // 5. Dynamic UPI QR Section
       finalY += 13;
       const qrDataUrl = getStandeeOfficialQrDataUrl();
       if (qrDataUrl) {
         try {
-          const qrX = 26.5;
+          const qrX = 8;
           const qrY = finalY;
           const qrSize = 27;
           
           doc.addImage(qrDataUrl, 'PNG', qrX, qrY, qrSize, qrSize);
 
-          // If bill is PAID, place a dedicated high-opacity stamp over the QR
-          if (status === 'PAID') {
-            doc.saveGraphicsState();
-            
-            // Semi-transparent frosted backdrop over QR code
-            doc.setGState(new doc.GState({ opacity: 0.75 }));
-            doc.setFillColor(255, 255, 255);
-            doc.roundedRect(qrX + 2, qrY + 8, qrSize - 4, 11, 2, 2, 'F');
-
-            // Crisp Emerald Stamp Border & Text
-            doc.setGState(new doc.GState({ opacity: 0.95 }));
-            doc.setDrawColor(5, 150, 105);
-            doc.setLineWidth(0.8);
-            doc.roundedRect(qrX + 2, qrY + 8, qrSize - 4, 11, 2, 2, 'S');
-
-            doc.setFontSize(11);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(5, 150, 105);
-            doc.text("PAID", 40, qrY + 15.5, { align: 'center' });
-
-            doc.restoreGraphicsState();
-          }
-
-          finalY += 30;
-          doc.setFontSize(6);
+          doc.setFontSize(5.5);
           doc.setFont(undefined, 'bold');
-          
           if (status === 'PAID') {
             doc.setTextColor(5, 150, 105);
-            doc.text("PAYMENT RECEIVED • THANK YOU", 40, finalY, { align: 'center' });
+            doc.text("PAYMENT RECEIVED", qrX + (qrSize / 2), qrY + qrSize + 3.5, { align: 'center' });
           } else {
             doc.setTextColor(15, 23, 42);
-            doc.text("SCAN WITH PHONEPE / GPAY TO PAY", 40, finalY, { align: 'center' });
+            doc.text("SCAN TO PAY (UPI)", qrX + (qrSize / 2), qrY + qrSize + 3.5, { align: 'center' });
           }
-        } catch (e) {
-          finalY += 6;
-        }
+        } catch (e) {}
       }
 
+      // 6. OFFICIAL EMBOSSED STAMP AT BOTTOM-RIGHT
+      const isPaid = (status === 'PAID');
+      const stampColor = isPaid ? [5, 150, 105] : [225, 29, 72];
+      const stampText = isPaid ? 'PAID' : 'DUE';
+      const stampSub = isPaid ? 'VERIFIED' : 'PENDING';
+
+      doc.saveGraphicsState();
+      
+      const stampCenter = { x: 58, y: finalY + 13 };
+      doc.setGState(new doc.GState({ opacity: 0.88 }));
+      doc.setDrawColor(stampColor[0], stampColor[1], stampColor[2]);
+      doc.setTextColor(stampColor[0], stampColor[1], stampColor[2]);
+
+      // Outer Circular Ring
+      doc.setLineWidth(1.0);
+      doc.circle(stampCenter.x, stampCenter.y, 12, 'S');
+
+      // Inner Dashed Circular Ring
+      doc.setLineWidth(0.4);
+      doc.setLineDashPattern([1, 1], 0);
+      doc.circle(stampCenter.x, stampCenter.y, 10.3, 'S');
+      doc.setLineDashPattern([], 0);
+
+      // Top & Bottom Stamp Arched Text
+      doc.setFontSize(4.2);
+      doc.setFont(undefined, 'bold');
+      doc.text("AMS LADIES BAGS", stampCenter.x, stampCenter.y - 6.8, { align: 'center', angle: -6 });
+      doc.text(stampSub, stampCenter.x, stampCenter.y + 7.5, { align: 'center', angle: -6 });
+
+      // Core Slanted Stamp Text
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'black');
+      doc.text(stampText, stampCenter.x, stampCenter.y + 1.8, { align: 'center', angle: -12 });
+
+      // Clean Double Parallel Inner Bars
+      doc.setLineWidth(0.4);
+      doc.line(stampCenter.x - 7.5, stampCenter.y - 3.2, stampCenter.x + 7.5, stampCenter.y - 3.2);
+      doc.line(stampCenter.x - 7.5, stampCenter.y + 3.8, stampCenter.x + 7.5, stampCenter.y + 3.8);
+
+      doc.restoreGraphicsState();
+
       // 7. Footer Clean Text Address
-      finalY += 6;
+      finalY += 34;
       doc.setFontSize(6);
       doc.setFont(undefined, 'bold');
       doc.setTextColor(71, 85, 105);
